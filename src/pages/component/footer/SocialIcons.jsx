@@ -8,10 +8,10 @@ import {
 } from "react-icons/fa";
 const SocialIcons = () => {
   return (
-    <div className="text-teal-500">
+    <div className=" text-slate-700">
       <span
         className="p-2 cursor-pointer inline-flex items-center
-        rounded-full bg-gray-700 mx-1.5 text-xl hover:text-gray-100 hover:bg-teal-500
+        rounded-full bg-slate-200 mx-1.5 text-xl  hover:bg-teal-400
         duration-300 "
       >
         {" "}
@@ -22,8 +22,8 @@ const SocialIcons = () => {
       </span>
       <span
         className="p-2 cursor-pointer inline-flex items-center
-      rounded-full bg-gray-700 mx-1.5 text-xl hover:text-gray-100 hover:bg-teal-500
-      duration-300 "
+        rounded-full bg-slate-200 mx-1.5 text-xl  hover:bg-teal-400
+        duration-300 "
       >
         <a href="https://www.youtube.com/" target="_blank">
           {" "}
@@ -32,7 +32,7 @@ const SocialIcons = () => {
       </span>
       <span
         className="p-2 cursor-pointer inline-flex items-center
-        rounded-full bg-gray-700 mx-1.5 text-xl hover:text-gray-100 hover:bg-teal-500
+        rounded-full bg-slate-200 mx-1.5 text-xl  hover:bg-teal-400
         duration-300 "
       >
         <a href="https://www.youtube.com/" target="_blank">
@@ -42,7 +42,7 @@ const SocialIcons = () => {
       </span>
       <span
         className="p-2 cursor-pointer inline-flex items-center
-        rounded-full bg-gray-700 mx-1.5 text-xl hover:text-gray-100 hover:bg-teal-500
+        rounded-full bg-slate-200 mx-1.5 text-xl  hover:bg-teal-400
         duration-300 "
       >
         <a href="https://www.youtube.com/" target="_blank">
@@ -51,7 +51,7 @@ const SocialIcons = () => {
       </span>
       <span
         className="p-2 cursor-pointer inline-flex items-center
-        rounded-full bg-gray-700 mx-1.5 text-xl hover:text-gray-100 hover:bg-teal-500
+        rounded-full bg-slate-200 mx-1.5 text-xl  hover:bg-teal-400
         duration-300 "
       >
         <a href="https://www.youtube.com/" target="_blank">
