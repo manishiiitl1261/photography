@@ -20,4 +20,4 @@ const Footer = () => {
     </footer>
   );
 };
-export default Footer;
+export default Footer; // test PR
