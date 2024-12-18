@@ -15,8 +15,8 @@ const ItemsContainer = () => {
           <input
             type="text"
             placeholder="Enter Your E-mail"
-            className=" text-white border border-gray-300 focus:placeholder-gray-50 hover:placeholder-gray-50 duration-300 bg-slate-600 dark:text-white
-           sm:w-72 !w-full sm:mr-5 mr-1 lg:mb-0 mb-4 py-2.5 rounded px-2 focus:ring-blue-500 focus:border-blue-500"
+            className=" text-black border hover:border-black focus:placeholder-slate-600 hover:placeholder-slate-600 duration-300 bg-white dark:text-white
+           sm:w-72 !w-full sm:mr-5 mr-1 lg:mb-0 mb-4 py-2.5 rounded px-2 focus:ring-blue-500 focus:border-blue-500 "
           />
           <label
             htmlFor="message"
@@ -27,9 +27,9 @@ const ItemsContainer = () => {
           <textarea
             id="message"
             rows="3"
-            className="text-white focus:placeholder-gray-50 hover:placeholder-gray-50 duration-300 block p-2.5  w-full text-sm text-black-900 bg-white-50 
-              rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 bg-slate-600 
-              dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 
+            className="ttext-black border hover:border-black focus:placeholder-slate-600 hover:placeholder-slate-600 duration-300 bg-white dark:text-white block p-2.5  w-full text-sm text-black-900 bg-white-50 
+              rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500  
+              dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 
               dark:focus:border-blue-500 "
             placeholder="Write your suggestion here..."
           ></textarea>
