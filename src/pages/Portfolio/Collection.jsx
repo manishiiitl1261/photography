@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-import { photos } from "@/pages/Portfolio/Photo";
+import photos from "@/pages/Portfolio/Photo";
 
 const animationVariants = {
     left: { x: [-300, 0], opacity: [0, 1] },

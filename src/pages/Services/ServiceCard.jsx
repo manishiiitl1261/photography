@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { services } from "@/pages/Services/ServiceCardHelper";
+import services from "@/pages/Services/ServiceCardHelper";
 const animationVariants = {
     left: { hidden: { x: -100, opacity: 0 }, visible: { x: 0, opacity: 1 } },
     right: { hidden: { x: 100, opacity: 0 }, visible: { x: 0, opacity: 1 } },

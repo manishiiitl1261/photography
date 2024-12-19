@@ -1,9 +1,9 @@
-import Footer from "@/pages/component/footer/Footer";
-import Review from "@/pages/component/review/Review";
-import Navbar from "@/pages/component/navbar/Navbar";
+import Footer from "@/pages/components/footer/Footer";
+import Review from "@/pages/components/review/Review";
+import Navbar from "@/pages/components/navbar/Navbar";
 import Gallary from "@/pages/Portfolio/Gallary";
-import HomeC from "@/pages/component/home/HomeC";
-import { sliderContent } from "@/pages/component/home/HomeContent";
+import HomeC from "@/pages/components/home/HomeC";
+import { sliderContent } from "@/pages/components/home/HomeContent";
 import Card from "@/pages/AboutUs/Card";
 import ServiceCard from "@/pages/Services/ServiceCard";
 export default function Home() {

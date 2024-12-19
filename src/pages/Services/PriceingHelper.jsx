@@ -1,4 +1,4 @@
-export const cardData = [
+const cardData = [
     {
         title: "Wedding Shoot",
         price: "$500",
@@ -72,3 +72,5 @@ export const cardData = [
         animation: "right",
     }
 ];
+
+export default cardData;

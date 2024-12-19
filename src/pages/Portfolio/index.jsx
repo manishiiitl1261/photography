@@ -1,5 +1,5 @@
-import Footer from "@/pages/component/footer/Footer";
-import Navbar from "@/pages/component/navbar/Navbar";
+import Footer from "@/pages/components/footer/Footer";
+import Navbar from "@/pages/components/navbar/Navbar";
 import Gallary from "@/pages/Portfolio/Gallary";
 import React from 'react'
 export default function index() {
