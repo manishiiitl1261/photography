@@ -25,7 +25,7 @@ export default function Review() {
 
               <span className=" text-8xl">4.0</span>
               <div className=" flex flex-row">
-                <span className="text-blue-500"> ★★★★</span>
+                <span className="text-blue-500 cursor-pointer"> ★★★★</span>
               </div>
               <span className="mt-2 text-indigo-950">47,599,425</span>
             </div>
@@ -38,10 +38,10 @@ export default function Review() {
         </div>
       </div>
 
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center lg:gap-10 gap-4">
         <label
           htmlFor="message"
-          className="text-3xl font-bold mb-4"
+          className="text-3xl lg:text-5xl font-bold italic"
         >
           Your Review
         </label>

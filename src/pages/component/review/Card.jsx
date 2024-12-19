@@ -2,29 +2,38 @@ import React from "react";
 import { FaStar } from "react-icons/fa";
 
 // Sample testimonials array
-const Card = ({ name, role, image, text, stars, brand }) => {
+const Card = ({ name, role, image, text, stars, brand, eventImage }) => {
     return (
         <div className="w-auto">
             {/* Testimonial Content */}
-            <div className="mb-8 w-full">
-                <div className="bg-gray-100 p-6 rounded-lg justify-center items-center relative">
-                    {/* Brand */}
-                    <p className="font-bold italic text-gray-500 text-2xl mb-4">{brand}</p>
+            <div className="mb-8 w-full ">
+                <div className="flex flex-row bg-gray-100 p-6 rounded-lg justify-center items-center relative  gap-2 sm:gap-4">
+                    <div>
+                        {/* Brand */}
+                        <p className="font-bold italic text-gray-500 text-2xl mb-4">{brand}</p>
 
-                    {/* Testimonial Text */}
-                    <p className="text-gray-600 text-sm mb-4">{text}</p>
+                        {/* Testimonial Text */}
+                        <p className="text-gray-600 text-sm mb-4">{text}</p>
 
-                    {/* Stars */}
-                    <div className="flex text-yellow-400 text-center">
-                        {[...Array(stars)].map((_, index) => (
-                            <FaStar key={index} />
-                        ))}
+                        {/* Stars */}
+                        <div className="flex text-yellow-400 text-center cursor-pointer">
+                            {[...Array(stars)].map((_, index) => (
+                                <FaStar key={index} />
+                            ))}
+                        </div>
+                    </div>
+                    {/* Event photo */}
+                    <div className="size-1/2 rounded-lg overflow-hidden">
+                        <img
+                            src={eventImage}
+                            alt={name}
+                            className=" w-full h-full object-cover cursor-pointer"
+                        />
                     </div>
                     {/* Speech bubble effect */}
                     <div className="absolute left-10 -bottom-4 w-6 h-6 bg-gray-100 rotate-45"></div>
                 </div>
             </div>
-
             {/* Profile Section */}
             <div className="flex items-center">
                 {/* Profile Image */}

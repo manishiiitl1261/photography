@@ -13,7 +13,7 @@ const Footer = () => {
           </div>
         </div>
         <div className=" text-center">
-          <span>© 2020 Appy. All rights reserved. Terms · Privacy Policy</span>
+          <span>© 2015 Padadi  All rights reserved. Terms · Privacy Policy</span>
         </div>
       </div>
     </footer>
