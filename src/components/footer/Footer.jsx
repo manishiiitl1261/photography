@@ -1,6 +1,6 @@
 import React from "react";
-import ItemsContainer from "@/pages/components/footer/ItemContainer";
-import SocialIcons from "@/pages/components/footer/SocialIcons";
+import ItemsContainer from "@/components/footer/ItemContainer";
+import SocialIcons from "@/components/footer/SocialIcons";
 const Footer = () => {
   return (
     <footer className="flex flex-col text-black tex sm:pt-10">

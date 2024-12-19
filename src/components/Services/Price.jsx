@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import cardData from '@/pages/Services/PriceingHelper';
+import cardData from '@/components/Services/PriceingHelper';
 const Price = () => {
     const animationVariants = {
         left: { hidden: { x: -100, opacity: 0 }, visible: { x: 0, opacity: 1 } },

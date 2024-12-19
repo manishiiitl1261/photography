@@ -1,6 +1,6 @@
 // pages/index.js
 import React from 'react';
-import ProgressBar from '@/pages/components/review/ProgressBar';
+import ProgressBar from '@/components/review/ProgressBar';
 
 function ProgressHelper() {
   return (

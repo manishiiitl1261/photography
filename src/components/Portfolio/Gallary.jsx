@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Slider from "react-slick";
-import photos from "@/pages/Portfolio/Photo";
+import photos from "@/components/Portfolio/Photo";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Collection from "@/pages/Portfolio/Collection";
+import Collection from "@/components/Portfolio/Collection";
 export default function Gallery() {
     const [animate, setAnimate] = useState(false);
     const galleryRef = useRef(null);
