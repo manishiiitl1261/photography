@@ -1,4 +1,4 @@
-const photos = [
+export const photos = [
     { id: 1, src: "assest/work-1.jpg", alt: "Photo 1" },
     { id: 2, src: "assest/work-2.jpg", alt: "Photo 2" },
     { id: 3, src: "assest/work-3.jpg", alt: "Photo 3" },
@@ -9,4 +9,3 @@ const photos = [
     { id: 8, src: "assest/work-8.jpg", alt: "Photo 8" },
     { id: 9, src: "assest/work-9.jpg", alt: "Photo 9" },
 ];
-export default photos;
