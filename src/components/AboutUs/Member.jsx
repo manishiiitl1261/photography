@@ -1,5 +1,5 @@
 "use client";
-import teamMembers from "@/pages/AboutUs/MembersHelper";
+import teamMembers from "@/components/AboutUs/MembersHelper";
 import { motion } from "framer-motion";
 const Member = () => {
     const animationVariants = {

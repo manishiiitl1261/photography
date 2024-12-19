@@ -1,6 +1,6 @@
-import Footer from "@/pages/components/footer/Footer";
-import Navbar from "@/pages/components/navbar/Navbar";
-import Home from "@/pages/ContactUs/Home";
+import Footer from "@/components/footer/Footer";
+import Navbar from "@/components/navbar/Navbar";
+import Home from "@/components/ContactUs/Home";
 export default function index() {
     return (
         <div className="bg-slate-300">

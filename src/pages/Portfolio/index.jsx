@@ -1,6 +1,6 @@
-import Footer from "@/pages/components/footer/Footer";
-import Navbar from "@/pages/components/navbar/Navbar";
-import Gallary from "@/pages/Portfolio/Gallary";
+import Footer from "@/components/footer/Footer";
+import Navbar from "@/components/navbar/Navbar";
+import Gallary from "@/components/Portfolio/Gallary";
 import React from 'react'
 export default function index() {
     return (

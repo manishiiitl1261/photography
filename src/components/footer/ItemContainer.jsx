@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import Item from "@/pages/components/footer/Item";
-import { ADDRESS, CONTACT } from "@/pages/components/footer/Menu";
+import Item from "@/components/footer/Item";
+import { ADDRESS, CONTACT } from "@/components/footer/Menu";
 
 const ItemsContainer = () => {
   // States for form inputs and submission notification

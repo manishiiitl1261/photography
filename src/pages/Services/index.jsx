@@ -1,8 +1,8 @@
-import Footer from "@/pages/components/footer/Footer";
-import Navbar from "@/pages/components/navbar/Navbar";
-import ServiceCard from "@/pages/Services/ServiceCard";
+import Footer from "@/components/footer/Footer";
+import Navbar from "@/components/navbar/Navbar";
+import ServiceCard from "@/components/Services/ServiceCard";
 import React from 'react'
-import Price from "@/pages/Services/Price";
+import Price from "@/components/Services/Price";
 export default function index() {
     return (
         <div className="bg-slate-300">

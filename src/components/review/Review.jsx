@@ -1,7 +1,7 @@
 import React from "react";
-import CardSlider from "@/pages/components/review/CardSlider"
-import ProgressHelper from "@/pages/components/review/ProgressHelper";
-import CommentForm from "@/pages/components/review/CommentForm"
+import CardSlider from "@/components/review/CardSlider"
+import ProgressHelper from "@/components/review/ProgressHelper";
+import CommentForm from "@/components/review/CommentForm"
 export default function Review() {
   return (
     <div className="flex flex-col p-4 bg-slate-300 gap-16">

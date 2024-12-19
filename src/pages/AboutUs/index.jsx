@@ -1,7 +1,7 @@
-import Footer from "@/pages/components/footer/Footer";
-import Navbar from "@/pages/components/navbar/Navbar";
-import Card from "@/pages/AboutUs/Card";
-import Member from "@/pages/AboutUs/Member";
+import Footer from "@/components/footer/Footer";
+import Navbar from "@/components/navbar/Navbar";
+import Card from "@/components/AboutUs/Card";
+import Member from "@/components/AboutUs/Member";
 export default function index() {
     return (
         <div className="bg-slate-300">
