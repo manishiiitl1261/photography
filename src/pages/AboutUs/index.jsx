@@ -1,5 +1,4 @@
 import Footer from "@/pages/component/footer/Footer";
-import Review from "@/pages/component/review/Review";
 import Navbar from "@/pages/component/navbar/Navbar";
 import Card from "@/pages/AboutUs/Card";
 import Member from "@/pages/AboutUs/Member";

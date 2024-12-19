@@ -1,4 +1,3 @@
-// Helper.jsx
 export const cardData = [
     {
         title: "Wedding Shoot",

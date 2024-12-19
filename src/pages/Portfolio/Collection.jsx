@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-import photoData from "@/pages/Portfolio/Photo";
+import { photos } from "@/pages/Portfolio/Photo";
 
 const animationVariants = {
     left: { x: [-300, 0], opacity: [0, 1] },
@@ -15,7 +15,7 @@ const directions = ["left", "right", "up", "down"];
 const Gallery = () => {
     return (
         <div className=" grid grid-cols-3 gap-4 p-4 overflow-hidden">
-            {photoData.map((photo, index) => {
+            {photos.map((photo, index) => {
                 const direction = directions[index % directions.length];
                 return (
                     <motion.div
