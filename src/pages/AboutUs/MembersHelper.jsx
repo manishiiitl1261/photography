@@ -1,4 +1,4 @@
-export const teamMembers = [
+const teamMembers = [
     {
         name: "Lewis Lucas",
         role: "IT Manager",
@@ -36,3 +36,4 @@ export const teamMembers = [
         animation: "right",
     },
 ];
+export default teamMembers;

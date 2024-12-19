@@ -1,6 +1,6 @@
 import ContactForm from '@/pages/ContactUs/ContactForm';
-import Item from "@/pages/component/footer/Item";
-import { ADDRESS, CONTACT } from "@/pages/component/footer/Menu";
+import Item from "@/pages/components/footer/Item";
+import { ADDRESS, CONTACT } from "@/pages/components/footer/Menu";
 export default function Home() {
     return (
         <div>

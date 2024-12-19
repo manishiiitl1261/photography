@@ -1,5 +1,5 @@
-import Footer from "@/pages/component/footer/Footer";
-import Navbar from "@/pages/component/navbar/Navbar";
+import Footer from "@/pages/components/footer/Footer";
+import Navbar from "@/pages/components/navbar/Navbar";
 import Home from "@/pages/ContactUs/Home";
 export default function index() {
     return (

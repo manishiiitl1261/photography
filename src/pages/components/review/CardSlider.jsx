@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import Card from "@/pages/component/review/Card";
-import { cardData } from "@/pages/component/review/CardHelper";
+import Card from "@/pages/components/review/Card";
+import cardData from "@/pages/components/review/CardHelper";
 
 const CardSlider = () => {
 

@@ -1,5 +1,5 @@
-import Footer from "@/pages/component/footer/Footer";
-import Navbar from "@/pages/component/navbar/Navbar";
+import Footer from "@/pages/components/footer/Footer";
+import Navbar from "@/pages/components/navbar/Navbar";
 import ServiceCard from "@/pages/Services/ServiceCard";
 import React from 'react'
 import Price from "@/pages/Services/Price";

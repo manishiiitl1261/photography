@@ -131,7 +131,7 @@ const ContactForm = () => {
                     ></textarea>
                     {errors.message && <div className="text-red-500 text-sm">{errors.message}</div>}
                 </div>
-                <button type="submit" className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 duration-300 hover:border hover:border-black">Send Message</button>
+                <button type="submit" className="bg-purple-500 text-white py-2 px-4 sm:px-8 rounded hover:bg-purple-600 duration-300 hover:border hover:border-black">Send </button>
             </form>
 
             {showPopup && (
