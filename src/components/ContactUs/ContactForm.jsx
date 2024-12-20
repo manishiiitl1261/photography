@@ -76,7 +76,7 @@ const ContactForm = () => {
                             placeholder="Name"
                             value={formData.name}
                             onChange={handleChange}
-                            className={`w-full p-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded hover:border hover:border-gray-900 hover:rounded duration-300`}
+                            className={`w-full p-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded hover:border hover:border-gray-900 hover:rounded duration-300 text-black`}
                             required
                         />
                         {errors.name && <div className="text-red-500 text-sm">{errors.name}</div>}
@@ -88,7 +88,7 @@ const ContactForm = () => {
                             placeholder="Whatsapp Number"
                             value={formData.whatsappNumber}
                             onChange={handleChange}
-                            className={`w-full p-2 border ${errors.whatsappNumber ? 'border-red-500' : 'border-gray-300'} rounded hover:border hover:border-gray-900  duration-300`}
+                            className={`w-full p-2 border ${errors.whatsappNumber ? 'border-red-500' : 'border-gray-300'} rounded hover:border hover:border-gray-900  duration-300 text-black`}
                             required
                         />
                         {errors.email && <div className="text-red-500 text-sm">{errors.whatsappNumber}</div>}
@@ -102,7 +102,7 @@ const ContactForm = () => {
                             placeholder="Phone Number"
                             value={formData.phoneNumber}
                             onChange={handleChange}
-                            className={`w-full p-2 border ${errors.phoneNumber ? 'border-red-500' : 'border-gray-300'} rounded hover:border hover:border-gray-900 duration-300`}
+                            className={`w-full p-2 border ${errors.phoneNumber ? 'border-red-500' : 'border-gray-300'} rounded hover:border hover:border-gray-900 duration-300 text-black`}
                             required
                         />
                         {errors.phone && <div className="text-red-500 text-sm">{errors.phoneNumber}</div>}
@@ -114,7 +114,7 @@ const ContactForm = () => {
                             placeholder="Event"
                             value={formData.subject}
                             onChange={handleChange}
-                            className={`w-full p-2 border ${errors.subject ? 'border-red-500' : 'border-gray-300'} roundedhover:border hover:border-gray-900  duration-300`}
+                            className={`w-full p-2 border ${errors.subject ? 'border-red-500' : 'border-gray-300'} roundedhover:border hover:border-gray-900  duration-300 text-black`}
                             required
                         />
                         {errors.subject && <div className="text-red-500 text-sm">{errors.subject}</div>}
@@ -126,7 +126,7 @@ const ContactForm = () => {
                         placeholder="description"
                         value={formData.message}
                         onChange={handleChange}
-                        className={`w-full p-2 border ${errors.message ? 'border-red-500' : 'border-gray-300'} rounded h-32 hover:border hover:border-gray-900 duration-300`}
+                        className={`w-full p-2 border ${errors.message ? 'border-red-500' : 'border-gray-300'} rounded h-32 hover:border hover:border-gray-900 duration-300 text-black`}
                         required
                     ></textarea>
                     {errors.message && <div className="text-red-500 text-sm">{errors.message}</div>}

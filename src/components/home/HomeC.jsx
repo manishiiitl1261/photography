@@ -60,13 +60,13 @@ const HomeC = ({ sliderContent }) => {
 
                             {/* Content */}
                             <div className="relative z-10 h-full flex flex-col justify-center items-start p-10 md:p-20 text-white">
-                                <p className="text-lg md:text-xl uppercase font-semibold mb-4">
+                                <p className="text-lg md:text-xl uppercase font-semibold mb-4 text-white">
                                     {slide.id === 1 ? "HELLO THERE!" : "WELCOME TO MY"}
                                 </p>
                                 <h1 className="text-4xl md:text-6xl font-bold mb-6 text-lime-400 italic">
                                     {slide.title}
                                 </h1>
-                                <p className="text-md md:text-lg mb-8 max-w-md">
+                                <p className="text-md md:text-lg mb-8 max-w-md text-white">
                                     {slide.subtitle}
                                 </p>
                                 <div className="flex space-x-4">
@@ -74,7 +74,7 @@ const HomeC = ({ sliderContent }) => {
                                     <a className="border border-white bg-lime-400 hover:bg-lime-500 px-6 py-2 rounded-md font-semibold text-black" href="/Services">
                                         {slide.buttonText1}
                                     </a>
-                                    <a className="border border-white px-6 py-2 rounded-md hover:bg-white hover:text-black transition duration-300" href="/ContactUs">
+                                    <a className="border border-white px-6 py-2 rounded-md hover:bg-white hover:text-black transition duration-300 text-white" href="/ContactUs">
                                         {slide.buttonText2}
                                     </a>
                                 </div>
@@ -83,7 +83,7 @@ const HomeC = ({ sliderContent }) => {
                     ))}
                 </Slider>
             ) : (
-                <div className="text-center text-gray-500 py-20">
+                <div className="text-center text-gray-500 py-20 ">
                     No content available for the slider.
                 </div>
             )}

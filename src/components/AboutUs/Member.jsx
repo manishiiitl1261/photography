@@ -10,7 +10,7 @@ const Member = () => {
     };
     return (
         <div className="overflow-hidden  gap-4 sm:gap-8 items-center my-4 sm:my-8">
-            <div className=" text-center sm:text-4xl lg:text-6xl text-4xl italic"> OUR MEMBERS </div>
+            <div className=" text-center sm:text-4xl lg:text-6xl text-4xl italic text-black"> OUR MEMBERS </div>
             <div className=" max-w-5xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 overflow-hidden">
                 {teamMembers.map((member, index) => (
                     <motion.div
@@ -27,7 +27,7 @@ const Member = () => {
                             alt={member.name}
                             className="w-full h-auto object-cover cursor-pointer"
                         />
-                        < h3 className="text-lg font-semibold mt-4" > {member.name}</h3>
+                        < h3 className="text-lg font-semibold mt-4 text-black" > {member.name}</h3>
                         <p className="text-purple-500">{member.role}</p>
                     </motion.div >
                 ))}

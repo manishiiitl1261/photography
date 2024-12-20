@@ -48,7 +48,7 @@ function CommentForm() {
             {/* Use FORM here */}
             <form onSubmit={handleSubmit} className="">
                 {/* Name Field */}
-                <div className="mb-2">
+                <div className="mb-2 text-black">
                     <label>
                         Name * <br />
                         <input
@@ -56,7 +56,7 @@ function CommentForm() {
                             placeholder="Name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="w-full p-2 mt-1 rounded-lg hover:border-2 hover:border-gray-950 duration-300"
+                            className="w-full p-2 mt-1 rounded-lg hover:border-2 hover:border-gray-950 duration-300 text-black"
                             required
                         />
                     </label>
@@ -78,7 +78,7 @@ function CommentForm() {
                 </div> */}
 
                 {/*  Event Details */}
-                <div className="mb-2">
+                <div className="mb-2 text-black">
                     <label>
                         Event * <br />
                         <input
@@ -86,35 +86,35 @@ function CommentForm() {
                             placeholder="Event"
                             value={event}
                             onChange={(e) => setEvent(e.target.value)}
-                            className="w-full p-2 mt-1 rounded-lg hover:border-2 hover:border-gray-950 duration-300"
+                            className="w-full p-2 mt-1 rounded-lg hover:border-2 hover:border-gray-950 duration-300 text-black"
                             required
                         />
                     </label>
                 </div>
 
                 {/* Comment Field */}
-                <div className="mb-2">
+                <div className="mb-2 text-black">
                     <label>
                         Comment * <br />
                         <textarea
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
                             rows="5"
-                            className="w-full p-2 mt-1 rounded-lg hover:border-2 hover:border-gray-950 duration-300"
+                            className="w-full p-2 mt-1 rounded-lg hover:border-2 hover:border-gray-950 duration-300 text-black"
                             required
                         ></textarea>
                     </label>
                 </div>
 
                 {/* Photo of the Event */}
-                <div className="mb-2 w-fit">
+                <div className="mb-2 w-fit text-black">
                     <label>
                         Photo of the Event * <br />
                         <input
                             type="file"
                             onChange={handlePhotoChange}
                             ref={fileInputRef}
-                            className="mt-2"
+                            className="mt-2 text-black"
                             required
                         />
                     </label>

@@ -45,7 +45,7 @@ const ItemsContainer = () => {
 
       {/* Suggestion Form */}
       <div className="flex flex-col gap-3 justify-center">
-        <h1 className="mb-1 font-semibold text-[20px]">Free to give your suggestion</h1>
+        <h1 className="mb-1 font-semibold text-[20px] text-black">Free to give your suggestion</h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
             type="email"
@@ -53,10 +53,10 @@ const ItemsContainer = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="text-black border hover:border-black focus:placeholder-slate-600 hover:placeholder-slate-600 duration-300 bg-white dark:text-white
+            className="text-black border hover:border-black focus:placeholder-slate-600 hover:placeholder-slate-600 duration-300 bg-white
             sm:w-72 !w-full sm:mr-5 mr-1 lg:mb-0 mb-4 py-2.5 rounded px-2 focus:ring-blue-500 focus:border-blue-500"
           />
-          <label htmlFor="message" className="font-semibold text-[20px]">
+          <label htmlFor="message" className="font-semibold text-[20px] text-black">
             Your Suggestion
           </label>
           <textarea
@@ -65,7 +65,7 @@ const ItemsContainer = () => {
             value={suggestion}
             onChange={(e) => setSuggestion(e.target.value)}
             required
-            className="text-black border hover:border-black focus:placeholder-slate-600 hover:placeholder-slate-600 duration-300 bg-white dark:text-white block p-2.5 w-full text-sm
+            className="text-black border hover:border-black focus:placeholder-slate-600 hover:placeholder-slate-600 duration-300 bg-white block p-2.5 w-full text-sm
             rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Write your suggestion here..."
           ></textarea>
@@ -82,13 +82,13 @@ const ItemsContainer = () => {
 
       {/* Quick Links Section */}
       <div className="flex flex-col gap-4">
-        <h1 className="text-lg font-bold">Quick Links</h1>
+        <h1 className="text-lg font-bold text-black">Quick Links</h1>
         <ul className="space-y-2">
           {links.map((link, index) => (
             <li key={index}>
               <a
                 href={link.href}
-                className="hover:text-teal-400 duration-300 cursor-pointer"
+                className="hover:text-teal-400 duration-300 cursor-pointer text-black"
               >
                 {link.name}
               </a>

@@ -11,7 +11,7 @@ const animationVariants = {
 const ServiceCard = () => {
     return (
         <div className="overflow-hidden  gap-4 sm:gap-8 items-center my-4 sm:my-8">
-            <div className=" text-center sm:text-4xl lg:text-6xl text-4xl italic"> OUR SERVICES </div>
+            <div className=" text-center sm:text-4xl lg:text-6xl text-4xl italic text-black"> OUR SERVICES </div>
             <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 overflow-hidden">
                 {services.map((service, index) => (
                     <motion.div
@@ -26,7 +26,7 @@ const ServiceCard = () => {
                         {/* Icon */}
                         <div className="text-5xl mb-4">{service.icon}</div>
                         {/* Title */}
-                        <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
+                        <h3 className="text-xl font-semibold mb-2 text-black">{service.title}</h3>
                         {/* Description */}
                         <p className="text-gray-600 mb-4">{service.description}</p>
                         {/* Learn More */}
