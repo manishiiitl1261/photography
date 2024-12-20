@@ -64,7 +64,7 @@ export default function Gallery() {
                 className={`max-w-screen-xl mx-auto p-6 sm:py-20 sm:px-6 transition-all duration-1000 ${animate ? "opacity-100 translate-y-0" : "opacity-0 translate-y-20"
                     }`}
             >
-                <h2 className="text-center  text-3xl sm:text-5xl font-bold mb-8 italic">OUR PORTFOLIO</h2>
+                <h2 className="text-center  text-3xl sm:text-5xl font-bold mb-8 italic text-black">OUR PORTFOLIO</h2>
                 <Slider {...settings}>
                     {photos.map((photo) => (
                         <div key={photo.id} className="p-2 overflow-hidden">

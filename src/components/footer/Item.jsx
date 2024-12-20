@@ -7,7 +7,7 @@ const Item = ({ Links, title }) => {
   return (
     <ul className="align-middle">
       <div className="flex items-center mb-2">
-        <h1 className="mb-1 font-semibold">{title}</h1>
+        <h1 className="mb-1 font-semibold text-black">{title}</h1>
       </div>
 
       {/* Render Each Link */}
@@ -26,12 +26,12 @@ const Item = ({ Links, title }) => {
         return (
           <li key={l.name} className="flex items-center mb-2">
             {title === "ADDRESS" ? (
-              <FaLocationDot className="mr-2" />
+              <FaLocationDot className="mr-2 text-black" />
             ) :
               l.title === "Phone" ? (
-                <FaSquarePhone className="mr-2" />
+                <FaSquarePhone className="mr-2 text-black" />
               ) : (
-                <IoIosMail className="mr-2" />
+                <IoIosMail className="mr-2 text-black" />
               )
             }
             <a
