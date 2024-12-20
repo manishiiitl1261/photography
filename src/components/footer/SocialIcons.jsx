@@ -15,7 +15,7 @@ const SocialIcons = () => {
         duration-300 "
       >
         {" "}
-        <a href="https://www.youtube.com/" target="_blank">
+        <a href="https://www.youtube.com/@ThakurSaabVlogs/" target="_blank">
           {" "}
           <FaFacebook className="text-2xl cursor-pointer hover:text-blue-600 duration-500" />
         </a>
@@ -25,7 +25,7 @@ const SocialIcons = () => {
         rounded-full bg-slate-200 mx-1.5 text-xl  hover:bg-teal-400
         duration-300 "
       >
-        <a href="https://www.youtube.com/" target="_blank">
+        <a href="https://www.instagram.com/thakursaabvlogs/" target="_blank">
           {" "}
           <FaInstagram className="text-2xl cursor-pointer hover:text-yellow-600 duration-500" />
         </a>
@@ -35,7 +35,7 @@ const SocialIcons = () => {
         rounded-full bg-slate-200 mx-1.5 text-xl  hover:bg-teal-400
         duration-300 "
       >
-        <a href="https://www.youtube.com/" target="_blank">
+        <a href="https://www.youtube.com/@PahariWorldPhotography" target="_blank">
           {" "}
           <FaTwitter className="text-2xl cursor-pointer hover:text-blue-600 duration-500" />
         </a>{" "}
@@ -45,7 +45,7 @@ const SocialIcons = () => {
         rounded-full bg-slate-200 mx-1.5 text-xl  hover:bg-teal-400
         duration-300 "
       >
-        <a href="https://www.youtube.com/" target="_blank">
+        <a href="https://www.youtube.com/@ThakurSaabVlogs/" target="_blank">
           <FaLinkedin className="text-2xl cursor-pointer hover:text-blue-600 duration-500" />
         </a>{" "}
       </span>
@@ -54,7 +54,7 @@ const SocialIcons = () => {
         rounded-full bg-slate-200 mx-1.5 text-xl  hover:bg-teal-400
         duration-300 "
       >
-        <a href="https://www.youtube.com/" target="_blank">
+        <a href="https://www.youtube.com/@PahariWorldRecords/" target="_blank">
           {" "}
           <FaYoutube className="text-2xl cursor-pointer hover:text-red-600 duration-500" />{" "}
         </a>

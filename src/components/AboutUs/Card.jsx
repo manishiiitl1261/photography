@@ -93,8 +93,8 @@ const Card = () => {
                     <Image
                         src="/assest/admin2.jpg"
                         alt="Photographer"
-                        width={500}
-                        height={600}
+                        width={1080}
+                        height={1350}
                         className="rounded-lg shadow-md object-cover mx-auto lg:mx-0 cursor-pointer"
                     />
                 </motion.div>
