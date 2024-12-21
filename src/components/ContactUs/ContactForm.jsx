@@ -1,13 +1,18 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const ContactForm = () => {
     const [formData, setFormData] = useState({
-        name: '',
-        whatsappNumber: '',
-        phoneNumber: '',
-        subject: '',
-        message: ''
+        name: "",
+        whatsappNumber: "",
+        phoneNumber: "",
+        subject: "",
+        message: "",
+    });
+
+    const [countryCode, setCountryCode] = useState({
+        whatsappNumber: "+91",
+        phoneNumber: "+91",
     });
 
     const [errors, setErrors] = useState({});
@@ -17,26 +22,27 @@ const ContactForm = () => {
         const { name, value } = e.target;
         setFormData({
             ...formData,
-            [name]: value
+            [name]: value,
         });
     };
-    const validatePhone = (phone) => {
-        const re = /^\+91\d{10}$/;
-        return re.test(phone);
+
+    const handleCountryCodeChange = (e, field) => {
+        setCountryCode({
+            ...countryCode,
+            [field]: e.target.value,
+        });
     };
+
+    const validatePhone = (phone) => /^\d{10}$/.test(phone);
 
     const validate = () => {
         let tempErrors = {};
         if (!formData.name) tempErrors.name = "Name is required";
-        if (!formData.whatsappNumber) {
-            tempErrors.whatsappNumber = "Phone is required";
-        } else if (!validatePhone(formData.whatsappNumber)) {
-            tempErrors.phone = "Invalid phone format. Format: +911234567890";
+        if (formData.whatsappNumber && !validatePhone(formData.whatsappNumber)) {
+            tempErrors.whatsappNumber = "Invalid WhatsApp number format. Enter 10 digits.";
         }
-        if (!formData.phoneNumber) {
-            tempErrors.phoneNumber = "Phone is required";
-        } else if (!validatePhone(formData.phoneNumber)) {
-            tempErrors.phoneNumber = "Invalid phone format. Format: +911234567890";
+        if (formData.phoneNumber && !validatePhone(formData.phoneNumber)) {
+            tempErrors.phoneNumber = "Invalid phone number format. Enter 10 digits.";
         }
         if (!formData.subject) tempErrors.subject = "Subject is required";
         if (!formData.message) tempErrors.message = "Message is required";
@@ -47,7 +53,19 @@ const ContactForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validate()) {
-            console.log('Form submitted:', formData);
+            const adminWhatsAppNumber = "+918279659726";
+
+            const message = `Name: ${formData.name}
+Event: ${formData.subject}
+Message: ${formData.message}
+WhatsApp: ${countryCode.whatsappNumber} ${formData.whatsappNumber || "Not Provided"}
+Phone: ${countryCode.phoneNumber} ${formData.phoneNumber || "Not Provided"}`;
+
+            const whatsappURL = `https://api.whatsapp.com/send?phone=${adminWhatsAppNumber}&text=${encodeURIComponent(
+                message
+            )}`;
+            window.open(whatsappURL, "_blank");
+
             setShowPopup(true);
 
             setTimeout(() => {
@@ -55,11 +73,11 @@ const ContactForm = () => {
             }, 3000);
 
             setFormData({
-                name: '',
-                whatsappNumber: '',
-                phoneNumber: '',
-                subject: '',
-                message: ''
+                name: "",
+                whatsappNumber: "",
+                phoneNumber: "",
+                subject: "",
+                message: "",
             });
             setErrors({});
         }
@@ -68,7 +86,7 @@ const ContactForm = () => {
     return (
         <div>
             <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="flex space-x-4">
+                <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
                     <div className="w-full">
                         <input
                             type="text"
@@ -76,67 +94,107 @@ const ContactForm = () => {
                             placeholder="Name"
                             value={formData.name}
                             onChange={handleChange}
-                            className={`w-full p-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded hover:border hover:border-gray-900 hover:rounded duration-300 text-black`}
+                            className={`w-full p-2 border ${errors.name ? "border-red-500" : "border-gray-300"
+                                } rounded text-black`}
                             required
                         />
                         {errors.name && <div className="text-red-500 text-sm">{errors.name}</div>}
                     </div>
-                    <div className="w-full ">
+                </div>
+                <div className="flex flex-col space-y-4 md:space-y-0">
+                    <div className="flex space-x-2">
+                        <select
+                            name="whatsappCountryCode"
+                            value={countryCode.whatsappNumber}
+                            onChange={(e) => handleCountryCodeChange(e, "whatsappNumber")}
+                            className="p-2 border border-gray-300 rounded bg-white"
+                        >
+                            <option value="+91">+91 (India)</option>
+                            <option value="+1">+1 (USA)</option>
+                            <option value="+44">+44 (UK)</option>
+                            <option value="+61">+61 (Australia)</option>
+                            <option value="+81">+81 (Japan)</option>
+                        </select>
                         <input
-                            type="number"
+                            type="text"
                             name="whatsappNumber"
-                            placeholder="Whatsapp Number"
+                            placeholder="WhatsApp Number"
                             value={formData.whatsappNumber}
                             onChange={handleChange}
-                            className={`w-full p-2 border ${errors.whatsappNumber ? 'border-red-500' : 'border-gray-300'} rounded hover:border hover:border-gray-900  duration-300 text-black`}
-                            required
+                            className={`flex-grow p-2 border ${errors.whatsappNumber ? "border-red-500" : "border-gray-300"
+                                } rounded text-black`}
                         />
-                        {errors.email && <div className="text-red-500 text-sm">{errors.whatsappNumber}</div>}
                     </div>
+                    {errors.whatsappNumber && (
+                        <div className="text-red-500 text-sm">{errors.whatsappNumber}</div>
+                    )}
                 </div>
-                <div className="flex space-x-4">
-                    <div className="w-full">
+                <div className="flex flex-col space-y-4 md:space-y-0">
+                    <div className="flex space-x-2">
+                        <select
+                            name="phoneCountryCode"
+                            value={countryCode.phoneNumber}
+                            onChange={(e) => handleCountryCodeChange(e, "phoneNumber")}
+                            className="p-2 border border-gray-300 rounded bg-white"
+                        >
+                            <option value="+91">+91 (India)</option>
+                            <option value="+1">+1 (USA)</option>
+                            <option value="+44">+44 (UK)</option>
+                            <option value="+61">+61 (Australia)</option>
+                            <option value="+81">+81 (Japan)</option>
+                        </select>
                         <input
-                            type="number"
+                            type="text"
                             name="phoneNumber"
                             placeholder="Phone Number"
                             value={formData.phoneNumber}
                             onChange={handleChange}
-                            className={`w-full p-2 border ${errors.phoneNumber ? 'border-red-500' : 'border-gray-300'} rounded hover:border hover:border-gray-900 duration-300 text-black`}
-                            required
+                            className={`flex-grow p-2 border ${errors.phoneNumber ? "border-red-500" : "border-gray-300"
+                                } rounded text-black`}
                         />
-                        {errors.phone && <div className="text-red-500 text-sm">{errors.phoneNumber}</div>}
                     </div>
-                    <div className="w-full">
-                        <input
-                            type="text"
-                            name="subject"
-                            placeholder="Event"
-                            value={formData.subject}
-                            onChange={handleChange}
-                            className={`w-full p-2 border ${errors.subject ? 'border-red-500' : 'border-gray-300'} roundedhover:border hover:border-gray-900  duration-300 text-black`}
-                            required
-                        />
-                        {errors.subject && <div className="text-red-500 text-sm">{errors.subject}</div>}
-                    </div>
+                    {errors.phoneNumber && (
+                        <div className="text-red-500 text-sm">{errors.phoneNumber}</div>
+                    )}
+                </div>
+                <div className="w-full">
+                    <input
+                        type="text"
+                        name="subject"
+                        placeholder="Event"
+                        value={formData.subject}
+                        onChange={handleChange}
+                        className={`w-full p-2 border ${errors.subject ? "border-red-500" : "border-gray-300"
+                            } rounded text-black`}
+                        required
+                    />
+                    {errors.subject && (
+                        <div className="text-red-500 text-sm">{errors.subject}</div>
+                    )}
                 </div>
                 <div className="w-full">
                     <textarea
                         name="message"
-                        placeholder="description"
+                        placeholder="Description"
                         value={formData.message}
                         onChange={handleChange}
-                        className={`w-full p-2 border ${errors.message ? 'border-red-500' : 'border-gray-300'} rounded h-32 hover:border hover:border-gray-900 duration-300 text-black`}
+                        className={`w-full p-2 border ${errors.message ? "border-red-500" : "border-gray-300"
+                            } rounded h-32 text-black`}
                         required
                     ></textarea>
                     {errors.message && <div className="text-red-500 text-sm">{errors.message}</div>}
                 </div>
-                <button type="submit" className="bg-purple-500 text-white py-2 px-4 sm:px-8 rounded hover:bg-purple-600 duration-300 hover:border hover:border-black">Send </button>
+                <button
+                    type="submit"
+                    className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600"
+                >
+                    Send
+                </button>
             </form>
 
             {showPopup && (
-                <div className="fixed top-2 right-2 z-50 bg-green-500 text-white p-2 shadow shadow-green-400 rounded-sm">
-                    🎉 Hurray! Your message has been sent successfully.
+                <div className="fixed top-2 right-2 bg-green-500 text-white p-2 rounded">
+                    🎉 Message sent! Redirecting to WhatsApp.
                 </div>
             )}
         </div>
