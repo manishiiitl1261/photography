@@ -101,21 +101,22 @@ Phone: ${countryCode.phoneNumber} ${formData.phoneNumber || "Not Provided"}`;
                         {errors.name && <div className="text-red-500 text-sm">{errors.name}</div>}
                     </div>
                 </div>
-                <div className="flex flex-col space-y-4 md:space-y-0">
-                    <div className="flex space-x-2">
+                <div className="flex flex-col">
+                    <div className="flex">
                         <select
                             name="whatsappCountryCode"
                             value={countryCode.whatsappNumber}
                             onChange={(e) => handleCountryCodeChange(e, "whatsappNumber")}
-                            className="p-2 border border-gray-300 rounded bg-white"
+                            className="border border-gray-300 rounded bg-white"
                         >
-                            <option value="+91">+91 (India)</option>
+                            <option value="+91">+91 (Ind)</option>
                             <option value="+1">+1 (USA)</option>
                             <option value="+44">+44 (UK)</option>
-                            <option value="+61">+61 (Australia)</option>
-                            <option value="+81">+81 (Japan)</option>
+                            <option value="+61">+61 (Aus)</option>
+                            <option value="+81">+81 (Jap)</option>
                         </select>
                         <input
+                            required
                             type="text"
                             name="whatsappNumber"
                             placeholder="WhatsApp Number"
@@ -129,19 +130,19 @@ Phone: ${countryCode.phoneNumber} ${formData.phoneNumber || "Not Provided"}`;
                         <div className="text-red-500 text-sm">{errors.whatsappNumber}</div>
                     )}
                 </div>
-                <div className="flex flex-col space-y-4 md:space-y-0">
-                    <div className="flex space-x-2">
+                <div className="flex flex-col">
+                    <div className="flex">
                         <select
                             name="phoneCountryCode"
                             value={countryCode.phoneNumber}
                             onChange={(e) => handleCountryCodeChange(e, "phoneNumber")}
-                            className="p-2 border border-gray-300 rounded bg-white"
+                            className="border border-gray-300 rounded bg-white"
                         >
-                            <option value="+91">+91 (India)</option>
+                            <option value="+91">+91 (Ind)</option>
                             <option value="+1">+1 (USA)</option>
                             <option value="+44">+44 (UK)</option>
-                            <option value="+61">+61 (Australia)</option>
-                            <option value="+81">+81 (Japan)</option>
+                            <option value="+61">+61 (Aus)</option>
+                            <option value="+81">+81 (Jap)</option>
                         </select>
                         <input
                             type="text"
