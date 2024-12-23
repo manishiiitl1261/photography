@@ -27,7 +27,7 @@ const CardSlider = () => {
                     eventImage={cardData[currentCard].eventImage}
                 />
             </div>
-            <div className="flex flex-row items-center gap-4 sm:gap-8 mt-4">
+            <div className="flex flex-row items-center gap-4 sm:gap-8">
                 <FaArrowLeft
                     className="bg-blue-950 text-white sm:size-12 size-10 rounded-full sm:p-3 p-2 cursor-pointer hover:bg-blue-500 focus:bg-blue-500 hover:scale-90 duration-500 focus:scale-90"
                     onClick={prevCard}
