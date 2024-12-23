@@ -6,48 +6,63 @@ function CommentForm() {
     const [event, setEvent] = useState("");
     const [comment, setComment] = useState("");
     const [photo, setPhoto] = useState("");
-    const [showPopup, setShowPopup] = useState(false); // State to control the popup
-    const fileInputRef = useRef(null);
-    //  for if photo is choosed and submit button is click after that photo name is cleared
-    const handlePhotoChange = (e) => {
-        const file = e.target.files[0]
-        setPhoto(file ? file.name : "")
-    }
+    const [profilePhoto, setProfilePhoto] = useState("");
+    const [showPopup, setShowPopup] = useState(false);
+    const [rating, setRating] = useState(0);
+    const [hoverRating, setHoverRating] = useState(0);
 
-    //  for submit button is click after
+    const fileInputRef = useRef(null);
+    const fileInputRef2 = useRef(null);
+
+    const handlePhotoChange = (e) => {
+        const file = e.target.files[0];
+        setPhoto(file ? file.name : "");
+    };
+
+    const handleProfilePhotoChange = (e) => {
+        const file = e.target.files[0];
+        setProfilePhoto(file ? file.name : "");
+    };
+
+    const handleStarClick = (ratingValue) => {
+        setRating(ratingValue);
+    };
+
+    const handleStarHover = (ratingValue) => {
+        setHoverRating(ratingValue);
+    };
+
+    const handleStarLeave = () => {
+        setHoverRating(0);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Check if inputs are filled (optional as 'required' already enforces this)
-        if (!name || !event || !comment || !photo) {
-            alert("Please fill all required fields!");
+
+        if (!name || !event || !comment || !photo || !profilePhoto || rating === 0) {
+            alert("Please fill all required fields! (rating,photo,profile,name,event,comment)");
             return;
         }
 
-        setShowPopup(true); // Show popup when form is submitted
+        setShowPopup(true);
 
-        // Automatically hide the popup after 3 seconds
         setTimeout(() => {
             setShowPopup(false);
         }, 3000);
 
-        // Clear form fields
         setName("");
         setEvent("");
         setComment("");
         setPhoto("");
-        if (fileInputRef.current) {
-            fileInputRef.current.value = "";
-        }
+        setProfilePhoto("");
+        setRating(0);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        if (fileInputRef2.current) fileInputRef2.current.value = "";
     };
-    return (
-        <div className="sm:w-4/6 bg-slate-200 p-6 rounded-lg shadow-md shadow-slate-100">
-            {/* <p className="text-red-400 text-center font-bold">
-                Your email address will not be published. Required fields are marked *
-            </p> */}
 
-            {/* Use FORM here */}
-            <form onSubmit={handleSubmit} className="">
-                {/* Name Field */}
+    return (
+        <div className="bg-slate-200 p-4 rounded-lg shadow-md shadow-slate-200 lg:py-10">
+            <form onSubmit={handleSubmit} className="gap-4">
                 <div className="mb-2 text-black">
                     <label>
                         Name * <br />
@@ -61,23 +76,6 @@ function CommentForm() {
                         />
                     </label>
                 </div>
-
-                {/* Email Field */}
-                {/* <div className="mb-2">
-                    <label>
-                        Email * <br />
-                        <input
-                            type="email"
-                            placeholder="Email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full p-2 mt-1 rounded-lg hover:border-2 hover:border-gray-950 duration-300"
-                            required
-                        />
-                    </label>
-                </div> */}
-
-                {/*  Event Details */}
                 <div className="mb-2 text-black">
                     <label>
                         Event * <br />
@@ -91,8 +89,6 @@ function CommentForm() {
                         />
                     </label>
                 </div>
-
-                {/* Comment Field */}
                 <div className="mb-2 text-black">
                     <label>
                         Comment * <br />
@@ -105,31 +101,57 @@ function CommentForm() {
                         ></textarea>
                     </label>
                 </div>
-
-                {/* Photo of the Event */}
-                <div className="mb-2 w-fit text-black">
-                    <label>
-                        Photo of the Event * <br />
-                        <input
-                            type="file"
-                            onChange={handlePhotoChange}
-                            ref={fileInputRef}
-                            className="mt-2 text-black"
-                            required
-                        />
-                    </label>
+                <div className="flex flex-col sm:flex-row justify-evenly">
+                    <div className="mb-2 text-black">
+                        <label>
+                            Photo of the Event * <br />
+                            <input
+                                type="file"
+                                onChange={handlePhotoChange}
+                                ref={fileInputRef}
+                                className="mt-2 text-black"
+                                required
+                            />
+                        </label>
+                    </div>
+                    <div className="mb-2 text-black">
+                        <label>
+                            Profile photo * <br />
+                            <input
+                                type="file"
+                                onChange={handleProfilePhotoChange}
+                                ref={fileInputRef2}
+                                className="mt-2 text-black"
+                                required
+                            />
+                        </label>
+                    </div>
                 </div>
-
-                {/* Submit Button */}
+                <div className="mb-2 text-black flex sm:flex-row flex-col sm:mt-4 gap-4 ">
+                    <h1>Rating *</h1>
+                    <div className="flex flex-row border border-black rounded-full bg-lime-400 gap-4 px-6 w-fit">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                                key={star}
+                                type="button"
+                                className={`text-2xl duration-300 ${(hoverRating || rating) >= star ? "text-blue-500" : "text-white"
+                                    }`}
+                                onMouseEnter={() => handleStarHover(star)}
+                                onMouseLeave={handleStarLeave}
+                                onClick={() => handleStarClick(star)}
+                            >
+                                ★
+                            </button>
+                        ))}
+                    </div>
+                </div>
                 <button
                     type="submit"
-                    className="duration-300 px-5 py-2.5 font-[Poppins] rounded-md text-white md:w-auto bg-sky-500 hover:bg-sky-600 mt-4 "
+                    className="duration-300 px-5 py-2.5 font-[Poppins] rounded-md text-white md:w-auto bg-sky-500 hover:bg-sky-600 mt-4 sm:ml-60"
                 >
                     Post Comment
                 </button>
             </form>
-
-            {/* Popup Message */}
             {showPopup && (
                 <div className="fixed top-2 right-2 z-50 bg-green-500 text-white p-2 shadow shadow-green-400 rounded-sm">
                     🎉 Hurray! Your review has been submitted successfully.

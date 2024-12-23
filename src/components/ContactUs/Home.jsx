@@ -1,6 +1,7 @@
 import ContactForm from '@/components/ContactUs/ContactForm';
 import Item from "@/components/footer/Item";
 import { ADDRESS, CONTACT } from "@/components/footer/Menu";
+import Map from '@/components/ContactUs/Map';
 export default function Home() {
     return (
         <div>
@@ -14,6 +15,7 @@ export default function Home() {
                     <ContactForm />
                 </div>
             </div>
+            <Map />
 
         </div>
     );
