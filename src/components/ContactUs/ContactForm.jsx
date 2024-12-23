@@ -56,11 +56,10 @@ const ContactForm = () => {
             const adminWhatsAppNumber = "+918279659726";
 
             const message = `Name: ${formData.name}
-Event: ${formData.subject}
-Message: ${formData.message}
-WhatsApp: ${countryCode.whatsappNumber} ${formData.whatsappNumber || "Not Provided"}
-Phone: ${countryCode.phoneNumber} ${formData.phoneNumber || "Not Provided"}`;
-
+                             Event: ${formData.subject}
+                             Message: ${formData.message}
+                             WhatsApp: ${countryCode.whatsappNumber} ${formData.whatsappNumber}
+                             Phone: ${countryCode.phoneNumber} ${formData.phoneNumber || "Not Provided"}`;
             const whatsappURL = `https://api.whatsapp.com/send?phone=${adminWhatsAppNumber}&text=${encodeURIComponent(
                 message
             )}`;
@@ -109,11 +108,11 @@ Phone: ${countryCode.phoneNumber} ${formData.phoneNumber || "Not Provided"}`;
                             onChange={(e) => handleCountryCodeChange(e, "whatsappNumber")}
                             className="border border-gray-300 rounded bg-white"
                         >
-                            <option value="+91">+91 (Ind)</option>
-                            <option value="+1">+1 (USA)</option>
-                            <option value="+44">+44 (UK)</option>
-                            <option value="+61">+61 (Aus)</option>
-                            <option value="+81">+81 (Jap)</option>
+                            <option value="+91">+91(IND)</option>
+                            <option value="+1">+1(USA)</option>
+                            <option value="+44">+44(UK)</option>
+                            <option value="+61">+61(AUS)</option>
+                            <option value="+81">+81(JAP)</option>
                         </select>
                         <input
                             required
@@ -123,7 +122,7 @@ Phone: ${countryCode.phoneNumber} ${formData.phoneNumber || "Not Provided"}`;
                             value={formData.whatsappNumber}
                             onChange={handleChange}
                             className={`flex-grow p-2 border ${errors.whatsappNumber ? "border-red-500" : "border-gray-300"
-                                } rounded text-black`}
+                                } rounded text-black w-full`}
                         />
                     </div>
                     {errors.whatsappNumber && (
@@ -138,11 +137,11 @@ Phone: ${countryCode.phoneNumber} ${formData.phoneNumber || "Not Provided"}`;
                             onChange={(e) => handleCountryCodeChange(e, "phoneNumber")}
                             className="border border-gray-300 rounded bg-white"
                         >
-                            <option value="+91">+91 (Ind)</option>
-                            <option value="+1">+1 (USA)</option>
-                            <option value="+44">+44 (UK)</option>
-                            <option value="+61">+61 (Aus)</option>
-                            <option value="+81">+81 (Jap)</option>
+                            <option value="+91">+91(IND)</option>
+                            <option value="+1">+1(USA)</option>
+                            <option value="+44">+44(UK)</option>
+                            <option value="+61">+61(AUS)</option>
+                            <option value="+81">+81(JAP)</option>
                         </select>
                         <input
                             type="text"
@@ -151,7 +150,7 @@ Phone: ${countryCode.phoneNumber} ${formData.phoneNumber || "Not Provided"}`;
                             value={formData.phoneNumber}
                             onChange={handleChange}
                             className={`flex-grow p-2 border ${errors.phoneNumber ? "border-red-500" : "border-gray-300"
-                                } rounded text-black`}
+                                } rounded text-black w-full`}
                         />
                     </div>
                     {errors.phoneNumber && (
