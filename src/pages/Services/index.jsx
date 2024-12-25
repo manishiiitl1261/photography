@@ -5,7 +5,7 @@ import React from 'react'
 import Price from "@/components/Services/Price";
 export default function index() {
     return (
-        <div className="bg-slate-300">
+        <div className="bg-purple-200">
             <Navbar />
             <main className="pt-16 gap-6 sm:gap-10 lg:gap-12 items-center">
                 <ServiceCard />

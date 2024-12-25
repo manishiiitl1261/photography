@@ -35,7 +35,7 @@ const ItemsContainer = () => {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row lg:bg-slate-300 justify-evenly m-4 gap-5 relative">
+    <div className="flex flex-col sm:flex-row justify-evenly m-4 gap-5 relative">
       {/* Popup Notification */}
       {showPopup && (
         <div className="fixed top-2 right-2 z-50 bg-green-500 text-white p-2 shadow shadow-green-400 rounded-sm">

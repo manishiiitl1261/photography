@@ -5,24 +5,24 @@ function CommentForm() {
     const [name, setName] = useState("");
     const [event, setEvent] = useState("");
     const [comment, setComment] = useState("");
-    const [photo, setPhoto] = useState("");
-    const [profilePhoto, setProfilePhoto] = useState("");
+    // const [photo, setPhoto] = useState("");
+    // const [profilePhoto, setProfilePhoto] = useState("");
     const [showPopup, setShowPopup] = useState(false);
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
 
-    const fileInputRef = useRef(null);
-    const fileInputRef2 = useRef(null);
+    // const fileInputRef = useRef(null);
+    // const fileInputRef2 = useRef(null);
 
-    const handlePhotoChange = (e) => {
-        const file = e.target.files[0];
-        setPhoto(file ? file.name : "");
-    };
+    // const handlePhotoChange = (e) => {
+    //     const file = e.target.files[0];
+    //     setPhoto(file ? file.name : "");
+    // };
 
-    const handleProfilePhotoChange = (e) => {
-        const file = e.target.files[0];
-        setProfilePhoto(file ? file.name : "");
-    };
+    // const handleProfilePhotoChange = (e) => {
+    //     const file = e.target.files[0];
+    //     setProfilePhoto(file ? file.name : "");
+    // };
 
     const handleStarClick = (ratingValue) => {
         setRating(ratingValue);
@@ -39,7 +39,11 @@ function CommentForm() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (!name || !event || !comment || !photo || !profilePhoto || rating === 0) {
+        // if (!name || !event || !comment || !photo || !profilePhoto || rating === 0) {
+        //     alert("Please fill all required fields! (rating,photo,profile,name,event,comment)");
+        //     return;
+        // }
+        if (!name || !event || !comment || rating === 0) {
             alert("Please fill all required fields! (rating,photo,profile,name,event,comment)");
             return;
         }
@@ -53,16 +57,16 @@ function CommentForm() {
         setName("");
         setEvent("");
         setComment("");
-        setPhoto("");
-        setProfilePhoto("");
+        // setPhoto("");
+        // setProfilePhoto("");
         setRating(0);
-        if (fileInputRef.current) fileInputRef.current.value = "";
-        if (fileInputRef2.current) fileInputRef2.current.value = "";
+        //  if (fileInputRef.current) fileInputRef.current.value = "";
+        //  if (fileInputRef2.current) fileInputRef2.current.value = "";
     };
 
     return (
-        <div className="bg-slate-200 p-4 rounded-lg shadow-md shadow-slate-200 lg:py-10">
-            <form onSubmit={handleSubmit} className="gap-4">
+        <div className=" bg-opacity-40 bg-purple-300 p-4 rounded-lg shadow-md shadow-slate-200 lg:p-10 lg:py-16">
+            <form onSubmit={handleSubmit} className="gap-4 lg:w-96">
                 <div className="mb-2 text-black">
                     <label>
                         Name * <br />
@@ -101,7 +105,7 @@ function CommentForm() {
                         ></textarea>
                     </label>
                 </div>
-                <div className="flex flex-col sm:flex-row justify-evenly">
+                {/* <div className="flex flex-col sm:flex-row justify-evenly">
                     <div className="mb-2 text-black">
                         <label>
                             Photo of the Event * <br />
@@ -126,7 +130,7 @@ function CommentForm() {
                             />
                         </label>
                     </div>
-                </div>
+                </div> */}
                 <div className="mb-2 text-black flex sm:flex-row flex-col sm:mt-4 gap-4 ">
                     <h1>Rating *</h1>
                     <div className="flex flex-row border border-black rounded-full bg-lime-400 gap-4 px-6 w-fit">
@@ -147,7 +151,7 @@ function CommentForm() {
                 </div>
                 <button
                     type="submit"
-                    className="duration-300 px-5 py-2.5 font-[Poppins] rounded-md text-white md:w-auto bg-sky-500 hover:bg-sky-600 mt-4 sm:ml-60"
+                    className="duration-300 px-5 py-2.5 font-[Poppins] rounded-md text-white md:w-auto bg-sky-500 hover:bg-sky-600 sm:ml-28 mt-4"
                 >
                     Post Comment
                 </button>

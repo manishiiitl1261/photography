@@ -4,7 +4,7 @@ import ProgressHelper from "@/components/review/ProgressHelper";
 import CommentForm from "@/components/review/CommentForm"
 export default function Review() {
   return (
-    <div className="flex flex-col p-4 bg-slate-300 gap-16">
+    <div className="flex flex-col p-4 gap-16">
 
       <h1 className="font-bold text-5xl text-center p italic text-black">
         What do<span className=" text-cyan-500 p-2">people think</span>about us
@@ -24,11 +24,11 @@ export default function Review() {
 
               <div className="flex flex-col justify-center items-center">
 
-                <span className=" text-8xl text-black">4.0</span>
+                <span className=" text-5xl sm:text-8xl text-black">4.0</span>
                 <div className=" flex flex-row">
                   <span className="text-blue-500 cursor-pointer"> ★★★★</span>
                 </div>
-                <span className="mt-2 text-indigo-950">47,599,425</span>
+                <span className="mt-2 text-indigo-950">47,599</span>
               </div>
               <ProgressHelper />
             </div>
