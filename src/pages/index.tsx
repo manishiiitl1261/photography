@@ -8,7 +8,7 @@ import Card from "@/components/AboutUs/Card";
 import ServiceCard from "@/components/Services/ServiceCard";
 export default function Home() {
   return (
-    <div className="bg-slate-300">
+    <div className="bg-purple-200">
       <Navbar />
       <main className="pt-16 gap-6">
         <HomeC sliderContent={sliderContent} />

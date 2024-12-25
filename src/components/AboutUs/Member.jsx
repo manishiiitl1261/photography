@@ -9,7 +9,7 @@ const Member = () => {
         down: { hidden: { y: 100, opacity: 0 }, visible: { y: 0, opacity: 1 } },
     };
     return (
-        <div className="overflow-hidden  gap-4 sm:gap-8 items-center my-4 sm:my-8">
+        <div className="overflow-hidden  gap-4 sm:gap-8 items-center my-4 sm:my-8 bg-opacity-70 bg-purple-200">
             <div className=" text-center sm:text-4xl lg:text-6xl text-4xl italic text-black"> OUR MEMBERS </div>
             <div className=" max-w-5xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 overflow-hidden">
                 {teamMembers.map((member, index) => (
