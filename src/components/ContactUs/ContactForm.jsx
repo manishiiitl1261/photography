@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const ContactForm = () => {
     const [formData, setFormData] = useState({
@@ -32,7 +32,9 @@ const ContactForm = () => {
     const validate = () => {
         let tempErrors = {};
         if (!formData.name) tempErrors.name = 'Name is required';
-        if (formData.whatsappNumber && !validatePhone(formData.whatsappNumber)) {
+        if (!formData.whatsappNumber) {
+            tempErrors.whatsappNumber = 'WhatsApp number is required';
+        } else if (!validatePhone(formData.whatsappNumber)) {
             tempErrors.whatsappNumber = 'Invalid WhatsApp number format. Enter 10 digits.';
         }
         if (formData.phoneNumber && !validatePhone(formData.phoneNumber)) {
@@ -47,15 +49,21 @@ const ContactForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validate()) {
-            const adminWhatsAppNumber = '+918279659726';
-            const message = `Name: ${formData.name}
-                             Event: ${formData.subject}
-                             Message: ${formData.message}
-                             WhatsApp: ${countryCode.whatsappNumber} ${formData.whatsappNumber}
-                             Phone: ${countryCode.phoneNumber} ${formData.phoneNumber || 'Not Provided'}`;
-            const whatsappURL = `https://api.whatsapp.com/send?phone=${adminWhatsAppNumber}&text=${encodeURIComponent(
-                message
-            )}`;
+            // Admin's phone number that will receive the message
+            const adminNumber = '918279659726';
+
+            // Create the message to be sent
+            const message = `Hi, I would like to contact you regarding:
+            
+Name: ${formData.name}
+Event: ${formData.subject}
+Message: ${formData.message}
+Phone: ${countryCode.phoneNumber} ${formData.phoneNumber || 'Not Provided'}`;
+
+            // Create WhatsApp URL with the admin's number as the recipient
+            const whatsappURL = `https://wa.me/${adminNumber}?text=${encodeURIComponent(message)}`;
+
+            // Open WhatsApp in a new tab
             window.open(whatsappURL, '_blank');
 
             setShowPopup(true);
@@ -96,6 +104,7 @@ const ContactForm = () => {
                         <option value="+1">+1 (USA)</option>
                     </select>
                     <input
+                        required
                         type="text"
                         name="whatsappNumber"
                         placeholder="WhatsApp Number"
@@ -106,7 +115,7 @@ const ContactForm = () => {
                 </div>
                 {errors.whatsappNumber && <div className="text-red-500 text-sm">{errors.whatsappNumber}</div>}
 
-                {/* Phone Number */}
+                {/* Phone Number (Optional) */}
                 <div className="flex space-x-2">
                     <select
                         value={countryCode.phoneNumber}
@@ -119,7 +128,7 @@ const ContactForm = () => {
                     <input
                         type="text"
                         name="phoneNumber"
-                        placeholder="Phone Number"
+                        placeholder="Phone Number (Optional)"
                         value={formData.phoneNumber}
                         onChange={handleChange}
                         className={`w-full p-2 border ${errors.phoneNumber ? 'border-red-500' : 'border-gray-300'} rounded`}
@@ -151,12 +160,13 @@ const ContactForm = () => {
                 {errors.message && <div className="text-red-500 text-sm">{errors.message}</div>}
 
                 <button type="submit" className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 w-full">
-                    Send
+                    Open in WhatsApp
                 </button>
             </form>
 
-            {showPopup && <div className="fixed top-2 right-2 bg-green-500 text-white p-2 rounded">🎉 Message sent!</div>}
+            {showPopup && <div className="fixed top-2 right-2 bg-green-500 text-white p-2 rounded">🎉 Opening WhatsApp!</div>}
         </div>
     );
 };
+
 export default ContactForm;
