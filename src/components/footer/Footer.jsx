@@ -15,17 +15,17 @@ const Footer = () => {
             </div>
           </div>
           <div className="flex flex-row items-center">
-            <h1 className=" text-lg md:text-xl font-bold inline text-center">Created by : <span className="mx-1 text-blue-400">Manish Rawat </span></h1>
+            <h1 className="  sm:text-lg md:text-xl font-bold inline text-center">Created by : <span className="mx-1 text-blue-400">Manish Rawat </span></h1>
             <span
               className="p-1 cursor-pointer inline-flex items-center
                     rounded-full bg-slate-200 mx-1.5 text-xl  hover:bg-teal-200
                     duration-300 "
             >
-              <a href="https://652bba74e6cb0259f99146a2--wondrous-meringue-f0e955.netlify.app/" target="_blank">
+              <a href="https://manishrawat-portfolio.netlify.app/" target="_blank">
                 {" "}
                 <div className="size-10 rounded-full overflow-hidden">
                   <img
-                    src="/assest/admin2.jpg"
+                    src="/assest/manish.jpeg"
                     className=" w-full h-full object-cover cursor-pointer"
                   />
                 </div>
@@ -34,7 +34,7 @@ const Footer = () => {
           </div>
         </div>
         <div className=" text-center">
-          <span className="text-white font-bold">© 2015 Pahadi  All rights reserved. Terms · Privacy Policy</span>
+          <span className="text-white sm:font-bold">© 2015 Pahadi  All rights reserved. Terms · Privacy Policy</span>
         </div>
       </div>
     </footer>
