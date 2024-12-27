@@ -6,6 +6,7 @@ const cardData = [
         stars: 5,
         brand: "WEDDING",
         eventImage: "/assest/wedding1.jpg",
+        image: "/assest/user1.jpg",
     },
     {
         id: 2,
@@ -14,6 +15,7 @@ const cardData = [
         stars: 4,
         brand: "BIRTHDAY",
         eventImage: "/assest/birthday2.jpg",
+        image: "/assest/team-2.jpg",
 
     },
     {
@@ -23,6 +25,7 @@ const cardData = [
         stars: 5,
         brand: "CREATIVE",
         eventImage: "/assest/wedding2.jpg",
+        image: "/assest/user2.jpg",
     },
     {
         id: 4,
@@ -31,6 +34,7 @@ const cardData = [
         stars: 4,
         brand: "DESIGN",
         eventImage: "/assest/birthday2.jpg",
+        image: "/assest/user3.jpg",
 
     },
 ];

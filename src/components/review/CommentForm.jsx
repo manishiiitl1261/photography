@@ -133,7 +133,7 @@ function CommentForm() {
                 </div> */}
                 <div className="mb-2 text-black flex sm:flex-row flex-col sm:mt-4 gap-4 ">
                     <h1>Rating *</h1>
-                    <div className="flex flex-row border border-black rounded-full bg-lime-400 gap-4 px-6 w-fit">
+                    <div className="flex flex-row border border-black rounded-lg bg-slate-400 gap-4 px-6 w-fit">
                         {[1, 2, 3, 4, 5].map((star) => (
                             <button
                                 key={star}
