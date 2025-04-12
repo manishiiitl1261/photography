@@ -4,6 +4,7 @@ import Slider from "react-slick";
 import Image from "next/image";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Custom Prev Arrow (bottom-right corner)
 const CustomPrevArrow = ({ onClick }) => (
@@ -26,6 +27,9 @@ const CustomNextArrow = ({ onClick }) => (
 );
 
 const HomeC = ({ sliderContent }) => {
+    // Get translations
+    const { t } = useLanguage();
+
     // Slider settings
     const settings = {
         dots: false,
@@ -50,7 +54,7 @@ const HomeC = ({ sliderContent }) => {
                             <div className="absolute top-0 left-0 w-full h-full">
                                 <Image
                                     src={slide.imageSrc}
-                                    alt={slide.title}
+                                    alt={slide.id === 1 ? t.home.sliderTitle1 : t.home.sliderTitle2}
                                     fill
                                     className="object-cover"
                                     priority
@@ -61,21 +65,20 @@ const HomeC = ({ sliderContent }) => {
                             {/* Content */}
                             <div className="relative z-10 h-full flex flex-col justify-center items-start p-10 md:p-20 text-white">
                                 <p className="text-lg md:text-xl uppercase font-semibold mb-4 text-white">
-                                    {slide.id === 1 ? "HELLO THERE!" : "WELCOME TO MY"}
+                                    {slide.id === 1 ? t.home.greeting : t.home.welcome}
                                 </p>
                                 <h1 className="text-4xl md:text-6xl font-bold mb-6 text-lime-400 italic">
-                                    {slide.title}
+                                    {slide.id === 1 ? t.home.sliderTitle1 : t.home.sliderTitle2}
                                 </h1>
                                 <p className="text-md md:text-lg mb-8 max-w-md text-white">
-                                    {slide.subtitle}
+                                    {t.home.sliderSubtitle}
                                 </p>
                                 <div className="flex space-x-4">
-
                                     <a className="border border-white bg-lime-400 hover:bg-lime-500 px-6 py-2 rounded-md font-semibold text-black" href="/Services">
-                                        {slide.buttonText1}
+                                        {t.home.exploreServices}
                                     </a>
                                     <a className="border border-white px-6 py-2 rounded-md hover:bg-white hover:text-black transition duration-300 text-white" href="/ContactUs">
-                                        {slide.buttonText2}
+                                        {t.home.contactMe}
                                     </a>
                                 </div>
                             </div>
@@ -84,7 +87,7 @@ const HomeC = ({ sliderContent }) => {
                 </Slider>
             ) : (
                 <div className="text-center text-gray-500 py-20 ">
-                    No content available for the slider.
+                    {t.home.noContent}
                 </div>
             )}
         </div>

@@ -2,21 +2,25 @@
 
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-
-const navigation = [
-    { name: "Home", href: "/", current: false },
-
-    { name: "Portfolio", href: "/Portfolio", current: false },
-    { name: "Service", href: "/Services", current: false },
-    { name: "About Us", href: "/AboutUs", current: false },
-    { name: "Contact Us", href: "/ContactUs", current: false },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
 }
 
 export default function Navbar() {
+    const { t } = useLanguage();
+
+    // Use translations for navigation
+    const navigation = [
+        { name: t.nav.home, href: "/", current: false },
+        { name: t.nav.portfolio, href: "/Portfolio", current: false },
+        { name: t.nav.services, href: "/Services", current: false },
+        { name: t.nav.aboutUs, href: "/AboutUs", current: false },
+        { name: t.nav.contactUs, href: "/ContactUs", current: false },
+    ];
+
     return (
         <>
             <div className="fixed w-screen bg-opacity-50 backdrop-blur-lg z-50 bg-slate-400">
@@ -65,6 +69,11 @@ export default function Navbar() {
                                             ))}
                                         </div>
                                     </div>
+
+                                    {/* Language Switcher - Desktop */}
+                                    <div className="hidden sm:flex items-center">
+                                        <LanguageSwitcher />
+                                    </div>
                                 </div>
                             </div>
 
@@ -87,6 +96,11 @@ export default function Navbar() {
                                             {item.name}
                                         </Disclosure.Button>
                                     ))}
+
+                                    {/* Language Switcher - Mobile */}
+                                    <div className="flex justify-center mt-3">
+                                        <LanguageSwitcher />
+                                    </div>
                                 </div>
                             </Disclosure.Panel>
                         </>

@@ -1,7 +1,10 @@
 "use client";
 import React, { useState, useRef } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 function CommentForm() {
+    const { t } = useLanguage();
+
     const [name, setName] = useState("");
     const [event, setEvent] = useState("");
     const [comment, setComment] = useState("");
@@ -44,7 +47,7 @@ function CommentForm() {
         //     return;
         // }
         if (!name || !event || !comment || rating === 0) {
-            alert("Please fill all required fields! (rating,photo,profile,name,event,comment)");
+            alert(t.reviews.comment.fillFields);
             return;
         }
 
@@ -69,10 +72,10 @@ function CommentForm() {
             <form onSubmit={handleSubmit} className="gap-4 lg:w-96">
                 <div className="mb-2 text-black">
                     <label>
-                        Name * <br />
+                        {t.reviews.comment.name} * <br />
                         <input
                             type="text"
-                            placeholder="Name"
+                            placeholder={t.reviews.comment.name}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             className="w-full p-2 mt-1 rounded-lg hover:border-2 hover:border-gray-950 duration-300 text-black"
@@ -82,10 +85,10 @@ function CommentForm() {
                 </div>
                 <div className="mb-2 text-black">
                     <label>
-                        Event * <br />
+                        {t.reviews.comment.event} * <br />
                         <input
                             type="text"
-                            placeholder="Event"
+                            placeholder={t.reviews.comment.event}
                             value={event}
                             onChange={(e) => setEvent(e.target.value)}
                             className="w-full p-2 mt-1 rounded-lg hover:border-2 hover:border-gray-950 duration-300 text-black"
@@ -95,7 +98,7 @@ function CommentForm() {
                 </div>
                 <div className="mb-2 text-black">
                     <label>
-                        Comment * <br />
+                        {t.reviews.comment.comment} * <br />
                         <textarea
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
@@ -132,7 +135,7 @@ function CommentForm() {
                     </div>
                 </div> */}
                 <div className="mb-2 text-black flex sm:flex-row flex-col sm:mt-4 gap-4 ">
-                    <h1>Rating *</h1>
+                    <h1>{t.reviews.comment.rating} *</h1>
                     <div className="flex flex-row border border-black rounded-lg bg-slate-400 gap-4 px-6 w-fit">
                         {[1, 2, 3, 4, 5].map((star) => (
                             <button
@@ -153,12 +156,12 @@ function CommentForm() {
                     type="submit"
                     className="duration-300 px-5 py-2.5 font-[Poppins] rounded-md text-white md:w-auto bg-sky-500 hover:bg-sky-600 sm:ml-28 mt-4"
                 >
-                    Post Comment
+                    {t.reviews.comment.postComment}
                 </button>
             </form>
             {showPopup && (
                 <div className="fixed top-2 right-2 z-50 bg-green-500 text-white p-2 shadow shadow-green-400 rounded-sm">
-                    🎉 Hurray! Your review has been submitted successfully.
+                    {t.reviews.comment.success}
                 </div>
             )}
         </div>
