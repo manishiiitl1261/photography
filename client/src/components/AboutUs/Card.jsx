@@ -2,8 +2,10 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Card = () => {
+    const { t } = useLanguage();
     const [isInView, setIsInView] = useState(false);
 
     useEffect(() => {
@@ -51,26 +53,22 @@ const Card = () => {
                     }}
                 >
                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-gray-900 mb-6 text-center lg:text-left italic">
-                        Hello, I'm <span className="text-lime-600">Arvind Rawat</span>, a
-                        professional photographer based on{" "}
-                        <span className="text-lime-600">India</span>
+                        {t.aboutUs.subtitle} <span className="text-lime-600">Arvind Rawat</span>, {t.aboutUs.description}
                     </h1>
                     <p className="text-gray-600 leading-relaxed mb-6 text-center lg:text-left">
-                        Hello! I became interested in landscape photography about five years ago
-                        when I moved to New York City. I had a full-time job during the week and
-                        spent my weekends getting as far away from the city as possible.
+                        {t.home.sliderSubtitle}
                     </p>
 
                     {/* List Section */}
                     <ul className="space-y-4 text-gray-800 text-center lg:text-left">
                         <li className="flex items-center justify-center lg:justify-start">
-                            <span className="mr-2 text-lime-600">✔</span> 12 Years of Experience
+                            <span className="mr-2 text-lime-600">✔</span> 12 {t.aboutUs.experience}
                         </li>
                         <li className="flex items-center justify-center lg:justify-start">
-                            <span className="mr-2 text-lime-600">✔</span> Phone: +105 773 321 7771
+                            <span className="mr-2 text-lime-600">✔</span> {t.footer.phone}: +105 773 321 7771
                         </li>
                         <li className="flex items-center justify-center lg:justify-start">
-                            <span className="mr-2 text-lime-600">✔</span> E-mail:
+                            <span className="mr-2 text-lime-600">✔</span> {t.footer.email}:
                             demo@example.com
                         </li>
                     </ul>

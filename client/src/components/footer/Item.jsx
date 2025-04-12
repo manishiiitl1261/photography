@@ -2,7 +2,10 @@ import React from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import { FaSquarePhone } from "react-icons/fa6";
 import { IoIosMail } from "react-icons/io";
+import { useLanguage } from "@/contexts/LanguageContext";
+
 const Item = ({ Links, title }) => {
+  const { t } = useLanguage();
 
   return (
     <ul className="align-middle">
@@ -23,12 +26,20 @@ const Item = ({ Links, title }) => {
           href = l.link || "#"; // Fallback if no link provided
         }
 
+        // Format the display text based on the type
+        let displayText = l.name;
+        if (l.type === "phone") {
+          displayText = `${t.footer.phone}: ${l.name}`;
+        } else if (l.type === "email") {
+          displayText = `${t.footer.email}: ${l.name}`;
+        }
+
         return (
           <li key={l.name} className="flex items-center mb-2">
-            {title === "ADDRESS" ? (
+            {title === t.footer.address.toUpperCase() ? (
               <FaLocationDot className="mr-2 text-black" />
             ) :
-              l.title === "Phone" ? (
+              l.titleKey === "phone" ? (
                 <FaSquarePhone className="mr-2 text-black" />
               ) : (
                 <IoIosMail className="mr-2 text-black" />
@@ -40,8 +51,7 @@ const Item = ({ Links, title }) => {
               target={href.startsWith("http") ? "_blank" : "_self"}
               rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
             >
-
-              {l.name}
+              {displayText}
             </a>
           </li>
         );
