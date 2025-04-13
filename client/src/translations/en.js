@@ -11,14 +11,14 @@ const en = {
   
   // Home Page
   home: {
-    greeting: "HELLO THERE!",
-    welcome: "WELCOME TO MY",
+    greeting: "Hello!",
+    welcome: "Welcome to my",
     exploreServices: "Explore Services",
     contactMe: "Contact Me",
-    noContent: "No content available for the slider.",
-    sliderTitle1: "I'm Arvind Rawat",
+    noContent: "No content available for slider.",
+    sliderTitle1: "I am Arvind Rawat",
     sliderTitle2: "Pahadi World Photography",
-    sliderSubtitle: "Hello We are became interested in landscape photography about five years ago when I moved to United States."
+    sliderSubtitle: "We started having an Interest in Landscape Photography about five years ago when I moved to the United States."
   },
   
   // Portfolio
@@ -44,15 +44,15 @@ const en = {
       },
       drone: {
         title: "Drone Photography",
-        description: "Aerial photography and videography providing stunning perspectives from above for your special events."
+        description: "Aerial photography and videography providing stunning overhead perspectives for your special events."
       },
       product: {
         title: "Product Photography",
-        description: "High-quality product photography for e-commerce, catalogs, and marketing materials to showcase your items."
+        description: "High-quality product photography for e-commerce, catalogs, and marketing materials to showcase your products."
       },
       lighting: {
-        title: "Lightning Setup",
-        description: "Expert lighting setup services for studio shoots, events, and productions for the perfect atmosphere."
+        title: "Lighting Setup",
+        description: "Expert lighting setup services for studio shoots, events, and productions for the perfect ambiance."
       },
       editing: {
         title: "Video Editing",
@@ -63,38 +63,38 @@ const en = {
   
   // Pricing
   pricing: {
-    title: "Pricing Plan",
+    title: "Pricing Plans",
     buyNow: "Buy Now",
-    hours: "Hours Session",
-    images: "Quality Images",
+    hours: "Hours session",
+    images: "Quality images",
     unlimited: "Unlimited",
-    gallery: "Private Online Photo Gallery",
-    locations: "Unlimited Coverage Locations",
-    film: "A 30-60 Minute Edited HD Film",
+    gallery: "Private online photo gallery",
+    locations: "Unlimited coverage locations",
+    film: "30-60 minute edited HD film",
     packages: {
       wedding: {
         title: "Wedding Shoot",
-        price: "$500",
+        price: "₹40,000",
       },
       birthday: {
         title: "Birthday Celebration",
-        price: "$300",
+        price: "₹24,000",
       },
       event: {
         title: "Event Shoot",
-        price: "$400",
+        price: "₹32,000",
       },
       song: {
         title: "Song Video Shoot",
-        price: "$700",
+        price: "₹56,000",
       },
       corporate: {
         title: "Corporate Event",
-        price: "$600",
+        price: "₹48,000",
       },
       portrait: {
         title: "Portrait Session",
-        price: "$200",
+        price: "₹16,000",
       }
     }
   },
@@ -102,17 +102,17 @@ const en = {
   // About Us
   aboutUs: {
     title: "About Us",
-    subtitle: "Hello, I'm",
-    description: "a professional photographer based in India",
+    subtitle: "Hello, I am",
+    description: "A professional photographer based in India",
     experience: "Years of Experience",
-    teamTitle: "Our Team",
+    teamTitle: "OUR MEMBERS",
     teamDescription: "Meet our talented photographers"
   },
 
   // Contact Us
   contactUs: {
     title: "Contact Us",
-    subtitle: "Get In Touch",
+    subtitle: "Get in Touch",
     formName: "Name",
     formEmail: "Email",
     formMessage: "Message",
@@ -121,11 +121,11 @@ const en = {
   
   // Reviews
   reviews: {
-    title: "Client Reviews",
-    subtitle: "What Our Clients Say",
-    peopleThink: "What do people think about us",
-    ratings: "Rating and Reviews",
-    verified: "Rating and reviews are verified and are from people who use the same device",
+    title: "Customer Reviews",
+    subtitle: "What Our Customers Say",
+    peopleThink: "What People Think of Us",
+    ratings: "Ratings & Reviews",
+    verified: "Ratings & reviews are verified and are from people who use the same type of device",
     clientSay: "Our Client Say",
     yourReview: "Your Review",
     comment: {
@@ -134,8 +134,15 @@ const en = {
       comment: "Comment",
       rating: "Rating",
       postComment: "Post Comment",
-      fillFields: "Please fill all required fields!",
-      success: "🎉 Hurray! Your review has been submitted successfully."
+      fillFields: "Please fill in all required fields!",
+      success: "🎉 Congratulations! Your review has been successfully submitted.",
+      submitError: "Error submitting review. Please try again.",
+      submitting: "Submitting...",
+      eventImage: "Event Picture",
+      optional: "Optional",
+      imageRequirements: "PNG, JPG, GIF up to 5MB",
+      imageTypeError: "Only image files are accepted!",
+      imageSizeError: "Image must be less than 5MB"
     }
   },
   
@@ -145,11 +152,11 @@ const en = {
     address: "Address",
     phone: "Phone",
     email: "Email",
-    social: "Let's get social",
-    createdBy: "Created by:",
+    social: "Let's Connect on Social Media",
+    createdBy: "Created By:",
     quickLinks: "Quick Links",
-    suggestion: "Free to give your suggestion",
-    suggestionSuccess: "🎉 Hurray! Your review has been submitted successfully."
+    suggestion: "Feel free to provide your suggestion",
+    suggestionSuccess: "🎉 Congratulations! Your review has been successfully submitted."
   },
 
   // Language Selector
@@ -159,4 +166,4 @@ const en = {
   }
 };
 
-export default en; 
+export default en;

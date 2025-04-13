@@ -2,7 +2,7 @@ const cardData = [
     {
         id: 1,
         name: "Lana Shelton",
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        text: "Arvind captured our wedding day perfectly! The photos were stunning and truly captured the essence of our special day. I'm so grateful we chose Pahadi World Photography for our wedding.",
         stars: 5,
         brand: "WEDDING",
         eventImage: "/assest/wedding1.jpg",
@@ -11,31 +11,48 @@ const cardData = [
     {
         id: 2,
         name: "John Doe",
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        text: "The birthday photoshoot for my daughter was amazing. Arvind has a special talent for capturing candid moments with children. The photos will be cherished for years to come.",
         stars: 4,
         brand: "BIRTHDAY",
         eventImage: "/assest/birthday2.jpg",
         image: "/assest/team-2.jpg",
-
     },
     {
         id: 3,
         name: "Jane Smith",
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        text: "Our corporate event was documented beautifully by Pahadi World Photography. The team was professional, unobtrusive, and delivered high-quality images that perfectly captured our company culture. Highly recommend!",
         stars: 5,
-        brand: "CREATIVE",
+        brand: "CORPORATE",
         eventImage: "/assest/wedding2.jpg",
         image: "/assest/user2.jpg",
     },
     {
         id: 4,
-        name: "John Doe",
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        stars: 4,
-        brand: "DESIGN",
+        name: "Priya Sharma",
+        text: "The drone photography service was exceptional. Arvind captured aerial views of our property that we never imagined possible. The quality and composition of the shots were outstanding.",
+        stars: 5,
+        brand: "DRONE",
         eventImage: "/assest/birthday2.jpg",
         image: "/assest/user3.jpg",
-
+    },
+    {
+        id: 5,
+        name: "Michael Chen",
+        text: "We hired Pahadi for our product photography needs and the results exceeded our expectations. The attention to detail and lighting was perfect. Our products look amazing in our new catalog!",
+        stars: 4,
+        brand: "PRODUCT",
+        eventImage: "/assest/wedding1.jpg",
+        image: "/assest/user1.jpg",
+    },
+    {
+        id: 6,
+        name: "Aisha Khan",
+        text: "Our engagement shoot was a wonderful experience. Arvind made us feel comfortable and the photos beautifully tell our love story. Thank you for capturing these special moments!",
+        stars: 5,
+        brand: "ENGAGEMENT",
+        eventImage: "/assest/birthday2.jpg",
+        image: "/assest/team-2.jpg",
     },
 ];
+
 export default cardData;

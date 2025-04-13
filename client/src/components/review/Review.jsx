@@ -3,9 +3,11 @@ import CardSlider from "@/components/review/CardSlider"
 import ProgressHelper from "@/components/review/ProgressHelper";
 import CommentForm from "@/components/review/CommentForm"
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useReviews } from "@/contexts/ReviewContext";
 
 export default function Review() {
   const { t } = useLanguage();
+  const { avgRating, reviewCount } = useReviews();
 
   return (
     <div className="flex flex-col p-4 gap-16">
@@ -24,11 +26,16 @@ export default function Review() {
 
             <div className="flex flex-row justify-center lg:gap-8 xl:gap-10 gap-6">
               <div className="flex flex-col justify-center items-center">
-                <span className=" text-5xl sm:text-8xl text-black">4.0</span>
+                <span className=" text-5xl sm:text-8xl text-black">{avgRating}</span>
                 <div className=" flex flex-row">
-                  <span className="text-blue-500 cursor-pointer"> ★★★★</span>
+                  <span className="text-blue-500 cursor-pointer">
+                    {Array.from({ length: Math.floor(avgRating) }).map((_, i) => (
+                      <span key={i}>★</span>
+                    ))}
+                    {avgRating % 1 !== 0 && "½"}
+                  </span>
                 </div>
-                <span className="mt-2 text-indigo-950">47,599</span>
+                <span className="mt-2 text-indigo-950">{reviewCount}</span>
               </div>
               <ProgressHelper />
             </div>

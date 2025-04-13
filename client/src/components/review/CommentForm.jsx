@@ -1,31 +1,46 @@
 "use client";
 import React, { useState, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useReviews } from "@/contexts/ReviewContext";
+import { FaStar } from "react-icons/fa";
 
 function CommentForm() {
     const { t } = useLanguage();
+    const { addReview } = useReviews();
 
     const [name, setName] = useState("");
     const [event, setEvent] = useState("");
     const [comment, setComment] = useState("");
-    // const [photo, setPhoto] = useState("");
-    // const [profilePhoto, setProfilePhoto] = useState("");
     const [showPopup, setShowPopup] = useState(false);
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
+    const [submitting, setSubmitting] = useState(false);
+    const [error, setError] = useState("");
+    const [eventImage, setEventImage] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState("");
 
-    // const fileInputRef = useRef(null);
-    // const fileInputRef2 = useRef(null);
+    const fileInputRef = useRef(null);
 
-    // const handlePhotoChange = (e) => {
-    //     const file = e.target.files[0];
-    //     setPhoto(file ? file.name : "");
-    // };
+    const handleEventImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Validate file type
+            if (!file.type.match('image.*')) {
+                setError(t.reviews.comment.imageTypeError);
+                return;
+            }
 
-    // const handleProfilePhotoChange = (e) => {
-    //     const file = e.target.files[0];
-    //     setProfilePhoto(file ? file.name : "");
-    // };
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                setError(t.reviews.comment.imageSizeError);
+                return;
+            }
+
+            setEventImage(file);
+            setPreviewUrl(URL.createObjectURL(file));
+            setError("");
+        }
+    };
 
     const handleStarClick = (ratingValue) => {
         setRating(ratingValue);
@@ -39,129 +54,236 @@ function CommentForm() {
         setHoverRating(0);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // if (!name || !event || !comment || !photo || !profilePhoto || rating === 0) {
-        //     alert("Please fill all required fields! (rating,photo,profile,name,event,comment)");
-        //     return;
-        // }
         if (!name || !event || !comment || rating === 0) {
             alert(t.reviews.comment.fillFields);
             return;
         }
 
-        setShowPopup(true);
+        try {
+            setSubmitting(true);
+            setError("");
 
-        setTimeout(() => {
-            setShowPopup(false);
-        }, 3000);
+            // Create form data to include the image file
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('event', event);
+            formData.append('text', comment);
+            formData.append('rating', rating);
 
-        setName("");
-        setEvent("");
-        setComment("");
-        // setPhoto("");
-        // setProfilePhoto("");
-        setRating(0);
-        //  if (fileInputRef.current) fileInputRef.current.value = "";
-        //  if (fileInputRef2.current) fileInputRef2.current.value = "";
+            // Only append eventImage if it exists
+            if (eventImage) {
+                formData.append('eventImage', eventImage);
+            }
+
+            // Submit the review to the API
+            const result = await addReview(formData);
+
+            if (result.success) {
+                // Show success popup
+                setShowPopup(true);
+
+                // Clear form fields
+                setName("");
+                setEvent("");
+                setComment("");
+                setRating(0);
+                setEventImage(null);
+                setPreviewUrl("");
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = "";
+                }
+
+                // Hide the popup after 3 seconds
+                setTimeout(() => {
+                    setShowPopup(false);
+                }, 3000);
+            } else {
+                setError(result.error || t.reviews.comment.submitError);
+            }
+        } catch (error) {
+            console.error("Error submitting review:", error);
+            setError(error.message || t.reviews.comment.submitError);
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
-        <div className=" bg-opacity-40 bg-purple-300 p-4 rounded-lg shadow-md shadow-slate-200 lg:p-10 lg:py-16">
-            <form onSubmit={handleSubmit} className="gap-4 lg:w-96">
-                <div className="mb-2 text-black">
-                    <label>
-                        {t.reviews.comment.name} * <br />
+        <div className="bg-opacity-40 bg-purple-300 p-4 rounded-lg shadow-md shadow-slate-200 lg:p-8">
+            <h2 className="text-2xl font-bold text-center mb-6 text-blue-950">{t.reviews.yourReview}</h2>
+
+            <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    {/* Name Input */}
+                    <div className="text-black">
+                        <label className="block mb-1 font-medium">
+                            {t.reviews.comment.name} *
+                        </label>
                         <input
                             type="text"
                             placeholder={t.reviews.comment.name}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="w-full p-2 mt-1 rounded-lg hover:border-2 hover:border-gray-950 duration-300 text-black"
+                            className="w-full p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 text-black"
                             required
+                            disabled={submitting}
                         />
-                    </label>
-                </div>
-                <div className="mb-2 text-black">
-                    <label>
-                        {t.reviews.comment.event} * <br />
+                    </div>
+
+                    {/* Event Input */}
+                    <div className="text-black">
+                        <label className="block mb-1 font-medium">
+                            {t.reviews.comment.event} *
+                        </label>
                         <input
                             type="text"
                             placeholder={t.reviews.comment.event}
                             value={event}
                             onChange={(e) => setEvent(e.target.value)}
-                            className="w-full p-2 mt-1 rounded-lg hover:border-2 hover:border-gray-950 duration-300 text-black"
+                            className="w-full p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 text-black"
                             required
+                            disabled={submitting}
                         />
-                    </label>
+                    </div>
                 </div>
-                <div className="mb-2 text-black">
-                    <label>
-                        {t.reviews.comment.comment} * <br />
-                        <textarea
-                            value={comment}
-                            onChange={(e) => setComment(e.target.value)}
-                            rows="5"
-                            className="w-full p-2 mt-1 rounded-lg hover:border-2 hover:border-gray-950 duration-300 text-black"
-                            required
-                        ></textarea>
+
+                {/* Comment Textarea */}
+                <div className="mb-4 text-black">
+                    <label className="block mb-1 font-medium">
+                        {t.reviews.comment.comment} *
                     </label>
+                    <textarea
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        rows="5"
+                        className="w-full p-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200 text-black"
+                        required
+                        disabled={submitting}
+                        placeholder="Share your experience..."
+                    ></textarea>
                 </div>
-                {/* <div className="flex flex-col sm:flex-row justify-evenly">
-                    <div className="mb-2 text-black">
-                        <label>
-                            Photo of the Event * <br />
+
+                {/* Event Image Upload */}
+                <div className="mb-4 text-black">
+                    <label className="block mb-1 font-medium">
+                        {t.reviews.comment.eventImage} <span className="text-sm text-gray-500">({t.reviews.comment.optional})</span>
+                    </label>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="w-full sm:w-1/2">
                             <input
                                 type="file"
-                                onChange={handlePhotoChange}
+                                accept="image/*"
+                                onChange={handleEventImageChange}
                                 ref={fileInputRef}
-                                className="mt-2 text-black"
-                                required
+                                className="w-full p-2 text-sm text-gray-800 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+                                disabled={submitting}
                             />
-                        </label>
+                            <p className="mt-1 text-xs text-gray-500">
+                                {t.reviews.comment.imageRequirements}
+                            </p>
+                        </div>
+
+                        {/* Image Preview */}
+                        <div className="w-full sm:w-1/2 h-40 border rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                            {previewUrl ? (
+                                <div className="relative w-full h-full">
+                                    <img
+                                        src={previewUrl}
+                                        alt="Event Preview"
+                                        className="w-full h-full object-cover"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setEventImage(null);
+                                            setPreviewUrl("");
+                                            if (fileInputRef.current) {
+                                                fileInputRef.current.value = "";
+                                            }
+                                        }}
+                                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 text-xs"
+                                        disabled={submitting}
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                            ) : (
+                                <span className="text-gray-400">Image preview</span>
+                            )}
+                        </div>
                     </div>
-                    <div className="mb-2 text-black">
-                        <label>
-                            Profile photo * <br />
-                            <input
-                                type="file"
-                                onChange={handleProfilePhotoChange}
-                                ref={fileInputRef2}
-                                className="mt-2 text-black"
-                                required
-                            />
-                        </label>
-                    </div>
-                </div> */}
-                <div className="mb-2 text-black flex sm:flex-row flex-col sm:mt-4 gap-4 ">
-                    <h1>{t.reviews.comment.rating} *</h1>
-                    <div className="flex flex-row border border-black rounded-lg bg-slate-400 gap-4 px-6 w-fit">
+                </div>
+
+                {/* Rating */}
+                <div className="mb-6 text-black">
+                    <label className="block mb-2 font-medium">
+                        {t.reviews.comment.rating} *
+                    </label>
+                    <div className="flex items-center gap-1 bg-slate-200 p-3 rounded-lg w-fit">
                         {[1, 2, 3, 4, 5].map((star) => (
                             <button
                                 key={star}
                                 type="button"
-                                className={`text-2xl duration-300 ${(hoverRating || rating) >= star ? "text-blue-500" : "text-white"
+                                className={`text-2xl transition-colors duration-200 ${(hoverRating || rating) >= star
+                                    ? "text-yellow-400"
+                                    : "text-gray-300"
                                     }`}
                                 onMouseEnter={() => handleStarHover(star)}
                                 onMouseLeave={handleStarLeave}
                                 onClick={() => handleStarClick(star)}
+                                disabled={submitting}
+                                aria-label={`Rate ${star} stars`}
                             >
-                                ★
+                                <FaStar />
                             </button>
                         ))}
                     </div>
                 </div>
-                <button
-                    type="submit"
-                    className="duration-300 px-5 py-2.5 font-[Poppins] rounded-md text-white md:w-auto bg-sky-500 hover:bg-sky-600 sm:ml-28 mt-4"
-                >
-                    {t.reviews.comment.postComment}
-                </button>
+
+                {/* Error Message */}
+                {error && (
+                    <div className="mb-4 text-red-600 text-sm p-2 bg-red-50 rounded-lg border border-red-200">
+                        {error}
+                    </div>
+                )}
+
+                {/* Submit Button */}
+                <div className="flex justify-center">
+                    <button
+                        type="submit"
+                        disabled={submitting || !name || !event || !comment || rating === 0}
+                        className={`px-6 py-3 font-medium rounded-md text-white transition-all duration-300 ${submitting || !name || !event || !comment || rating === 0
+                            ? "bg-gray-400 cursor-not-allowed"
+                            : "bg-blue-600 hover:bg-blue-700 hover:shadow-lg"
+                            }`}
+                    >
+                        {submitting ? (
+                            <span className="flex items-center">
+                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                {t.reviews.comment.submitting || "Submitting..."}
+                            </span>
+                        ) : (
+                            t.reviews.comment.postComment
+                        )}
+                    </button>
+                </div>
             </form>
+
+            {/* Success Popup */}
             {showPopup && (
-                <div className="fixed top-2 right-2 z-50 bg-green-500 text-white p-2 shadow shadow-green-400 rounded-sm">
-                    {t.reviews.comment.success}
+                <div className="fixed top-4 right-4 z-50 bg-green-500 text-white p-4 rounded-lg shadow-lg animate-fadeIn">
+                    <div className="flex items-center">
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        {t.reviews.comment.success}
+                    </div>
                 </div>
             )}
         </div>
