@@ -8,6 +8,13 @@ const CardSlider = () => {
     const { reviews, loading } = useReviews();
     const [currentCard, setCurrentCard] = useState(0);
 
+    // Debug log the current review
+    React.useEffect(() => {
+        if (reviews && reviews.length > 0) {
+            console.log('Current review data:', reviews[currentCard]);
+        }
+    }, [reviews, currentCard]);
+
     const nextCard = () => {
         setCurrentCard((prev) => (prev + 1) % reviews.length);
     };
@@ -45,6 +52,7 @@ const CardSlider = () => {
                         stars={reviews[currentCard].rating || reviews[currentCard].stars}
                         brand={reviews[currentCard].brand || reviews[currentCard].event}
                         eventImage={reviews[currentCard].eventImage}
+                        userAvatar={reviews[currentCard].userAvatar}
                     />
                 </div>
             </div>

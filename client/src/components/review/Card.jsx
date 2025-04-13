@@ -1,7 +1,70 @@
 import React from "react";
 import { FaStar, FaRegUserCircle } from "react-icons/fa";
 
-const Card = ({ name, text, stars, brand, eventImage, image }) => {
+const Card = ({ name, text, stars, brand, eventImage, image, userAvatar }) => {
+    // Choose the right avatar image with priority: userAvatar > image > default
+    const getAvatarImage = () => {
+        // More detailed debug logging
+        console.log('Avatar data details:', {
+            userAvatar,
+            image,
+            apiUrl: process.env.NEXT_PUBLIC_API_URL,
+            fullUserAvatarUrl: userAvatar ? `${process.env.NEXT_PUBLIC_API_URL}${userAvatar}` : null
+        });
+
+        if (userAvatar) {
+            // If it's already a full URL, use it directly
+            if (userAvatar.startsWith('http')) {
+                console.log('Using full URL avatar:', userAvatar);
+                return userAvatar;
+            }
+            // If it's a server path with /uploads/ prefix
+            else if (userAvatar.startsWith('/uploads/')) {
+                const fullUrl = `${process.env.NEXT_PUBLIC_API_URL}${userAvatar}`;
+                console.log('Using server path avatar:', fullUrl);
+                return fullUrl;
+            }
+            // If it's just a filename, add the full path
+            else {
+                const fullUrl = `${process.env.NEXT_PUBLIC_API_URL}/uploads/${userAvatar}`;
+                console.log('Using filename avatar:', fullUrl);
+                return fullUrl;
+            }
+        }
+        // Fallback to image property if no userAvatar
+        else if (image) {
+            if (image.startsWith('http')) {
+                console.log('Using full URL image:', image);
+                return image;
+            } else if (image.startsWith('/uploads/')) {
+                const fullUrl = `${process.env.NEXT_PUBLIC_API_URL}${image}`;
+                console.log('Using server path image:', fullUrl);
+                return fullUrl;
+            } else {
+                const fullUrl = `${process.env.NEXT_PUBLIC_API_URL}/uploads/${image}`;
+                console.log('Using filename image:', fullUrl);
+                return fullUrl;
+            }
+        }
+
+        // No avatar image found, will render default icon
+        console.log('No avatar found, using default');
+        return null;
+    };
+
+    const avatarImage = getAvatarImage();
+
+    // Handle server-side event image paths
+    const getEventImage = () => {
+        if (eventImage && eventImage.startsWith('/uploads/')) {
+            // If it's a server path, prepend the API URL
+            return `${process.env.NEXT_PUBLIC_API_URL}${eventImage}`;
+        }
+        return eventImage;
+    };
+
+    const displayEventImage = getEventImage();
+
     return (
         <div className="w-full min-w-[300px] sm:min-w-[340px] md:min-w-[400px] lg:min-w-[480px]">
             {/* Testimonial Content */}
@@ -24,11 +87,15 @@ const Card = ({ name, text, stars, brand, eventImage, image }) => {
 
                     {/* Event photo */}
                     <div className="w-full sm:w-1/3 h-32 sm:h-40 rounded-lg overflow-hidden shadow-md">
-                        {eventImage ? (
+                        {displayEventImage ? (
                             <img
-                                src={eventImage}
+                                src={displayEventImage}
                                 alt={name}
                                 className="w-full h-full object-cover cursor-pointer"
+                                onError={(e) => {
+                                    // Fallback if image fails to load
+                                    e.target.src = '/assets/avtar.png';
+                                }}
                             />
                         ) : (
                             <div className="w-full h-full bg-gray-300 flex items-center justify-center">
@@ -46,11 +113,15 @@ const Card = ({ name, text, stars, brand, eventImage, image }) => {
             <div className="flex items-center">
                 {/* Profile Image */}
                 <div className="size-12 sm:size-14 md:size-16 rounded-full overflow-hidden border-4 border-white hover:border-slate-400 cursor-pointer duration-300 shadow-md">
-                    {image ? (
+                    {avatarImage ? (
                         <img
-                            src={image}
+                            src={avatarImage}
                             alt={name}
                             className="w-full h-full object-cover"
+                            onError={(e) => {
+                                // Fallback if avatar fails to load
+                                e.target.src = '/assets/avtar.png';
+                            }}
                         />
                     ) : (
                         <FaRegUserCircle className="w-full h-full object-cover text-black bg-slate-200" />

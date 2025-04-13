@@ -1,4 +1,5 @@
 const Review = require('../models/Review');
+const User = require('../models/User');
 
 // Get all reviews
 const getAllReviews = async (req, res) => {
@@ -13,7 +14,7 @@ const getAllReviews = async (req, res) => {
 // Create a new review
 const createReview = async (req, res) => {
   try {
-    const { name, event, text, rating } = req.body;
+    const { name, event, text, rating, userId, userAvatar } = req.body;
     
     if (!name || !event || !text || !rating) {
       return res.status(400).json({ 
@@ -30,15 +31,37 @@ const createReview = async (req, res) => {
       rating: parseInt(rating),
     };
 
+    // Add user reference if provided
+    if (userId) {
+      // Verify that the user exists
+      const userExists = await User.findById(userId);
+      if (userExists) {
+        reviewData.userId = userId;
+        
+        // If user exists and has an avatar, use it directly (unless it's overridden)
+        if (userExists.avatar && !userAvatar) {
+          reviewData.userAvatar = userExists.avatar;
+        }
+      }
+    }
+
+    // Add user avatar if provided in the request - use it directly
+    if (userAvatar) {
+      reviewData.userAvatar = userAvatar;
+      console.log('Using avatar path from request:', userAvatar);
+    }
+
     // If there's an uploaded file, add its path
     if (req.file) {
-      // Get server base URL
-      const baseUrl = `${req.protocol}://${req.get('host')}`;
-      reviewData.eventImage = `${baseUrl}/uploads/${req.file.filename}`;
+      reviewData.eventImage = `/uploads/${req.file.filename}`;
     }
 
     // Create the review
     const review = await Review.create(reviewData);
+    
+    // Log the created review for debugging
+    console.log('Created review with avatar:', review.userAvatar);
+    
     res.status(201).json({ success: true, data: review });
   } catch (error) {
     console.error('Error creating review:', error);
