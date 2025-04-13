@@ -142,7 +142,8 @@ const hi = {
       optional: "वैकल्पिक",
       imageRequirements: "PNG, JPG, GIF 5MB तक",
       imageTypeError: "केवल इमेज फाइलें ही स्वीकार की जाती हैं!",
-      imageSizeError: "इमेज का आकार 5MB से कम होना चाहिए"
+      imageSizeError: "इमेज का आकार 5MB से कम होना चाहिए",
+      reviewingAs: "के रूप में समीक्षा करना"
     }
   },
   
@@ -163,6 +164,44 @@ const hi = {
   language: {
     english: "English",
     hindi: "हिंदी",
+  },
+
+  // Authentication
+  auth: {
+    login: "लॉगिन",
+    loggingIn: "लॉगिन हो रहा है...",
+    register: "रजिस्टर",
+    registering: "रजिस्टर हो रहा है...",
+    logout: "लॉगआउट",
+    name: "नाम",
+    namePlaceholder: "आपका नाम",
+    email: "ईमेल",
+    password: "पासवर्ड",
+    confirmPassword: "पासवर्ड की पुष्टि करें",
+    forgotPassword: "पासवर्ड भूल गए?",
+    resetPassword: "पासवर्ड रीसेट करें",
+    noAccount: "खाता नहीं है?",
+    haveAccount: "पहले से ही खाता है?",
+    fillAllFields: "कृपया सभी आवश्यक फ़ील्ड भरें",
+    passwordsNotMatch: "पासवर्ड मेल नहीं खाते",
+    passwordTooShort: "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए",
+    userAvatar: "उपयोगकर्ता अवतार",
+    personalInfo: "व्यक्तिगत जानकारी",
+    orders: "मेरे ऑर्डर",
+    wallet: "मेरा वॉलेट",
+    profile: "प्रोफाइल",
+    editProfile: "प्रोफाइल संपादित करें",
+    updatePassword: "पासवर्ड अपडेट करें",
+    deleteAccount: "खाता हटाएं",
+    loginToAccess: "इस सुविधा का उपयोग करने के लिए कृपया लॉगिन करें",
+    registrationSuccess: "पंजीकरण सफल!",
+    loginSuccess: "लॉगिन सफल!",
+    logoutSuccess: "लॉगआउट सफल",
+    profileUpdated: "प्रोफाइल सफलतापूर्वक अपडेट किया गया!",
+    updateError: "प्रोफाइल अपडेट करने में त्रुटि। कृपया पुन: प्रयास करें।",
+    changePhoto: "फोटो बदलें",
+    avatarUpdated: "प्रोफाइल चित्र सफलतापूर्वक अपडेट किया गया!",
+    avatarUpdateError: "प्रोफाइल चित्र अपडेट करने में विफल। कृपया पुन: प्रयास करें।"
   }
 };
 

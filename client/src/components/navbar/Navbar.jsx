@@ -3,7 +3,10 @@
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import LoginButton from "@/components/auth/LoginButton";
+import UserProfileMenu from "@/components/auth/UserProfileMenu";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
@@ -11,6 +14,7 @@ function classNames(...classes) {
 
 export default function Navbar() {
     const { t } = useLanguage();
+    const { user } = useAuth();
 
     // Use translations for navigation
     const navigation = [
@@ -70,9 +74,16 @@ export default function Navbar() {
                                         </div>
                                     </div>
 
-                                    {/* Language Switcher - Desktop */}
-                                    <div className="hidden sm:flex items-center">
+                                    {/* Right side menu - Desktop */}
+                                    <div className="hidden sm:flex items-center space-x-4">
                                         <LanguageSwitcher />
+
+                                        {/* Auth Section */}
+                                        {user ? (
+                                            <UserProfileMenu />
+                                        ) : (
+                                            <LoginButton />
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -97,9 +108,18 @@ export default function Navbar() {
                                         </Disclosure.Button>
                                     ))}
 
-                                    {/* Language Switcher - Mobile */}
-                                    <div className="flex justify-center mt-3">
+                                    {/* Language and Auth - Mobile */}
+                                    <div className="flex justify-center space-y-2 flex-col items-center mt-3">
                                         <LanguageSwitcher />
+
+                                        {/* Auth Section - Mobile */}
+                                        <div className="mt-2">
+                                            {user ? (
+                                                <UserProfileMenu />
+                                            ) : (
+                                                <LoginButton />
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </Disclosure.Panel>

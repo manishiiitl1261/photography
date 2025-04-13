@@ -44,6 +44,17 @@ const ReviewSchema = new mongoose.Schema({
     type: String,
     default: '/assest/user1.jpg'
   },
+  // User who created the review (if authenticated)
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false
+  },
+  // User avatar (if authenticated)
+  userAvatar: {
+    type: String,
+    default: '/assets/avtar.png'
+  },
   createdAt: {
     type: Date,
     default: Date.now

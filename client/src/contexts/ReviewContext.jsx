@@ -36,27 +36,30 @@ export const ReviewProvider = ({ children }) => {
             const data = await response.json();
 
             if (data.success && data.data.length > 0) {
-                // Combine with existing cardData for demo purposes
-                // In a real app, you'd use only the API data
-                const combinedReviews = [...data.data, ...cardData];
-                setReviews(combinedReviews);
+                // Use only the API data instead of combining with demo data
+                const apiReviews = data.data;
+
+                // Log the received reviews for debugging
+                console.log('API Reviews:', apiReviews);
+
+                setReviews(apiReviews);
 
                 // Calculate average rating
-                const total = combinedReviews.reduce((sum, review) => {
+                const total = apiReviews.reduce((sum, review) => {
                     // Ensure we're using a number value for rating
                     const ratingValue = review.rating ? Number(review.rating) : Number(review.stars) || 0;
                     return sum + ratingValue;
                 }, 0);
 
-                const average = (total / combinedReviews.length).toFixed(1);
+                const average = (total / apiReviews.length).toFixed(1);
                 setAvgRating(average);
 
                 // Set review count
-                setReviewCount(combinedReviews.length);
+                setReviewCount(apiReviews.length);
 
                 // Calculate rating distribution
                 const distribution = [5, 4, 3, 2, 1].map(stars => {
-                    const count = combinedReviews.filter(r => {
+                    const count = apiReviews.filter(r => {
                         // Check both rating and stars fields
                         const reviewRating = r.rating !== undefined ? Number(r.rating) : Number(r.stars) || 0;
                         return reviewRating === stars;
@@ -64,17 +67,38 @@ export const ReviewProvider = ({ children }) => {
 
                     return {
                         stars,
-                        percentage: Math.round((count / combinedReviews.length) * 100)
+                        percentage: Math.round((count / apiReviews.length) * 100)
                     };
                 });
 
                 setRatingDistribution(distribution);
+            } else {
+                // If no API data, use an empty array (don't use cardData)
+                setReviews([]);
+                setAvgRating(0);
+                setReviewCount(0);
+                setRatingDistribution([
+                    { stars: 5, percentage: 0 },
+                    { stars: 4, percentage: 0 },
+                    { stars: 3, percentage: 0 },
+                    { stars: 2, percentage: 0 },
+                    { stars: 1, percentage: 0 }
+                ]);
             }
         } catch (err) {
             console.error("Error fetching reviews:", err);
             setError(err.message);
-            // Use demo data if API fails
-            setReviews(cardData);
+            // Don't use demo data on error, use empty array instead
+            setReviews([]);
+            setAvgRating(0);
+            setReviewCount(0);
+            setRatingDistribution([
+                { stars: 5, percentage: 0 },
+                { stars: 4, percentage: 0 },
+                { stars: 3, percentage: 0 },
+                { stars: 2, percentage: 0 },
+                { stars: 1, percentage: 0 }
+            ]);
         } finally {
             setLoading(false);
         }

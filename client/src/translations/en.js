@@ -142,7 +142,8 @@ const en = {
       optional: "Optional",
       imageRequirements: "PNG, JPG, GIF up to 5MB",
       imageTypeError: "Only image files are accepted!",
-      imageSizeError: "Image must be less than 5MB"
+      imageSizeError: "Image must be less than 5MB",
+      reviewingAs: "Reviewing as"
     }
   },
   
@@ -163,6 +164,44 @@ const en = {
   language: {
     english: "English",
     hindi: "हिंदी",
+  },
+
+  // Authentication
+  auth: {
+    login: "Login",
+    loggingIn: "Logging in...",
+    register: "Register",
+    registering: "Registering...",
+    logout: "Logout",
+    name: "Name",
+    namePlaceholder: "Your Name",
+    email: "Email",
+    password: "Password",
+    confirmPassword: "Confirm Password",
+    forgotPassword: "Forgot Password?",
+    resetPassword: "Reset Password",
+    noAccount: "Don't have an account?",
+    haveAccount: "Already have an account?",
+    fillAllFields: "Please fill in all required fields",
+    passwordsNotMatch: "Passwords do not match",
+    passwordTooShort: "Password must be at least 6 characters",
+    userAvatar: "User Avatar",
+    personalInfo: "Personal Information",
+    orders: "My Orders",
+    wallet: "My Wallet",
+    profile: "Profile",
+    editProfile: "Edit Profile",
+    updatePassword: "Update Password",
+    deleteAccount: "Delete Account",
+    loginToAccess: "Please login to access this feature",
+    registrationSuccess: "Registration successful!",
+    loginSuccess: "Login successful!",
+    logoutSuccess: "Logout successful",
+    profileUpdated: "Profile successfully updated!",
+    updateError: "Error updating profile. Please try again.",
+    changePhoto: "Change Photo",
+    avatarUpdated: "Profile picture successfully updated!",
+    avatarUpdateError: "Failed to update profile picture. Please try again."
   }
 };
 

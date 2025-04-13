@@ -2,13 +2,15 @@
 import React, { useState, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useReviews } from "@/contexts/ReviewContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { FaStar } from "react-icons/fa";
 
 function CommentForm() {
     const { t } = useLanguage();
     const { addReview } = useReviews();
+    const { user, getAvatarUrl } = useAuth();
 
-    const [name, setName] = useState("");
+    const [name, setName] = useState(user?.name || "");
     const [event, setEvent] = useState("");
     const [comment, setComment] = useState("");
     const [showPopup, setShowPopup] = useState(false);
@@ -73,6 +75,21 @@ function CommentForm() {
             formData.append('text', comment);
             formData.append('rating', rating);
 
+            // Include user ID if available
+            if (user?._id) {
+                formData.append('userId', user._id);
+            }
+
+            // Include user's avatar if available
+            if (user?.avatar) {
+                // Don't try to parse the path - send the user's exact avatar path
+                // The server will handle the formatting
+                formData.append('userAvatar', user.avatar);
+
+                // Debugging - log what we're sending
+                console.log('Sending user avatar path:', user.avatar);
+            }
+
             // Only append eventImage if it exists
             if (eventImage) {
                 formData.append('eventImage', eventImage);
@@ -86,7 +103,7 @@ function CommentForm() {
                 setShowPopup(true);
 
                 // Clear form fields
-                setName("");
+                setName(user?.name || "");
                 setEvent("");
                 setComment("");
                 setRating(0);
@@ -114,6 +131,23 @@ function CommentForm() {
     return (
         <div className="bg-opacity-40 bg-purple-300 p-4 rounded-lg shadow-md shadow-slate-200 lg:p-8">
             <h2 className="text-2xl font-bold text-center mb-6 text-blue-950">{t.reviews.yourReview}</h2>
+
+            {/* User avatar display when logged in */}
+            {user && (
+                <div className="flex justify-center mb-6">
+                    <div className="flex flex-col items-center">
+                        <img
+                            src={getAvatarUrl(user.avatar)}
+                            alt={user.name}
+                            className="w-16 h-16 rounded-full object-cover border-2 border-purple-400"
+                            onError={(e) => {
+                                e.target.src = '/assets/avtar.png';
+                            }}
+                        />
+                        <p className="mt-2 text-blue-900 font-medium">{t.reviews.comment.reviewingAs} {user.name}</p>
+                    </div>
+                </div>
+            )}
 
             <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
