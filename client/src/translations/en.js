@@ -74,27 +74,27 @@ const en = {
     packages: {
       wedding: {
         title: "Wedding Shoot",
-        price: "₹40,000",
+        price: "₹40000",
       },
       birthday: {
         title: "Birthday Celebration",
-        price: "₹24,000",
+        price: "₹24000",
       },
       event: {
         title: "Event Shoot",
-        price: "₹32,000",
+        price: "₹32000",
       },
       song: {
         title: "Song Video Shoot",
-        price: "₹56,000",
+        price: "₹56000",
       },
       corporate: {
         title: "Corporate Event",
-        price: "₹48,000",
+        price: "₹48000",
       },
       portrait: {
         title: "Portrait Session",
-        price: "₹16,000",
+        price: "₹16000",
       }
     }
   },

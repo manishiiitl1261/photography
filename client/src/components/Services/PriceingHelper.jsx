@@ -1,7 +1,7 @@
 const cardData = [
     {
         title: "Wedding Shoot",
-        price: "$500",
+        price: "₹49999",
         features: [
             "8 Hours Session",
             "300 Quality Images",
@@ -13,7 +13,7 @@ const cardData = [
     },
     {
         title: "Birthday Celebration",
-        price: "$300",
+        price: "₹24000",
         features: [
             "4 Hours Session",
             "200 Quality Images",
@@ -25,7 +25,7 @@ const cardData = [
     },
     {
         title: "Event Shoot",
-        price: "$400",
+        price: "₹32000",
         features: [
             "6 Hours Session",
             "250 Quality Images",
@@ -37,7 +37,7 @@ const cardData = [
     },
     {
         title: "Song Video Shoot",
-        price: "$700",
+        price: "₹56000",
         features: [
             "10 Hours Session",
             "Unlimited Quality Images",
@@ -49,7 +49,7 @@ const cardData = [
     },
     {
         title: "Corporate Event",
-        price: "$600",
+        price: "₹48000",
         features: [
             "8 Hours Session",
             "400 Quality Images",
@@ -61,7 +61,7 @@ const cardData = [
     },
     {
         title: "Portrait Session",
-        price: "$200",
+        price: "₹16000",
         features: [
             "2 Hours Session",
             "100 Quality Images",

@@ -2,7 +2,7 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
-const { generateOTP, sendOTPEmail, sendWelcomeEmail, createTransporter } = require('../utils/emailService');
+const { generateOTP, sendOTPEmail, sendEmailChangeOTP, sendWelcomeEmail, createTransporter } = require('../utils/emailService');
 const crypto = require('crypto');
 const emailService = require('../utils/emailService');
 const nodemailer = require('nodemailer');
@@ -354,15 +354,9 @@ exports.updateUserProfile = async (req, res) => {
     const updateData = {};
     
     if (name) updateData.name = name;
-    if (email) updateData.email = email;
-    if (avatar) updateData.avatar = avatar;
     
-    const user = await User.findByIdAndUpdate(
-      userId,
-      updateData,
-      { new: true, runValidators: true }
-    ).select('-password -refreshToken -refreshTokenExpiresAt');
-    
+    // Check if email is being changed
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ 
         success: false, 
@@ -370,9 +364,48 @@ exports.updateUserProfile = async (req, res) => {
       });
     }
     
+    if (email && email !== user.email) {
+      // Check if email is already in use by someone else
+      const existingUser = await User.findOne({ email });
+      if (existingUser && existingUser._id.toString() !== userId) {
+        return res.status(400).json({
+          success: false,
+          message: 'This email is already associated with another account'
+        });
+      }
+    
+      // Store the new email in tempEmail field instead of changing it directly
+      updateData.tempEmail = email;
+      
+      // Generate and set OTP for verification
+      const otp = user.generateVerificationOTP();
+      
+      // Save the user with tempEmail and OTP
+      user.tempEmail = email;
+      await user.save();
+      
+      // Send verification email to the new email address
+      await sendEmailChangeOTP(email, otp);
+      
+      return res.status(200).json({
+        success: true,
+        message: 'Email change requested. Please verify your new email address with the code we sent.',
+        requiresVerification: true,
+        email
+      });
+    }
+    
+    if (avatar) updateData.avatar = avatar;
+    
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      updateData,
+      { new: true, runValidators: true }
+    ).select('-password -refreshToken -refreshTokenExpiresAt');
+    
     res.status(200).json({ 
       success: true,
-      user
+      user: updatedUser
     });
   } catch (error) {
     logger.error('Update user profile error:', error);
@@ -830,6 +863,312 @@ exports.validateResetToken = async (req, res) => {
     
   } catch (error) {
     console.error('Token validation error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Something went wrong. Please try again.' 
+    });
+  }
+};
+
+// Create token
+const createToken = (user) => {
+  const token = jwt.sign(
+    { 
+      userId: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_LIFETIME }
+  );
+  
+  console.log('Created JWT token with payload:', { 
+    userId: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role
+  });
+  
+  return token;
+};
+
+// Check if email exists
+exports.checkEmailExists = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required'
+      });
+    }
+
+    // Find if a user already exists with this email
+    const existingUser = await User.findOne({ email });
+    
+    // Return whether the email exists
+    return res.status(200).json({
+      success: true,
+      exists: !!existingUser
+    });
+  } catch (error) {
+    logger.error('Check email exists error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'An error occurred while checking email'
+    });
+  }
+};
+
+// Request email change
+exports.requestEmailChange = async (req, res) => {
+  try {
+    // Get user ID from req.user (could be in either id or userId)
+    const userId = req.user.id || req.user.userId;
+    
+    if (!userId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'User ID not found in authentication token' 
+      });
+    }
+    
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a new email address'
+      });
+    }
+    
+    // Check if email is valid
+    const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email address'
+      });
+    }
+    
+    // Get the user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'User not found' 
+      });
+    }
+    
+    // Check if email is already in use by someone else
+    const existingUser = await User.findOne({ email });
+    if (existingUser && existingUser._id.toString() !== userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'This email is already associated with another account'
+      });
+    }
+    
+    // If it's the same as current email, return success
+    if (email === user.email) {
+      return res.status(200).json({
+        success: true,
+        message: 'This is already your email address'
+      });
+    }
+    
+    // Update the user's tempEmail field
+    user.tempEmail = email;
+    
+    // Generate and set OTP for verification
+    const otp = user.generateVerificationOTP();
+    await user.save();
+    
+    // Send verification email to the new email address
+    await sendEmailChangeOTP(email, otp);
+    
+    res.status(200).json({
+      success: true,
+      message: 'Verification code sent to your new email address',
+      email
+    });
+  } catch (error) {
+    logger.error('Request email change error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Something went wrong. Please try again.' 
+    });
+  }
+};
+
+// Verify email change
+exports.verifyEmailChange = async (req, res) => {
+  try {
+    // Get user ID from req.user (could be in either id or userId)
+    const userId = req.user.id || req.user.userId;
+    
+    if (!userId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'User ID not found in authentication token' 
+      });
+    }
+    
+    const { otp } = req.body;
+    
+    if (!otp) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide the verification code'
+      });
+    }
+    
+    // Get the user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'User not found' 
+      });
+    }
+    
+    // Check if user has a tempEmail
+    if (!user.tempEmail) {
+      return res.status(400).json({
+        success: false,
+        message: 'No email change was requested'
+      });
+    }
+    
+    // Verify OTP
+    const isValidOTP = user.verifyOTP(otp);
+    if (!isValidOTP) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired verification code'
+      });
+    }
+    
+    // Check if the tempEmail is already in use by another account
+    const existingUser = await User.findOne({ email: user.tempEmail });
+    if (existingUser && existingUser._id.toString() !== userId) {
+      // Clear tempEmail as it's not usable
+      user.tempEmail = undefined;
+      await user.save();
+      
+      return res.status(400).json({
+        success: false,
+        message: 'This email is already associated with another account'
+      });
+    }
+    
+    try {
+      // Update the user's email with the verified tempEmail
+      const oldEmail = user.email;
+      user.email = user.tempEmail;
+      user.tempEmail = undefined;
+      
+      // Save the user
+      await user.save();
+      
+      // Send confirmation email to both old and new email addresses
+      try {
+        const transporter = await createTransporter();
+        
+        // Send to new email
+        const mailOptions = {
+          from: process.env.EMAIL_FROM || 'Photography App <noreply@photography.com>',
+          to: user.email,
+          subject: 'Email Address Changed - Photography App',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
+              <h2 style="color: #333; text-align: center;">Email Address Changed</h2>
+              <p>Your email address for Photography App has been successfully changed.</p>
+              <p>If you did not make this change, please contact support immediately.</p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}" style="background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                  Login to Your Account
+                </a>
+              </div>
+              <p style="color: #666; font-size: 12px; margin-top: 30px; text-align: center;">
+                &copy; ${new Date().getFullYear()} Photography App. All rights reserved.
+              </p>
+            </div>
+          `
+        };
+        
+        // Send to old email
+        const notificationOptions = {
+          from: process.env.EMAIL_FROM || 'Photography App <noreply@photography.com>',
+          to: oldEmail,
+          subject: 'Email Address Changed - Photography App',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
+              <h2 style="color: #333; text-align: center;">Email Address Changed</h2>
+              <p>The email address for your Photography App account has been changed to ${user.email}.</p>
+              <p>If you did not make this change, please contact support immediately.</p>
+              <p style="color: #666; font-size: 12px; margin-top: 30px; text-align: center;">
+                &copy; ${new Date().getFullYear()} Photography App. All rights reserved.
+              </p>
+            </div>
+          `
+        };
+        
+        await transporter.sendMail(mailOptions);
+        await transporter.sendMail(notificationOptions);
+      } catch (emailError) {
+        console.error('Error sending email change confirmation:', emailError);
+      }
+      
+      // Return the updated user
+      const updatedUser = {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+        isVerified: user.isVerified
+      };
+      
+      res.status(200).json({
+        success: true,
+        message: 'Email address changed successfully',
+        user: updatedUser
+      });
+    } catch (saveError) {
+      logger.error('Error saving user email change:', saveError);
+      
+      // Check if this is a duplicate key error (email already exists)
+      if (saveError.code === 11000) {
+        // Reset the user's tempEmail since we can't use it
+        user.email = oldEmail; // Set back to original
+        user.tempEmail = undefined;
+        await user.save();
+        
+        return res.status(400).json({
+          success: false,
+          message: 'This email is already associated with another account'
+        });
+      }
+      
+      // For other errors, return a generic message
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to update email. Please try again.'
+      });
+    }
+  } catch (error) {
+    logger.error('Verify email change error:', error);
+    
+    // Check if this is a duplicate key error (email already exists)
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: 'This email is already associated with another account'
+      });
+    }
+    
     res.status(500).json({ 
       success: false, 
       message: 'Something went wrong. Please try again.' 

@@ -13,6 +13,14 @@ const Price = () => {
         down: { hidden: { y: 100, opacity: 0 }, visible: { y: 0, opacity: 1 } },
     };
 
+    // Scroll to booking form when button is clicked
+    const scrollToBookingForm = () => {
+        const bookingFormElement = document.getElementById('booking-form-section');
+        if (bookingFormElement) {
+            bookingFormElement.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     // Get translated titles, prices, and features based on the package type
     const getTranslatedPackage = (card) => {
         let packageKey;
@@ -92,7 +100,10 @@ const Price = () => {
                                         <li key={i} className="mb-2 text-black">{feature}</li>
                                     ))}
                                 </ul>
-                                <button className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 duration-300">
+                                <button
+                                    className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 duration-300"
+                                    onClick={scrollToBookingForm}
+                                >
                                     {t.pricing.buyNow}
                                 </button>
                             </div>

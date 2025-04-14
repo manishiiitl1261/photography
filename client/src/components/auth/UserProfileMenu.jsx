@@ -8,6 +8,7 @@ import {
     UserIcon,
     ShoppingBagIcon,
     CreditCardIcon,
+    CalendarIcon,
     ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline';
 
@@ -94,16 +95,29 @@ const UserProfileMenu = () => {
                             </a>
                         </Link>
 
-                        {/* Orders link */}
-                        <Link href="/orders" legacyBehavior>
+                        {/* My Bookings link */}
+                        <Link href="/profile/bookings" legacyBehavior>
                             <a
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                 onClick={() => setIsDropdownOpen(false)}
                             >
-                                <ShoppingBagIcon className="h-4 w-4 mr-2" />
-                                {t.auth.orders}
+                                <CalendarIcon className="h-4 w-4 mr-2" />
+                                My Bookings
                             </a>
                         </Link>
+
+                        {/* Admin Dashboard - only show for admin users */}
+                        {user.role === 'admin' && (
+                            <Link href="/admin/dashboard" legacyBehavior>
+                                <a
+                                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    onClick={() => setIsDropdownOpen(false)}
+                                >
+                                    <ShoppingBagIcon className="h-4 w-4 mr-2" />
+                                    Admin Dashboard
+                                </a>
+                            </Link>
+                        )}
 
                         {/* Wallet link */}
                         <Link href="/wallet" legacyBehavior>

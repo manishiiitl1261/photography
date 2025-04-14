@@ -8,7 +8,7 @@ const Footer = () => {
   const { t } = useLanguage();
 
   return (
-    <footer className="flex flex-col text-black tex sm:pt-10">
+    <footer className="flex flex-col text-black tex sm:pt-10 bg-purple-200">
       <ItemsContainer />
       <div className="flex flex-col gap-y-5 p-4 bg-slate-700 text-white " >
         <div className="flex md:flex-row flex-col justify-between items-center md:px-10">

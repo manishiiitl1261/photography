@@ -421,6 +421,17 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // Check if email exists in system - implementation preserved but not used
+    const checkEmailExists = async (email) => {
+        try {
+            console.log('Note: Email check functionality is not implemented on server.');
+            return false; // Always return false since the endpoint doesn't exist
+        } catch (error) {
+            console.error('Error checking email:', error);
+            return false;
+        }
+    };
+
     // Update user profile
     const updateProfile = async (profileData) => {
         if (!user) return null;
@@ -431,7 +442,19 @@ export const AuthProvider = ({ children }) => {
                 throw new Error('No authentication token found');
             }
 
-            // Hardcoded URL
+            // Check if email is being changed
+            const isEmailChanged = user.email !== profileData.email;
+
+            // If email is changed, just validate the format
+            if (isEmailChanged) {
+                // Validate email format
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(profileData.email)) {
+                    throw new Error('Please provide a valid email address');
+                }
+            }
+
+            // Use regular profile update endpoint for all changes
             const apiUrl = 'http://localhost:5000/api/auth/profile';
 
             const response = await fetch(apiUrl, {
@@ -460,30 +483,87 @@ export const AuthProvider = ({ children }) => {
                         credentials: 'include'
                     });
 
-                    if (!retryResponse.ok) {
-                        throw new Error('Failed to update profile after token refresh');
-                    }
+                    try {
+                        const retryData = await retryResponse.json();
 
-                    const retryData = await retryResponse.json();
-                    setUser(retryData.user);
-                    localStorage.setItem('user', JSON.stringify(retryData.user));
-                    return retryData.user;
+                        if (!retryResponse.ok) {
+                            // Check for validation errors in retry response
+                            if (retryResponse.status === 400 && retryData.errors) {
+                                const errorMessages = Object.values(retryData.errors)
+                                    .map(err => err.message || err)
+                                    .join(', ');
+                                throw new Error(errorMessages || retryData.message || 'Failed to update profile');
+                            }
+                            throw new Error(retryData.message || 'Failed to update profile after token refresh');
+                        }
+
+                        // Check if email verification is required
+                        if (retryData.requiresVerification) {
+                            return {
+                                success: true,
+                                requiresVerification: true,
+                                email: retryData.email || profileData.email,
+                                message: retryData.message || 'Please verify your new email address'
+                            };
+                        }
+
+                        // Standard response handling
+                        setUser(retryData.user);
+                        localStorage.setItem('user', JSON.stringify(retryData.user));
+                        return retryData;
+                    } catch (parseError) {
+                        console.error('Error parsing retry response:', parseError);
+                        throw new Error('Failed to parse server response. Please try again.');
+                    }
                 } else {
                     throw new Error('Authentication failed. Please login again.');
                 }
             }
 
-            const data = await response.json();
+            try {
+                const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.message || 'Failed to update profile');
+                if (!response.ok) {
+                    // Check for specific validation errors
+                    if (response.status === 400 && data.errors) {
+                        const errorMessages = Object.values(data.errors)
+                            .map(err => err.message || err)
+                            .join(', ');
+                        throw new Error(errorMessages || data.message || 'Failed to update profile');
+                    }
+
+                    // Handle email duplication error specifically - return a proper error object
+                    if (data.message && data.message.includes('already associated with another account')) {
+                        // Don't throw - return a formatted error object that the UI can handle
+                        return {
+                            success: false,
+                            error: true,
+                            message: data.message
+                        };
+                    }
+
+                    throw new Error(data.message || 'Failed to update profile');
+                }
+
+                // Check if email verification is required
+                if (data.requiresVerification) {
+                    return {
+                        success: true,
+                        requiresVerification: true,
+                        email: data.email || profileData.email,
+                        message: data.message || 'Please verify your new email address'
+                    };
+                }
+
+                // Update user in state and localStorage
+                setUser(data.user);
+                localStorage.setItem('user', JSON.stringify(data.user));
+
+                return data;
+            } catch (parseError) {
+                console.error('Error parsing profile response:', parseError);
+                throw new Error('Failed to parse server response. Please try again.');
             }
-
-            // Update user in state and localStorage
-            setUser(data.user);
-            localStorage.setItem('user', JSON.stringify(data.user));
-
-            return data.user;
         } catch (error) {
             console.error('Error updating profile:', error);
             if (error.message.includes('Authentication') || error.message.includes('token')) {
@@ -678,6 +758,7 @@ export const AuthProvider = ({ children }) => {
         getAvatarUrl,
         verifyEmail,
         resendVerificationOTP,
+        checkEmailExists,
     };
 
     return (

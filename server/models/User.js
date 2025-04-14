@@ -16,6 +16,14 @@ const UserSchema = new mongoose.Schema({
     ],
     unique: true,
   },
+  // Temporary email field for email change verification
+  tempEmail: {
+    type: String,
+    match: [
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      'Please provide a valid email',
+    ],
+  },
   password: {
     type: String,
     required: [true, 'Please provide a password'],
@@ -27,6 +35,11 @@ const UserSchema = new mongoose.Schema({
       },
       message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number'
     }
+  },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
   },
   avatar: {
     type: String,
@@ -171,10 +184,15 @@ UserSchema.methods.verifyOTP = function(otp) {
     return false;
   }
   
-  // Clear OTP fields and mark as verified
+  // Clear OTP fields
   this.verificationOTP = undefined;
   this.verificationOTPExpires = undefined;
-  this.isVerified = true;
+  
+  // If this is a new user (not verified yet), mark as verified
+  // If this is an email change (tempEmail exists), don't change isVerified status
+  if (!this.isVerified && !this.tempEmail) {
+    this.isVerified = true;
+  }
   
   return true;
 };

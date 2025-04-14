@@ -17,6 +17,11 @@ router.post('/login', authController.login);
 router.post('/verify-email', authController.verifyEmail);
 router.post('/resend-verification', authController.resendVerificationOTP);
 
+// Email change routes
+router.post('/change-email', authMiddleware, authController.requestEmailChange);
+router.post('/verify-email-change', authMiddleware, authController.verifyEmailChange);
+router.post('/check-email', authController.checkEmailExists);
+
 // Password reset routes
 router.post('/forgot-password', authController.forgotPassword);
 router.post('/reset-password', authController.resetPassword);

@@ -91,7 +91,7 @@ const LoginForm = ({ onClose, setShowRegister }) => {
             setUser?.(data.user);
         }
 
-        onClose(); // Close modal after successful verification
+        onClose(); // Close modal or redirect via the onClose callback
     };
 
     // Handle resend OTP
