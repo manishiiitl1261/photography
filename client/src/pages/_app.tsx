@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ReviewProvider } from "@/contexts/ReviewContext";
+import { BookingProvider } from "@/contexts/BookingContext";
 import AuthWrapper from "@/components/auth/AuthWrapper";
 import { ErrorBoundary } from 'react-error-boundary';
 import { useRouter } from 'next/router';
@@ -43,7 +44,9 @@ export default function App({ Component, pageProps }: AppProps) {
       <LanguageProvider>
         <AuthWrapper>
           <ReviewProvider>
-            <Component {...pageProps} />
+            <BookingProvider>
+              <Component {...pageProps} />
+            </BookingProvider>
           </ReviewProvider>
         </AuthWrapper>
       </LanguageProvider>

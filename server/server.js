@@ -11,6 +11,7 @@ const { handleCSRFError } = require('./middleware/csrfMiddleware');
 const logger = require('./utils/logger');
 const reviewRoutes = require('./routes/reviewRoutes');
 const authRoutes = require('./routes/authRoutes');
+const bookingRoutes = require('./routes/bookingRoutes');
 
 // Initialize Express app
 const app = express();
@@ -75,6 +76,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Routes
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/bookings', bookingRoutes);
 
 // Home route
 app.get('/', (req, res) => {

@@ -39,7 +39,7 @@ const Card = () => {
             className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 lg:px-20 py-12 overflow-hidden "
         >
             {/* Card Container */}
-            <div className="flex flex-col lg:flex-row items-center gap-10 shadow-lg rounded-lg p-6 md:p-8 lg:p-16 relative bg-opacity-70 bg-slate-300">
+            <div className="flex flex-col lg:flex-row items-center gap-10 shadow-lg rounded-lg p-6 md:p-8 lg:p-16 relative bg-opacity-70 bg-slate-300 overflow-hidden">
                 {/* Left Section: Text Content */}
                 <motion.div
                     className="flex-1"

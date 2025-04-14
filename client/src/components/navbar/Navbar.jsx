@@ -48,7 +48,7 @@ export default function Navbar() {
                                     <div className="">
                                         <img
                                             className="h-12 w-20 rounded-lg"
-                                            src="assest/logo.jpg"
+                                            src="/assest/logo.jpg"
                                             alt="Your Company"
                                         />
                                     </div>

@@ -74,27 +74,27 @@ const hi = {
     packages: {
       wedding: {
         title: "शादी की शूटिंग",
-        price: "₹40,000",
+        price: "₹40000",
       },
       birthday: {
         title: "जन्मदिन समारोह",
-        price: "₹24,000",
+        price: "₹24000",
       },
       event: {
         title: "इवेंट शूटिंग",
-        price: "₹32,000",
+        price: "₹32000",
       },
       song: {
         title: "गाना वीडियो शूटिंग",
-        price: "₹56,000",
+        price: "₹56000",
       },
       corporate: {
         title: "कॉर्पोरेट इवेंट",
-        price: "₹48,000",
+        price: "₹48000",
       },
       portrait: {
         title: "पोर्ट्रेट सेशन",
-        price: "₹16,000",
+        price: "₹16000",
       }
     }
   },

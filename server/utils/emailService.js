@@ -103,6 +103,47 @@ const sendOTPEmail = async (email, otp) => {
   }
 };
 
+// Send email change verification code
+const sendEmailChangeOTP = async (email, otp) => {
+  try {
+    console.log(`Attempting to send email change verification code to ${email}`);
+    const transporter = await createTransporter();
+    
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || 'Photography App <noreply@photography.com>',
+      to: email,
+      subject: 'Email Change Verification - Photography App',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
+          <h2 style="color: #333; text-align: center;">Email Change Verification</h2>
+          <p>You've requested to change your email address for your Photography App account. Please use the following verification code to confirm this change:</p>
+          <div style="background-color: #f5f5f5; padding: 10px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; margin: 20px 0;">
+            ${otp}
+          </div>
+          <p>This code will expire in ${process.env.OTP_EXPIRY || 10} minutes.</p>
+          <p>If you didn't request this change, please ignore this email or contact support if you believe your account may be compromised.</p>
+          <p style="color: #666; font-size: 12px; margin-top: 30px; text-align: center;">
+            &copy; ${new Date().getFullYear()} Photography App. All rights reserved.
+          </p>
+        </div>
+      `
+    };
+    
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Email change verification email sent:', info.messageId);
+    
+    // If using Ethereal, provide preview URL
+    if (info.messageId && info.messageId.includes('ethereal')) {
+      console.log('Preview URL:', nodemailer.getTestMessageUrl(info));
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error sending email change verification email:', error);
+    return false;
+  }
+};
+
 // Send welcome email after successful verification
 const sendWelcomeEmail = async (email, name) => {
   try {
@@ -149,6 +190,7 @@ const sendWelcomeEmail = async (email, name) => {
 module.exports = {
   generateOTP,
   sendOTPEmail,
+  sendEmailChangeOTP,
   sendWelcomeEmail,
   createTransporter
 }; 
