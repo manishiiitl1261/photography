@@ -2,6 +2,7 @@
 
 import { createContext, useState, useContext, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Base URL for API calls
 const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
@@ -12,6 +13,7 @@ export const useBooking = () => useContext(BookingContext);
 
 export const BookingProvider = ({ children }) => {
     const { user } = useAuth();
+    const { t } = useLanguage();
     const [bookings, setBookings] = useState([]);
     const [userBookings, setUserBookings] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -28,7 +30,7 @@ export const BookingProvider = ({ children }) => {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                throw new Error('You must be logged in to create a booking');
+                throw new Error(t.booking.loginRequired);
             }
 
             const apiUrl = `${baseUrl}/api/bookings`;
@@ -44,7 +46,7 @@ export const BookingProvider = ({ children }) => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || 'Failed to create booking');
+                throw new Error(data.message || t.booking.failure);
             }
 
             // Update user bookings
@@ -76,7 +78,7 @@ export const BookingProvider = ({ children }) => {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                throw new Error('You must be logged in to view your bookings');
+                throw new Error(t.booking.loginRequired);
             }
 
             const apiUrl = `${baseUrl}/api/bookings`;

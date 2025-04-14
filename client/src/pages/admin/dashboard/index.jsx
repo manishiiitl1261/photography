@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useBooking } from '@/contexts/BookingContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/router';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/navbar/Navbar';
 import {
     CheckCircleIcon,
     XCircleIcon,

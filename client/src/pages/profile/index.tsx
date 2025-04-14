@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Navbar from '@/components/navbar/Navbar';
 import { CameraIcon } from '@heroicons/react/24/outline';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 // Debounce function to prevent excessive API calls
 const debounce = <F extends (...args: any[]) => any>(func: F, wait: number) => {
@@ -35,7 +36,7 @@ const debounce = <F extends (...args: any[]) => any>(func: F, wait: number) => {
 };
 
 const ProfilePage = () => {
-  const { user, getUserProfile, updateProfile, uploadAvatar, getAvatarUrl } = useAuth();
+  const { user, getUserProfile, updateProfile, uploadAvatar, removeAvatar, getAvatarUrl } = useAuth();
   const { t } = useLanguage();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -429,6 +430,34 @@ const ProfilePage = () => {
     }
   };
 
+  const handleRemoveAvatar = async () => {
+    if (!user?.avatar) {
+      return; // Don't do anything if there's no avatar to remove
+    }
+
+    // Show confirmation dialog
+    if (window.confirm(t.auth.removeAvatarConfirm || 'Are you sure you want to remove your profile picture?')) {
+      try {
+        setUploading(true);
+        setMessage({ text: '', type: '' });
+        
+        await removeAvatar();
+        
+        setMessage({
+          text: t.auth.avatarRemoved || 'Profile picture removed successfully',
+          type: 'success'
+        });
+      } catch (error: any) {
+        setMessage({
+          text: error.message || t.auth.avatarRemoveError || 'Failed to remove profile picture',
+          type: 'error'
+        });
+      } finally {
+        setUploading(false);
+      }
+    }
+  };
+
   const handleVerificationCancel = () => {
     setShowVerification(false);
     setVerificationCode('');
@@ -543,14 +572,19 @@ const ProfilePage = () => {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto px-4 pt-32 pb-16">
-        <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8">
-          <h1 className="text-3xl font-bold mb-8 text-center">{t.auth.profile}</h1>
+      <div className="container mx-auto px-4 pt-32 pb-16 bg-gray-50">
+        <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 py-8 px-6">
+            <h1 className="text-3xl font-bold text-center text-white">{t.auth.profile}</h1>
+            <div className="absolute top-4 right-4">
+              <LanguageSwitcher variant="navbar" />
+            </div>
+          </div>
 
           {message.text && (
             <div 
-              className={`mb-6 p-4 rounded ${
-                message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+              className={`mx-8 mt-6 p-4 rounded-lg ${
+                message.type === 'success' ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200'
               }`}
             >
               {message.text}
@@ -558,16 +592,18 @@ const ProfilePage = () => {
           )}
           
           {/* Avatar upload section */}
-          <div className="flex justify-center mb-8">
+          <div className="flex justify-center -mt-12">
             <div className="relative group">
-              <img 
-                src={getAvatarUrl(user?.avatar)} 
-                alt={t.auth.userAvatar} 
-                className="h-32 w-32 object-cover rounded-full border-4 border-gray-200"
-                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                  e.currentTarget.src = '/assets/avtar.png';
-                }}
-              />
+              <div className="h-32 w-32 rounded-full border-4 border-white bg-white shadow-md overflow-hidden">
+                <img 
+                  src={getAvatarUrl(user?.avatar)} 
+                  alt={t.auth.userAvatar} 
+                  className="h-full w-full object-cover"
+                  onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                    e.currentTarget.src = '/assets/avtar.png';
+                  }}
+                />
+              </div>
               
               <div 
                 className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full 
@@ -576,7 +612,7 @@ const ProfilePage = () => {
               >
                 <div className="text-white flex flex-col items-center justify-center">
                   <CameraIcon className="h-8 w-8 mb-1" />
-                  <span className="text-xs">{t.auth.changePhoto}</span>
+                  <span className="text-xs font-medium">{t.auth.changePhoto}</span>
                 </div>
               </div>
               
@@ -595,69 +631,85 @@ const ProfilePage = () => {
               )}
             </div>
           </div>
-
-          <form onSubmit={handleSubmit}>
-            <div className="mb-6">
-              <label 
-                className="block text-gray-700 text-sm font-bold mb-2" 
-                htmlFor="name"
-              >
-                {t.auth.name}
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="name"
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="mb-6">
-              <label 
-                className="block text-gray-700 text-sm font-bold mb-2" 
-                htmlFor="email"
-              >
-                {t.auth.email}
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="email"
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Changing your email will require verification via a code sent to the new email address.
-              </p>
-            </div>
-
-            <div className="flex justify-center">
+          
+          {/* Remove Avatar Button - Only show if user has a custom avatar, not the default */}
+          {user?.avatar && user.avatar !== null && user.avatar !== undefined && user.avatar !== '' && (
+            <div className="flex justify-center mt-2">
               <button
-                type="submit"
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline"
+                type="button"
+                onClick={handleRemoveAvatar}
+                className="text-red-600 text-sm hover:text-red-800 transition-colors font-medium"
+                disabled={uploading}
               >
-                {t.auth.editProfile}
+                {t.auth.removePhoto || 'Remove photo'}
               </button>
             </div>
-          </form>
+          )}
 
-          {/* Links to other user pages */}
-          <div className="mt-10 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <Link href="/orders" legacyBehavior>
-              <a className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-center">
-                {t.auth.orders}
-              </a>
-            </Link>
-            <Link href="/wallet" legacyBehavior>
-              <a className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-center">
-                {t.auth.wallet}
-              </a>
-            </Link>
+          <div className="p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-1">
+                <label 
+                  className="block text-gray-700 text-sm font-bold mb-2" 
+                  htmlFor="name"
+                >
+                  {t.auth.name}
+                </label>
+                <input
+                  className="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  id="name"
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label 
+                  className="block text-gray-700 text-sm font-bold mb-2" 
+                  htmlFor="email"
+                >
+                  {t.auth.email}
+                </label>
+                <input
+                  className="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  id="email"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Changing your email will require verification via a code sent to the new email address.
+                </p>
+              </div>
+
+              <div className="pt-4">
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 shadow-md transition-colors duration-200"
+                >
+                  {t.auth.editProfile}
+                </button>
+              </div>
+            </form>
+
+            {/* Links to other user pages - using profile/bookings instead of non-existent pages */}
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Link href="/profile/bookings" legacyBehavior>
+                <a className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-4 rounded-lg focus:outline-none shadow-sm text-center transition-colors duration-200">
+                  {t.booking.myBookings || "My Bookings"}
+                </a>
+              </Link>
+              <Link href="/" legacyBehavior>
+                <a className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-4 rounded-lg focus:outline-none shadow-sm text-center transition-colors duration-200">
+                  {t.nav.home}
+                </a>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
