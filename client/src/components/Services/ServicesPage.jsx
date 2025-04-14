@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../header/Header';
 import PricePackages from './PricePackages';
 import Footer from '../footer/Footer';
@@ -8,40 +8,44 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 const ServicesPage = () => {
     const { t } = useLanguage();
+    const [services, setServices] = useState([]);
 
-    const services = [
-        {
-            title: 'Wedding Photography',
-            description: 'Capture your special day with our professional wedding photography services. We offer a range of packages to suit your needs and budget.',
-            image: '/assest/wedding.jpg'
-        },
-        {
-            title: 'Portrait Photography',
-            description: 'Professional portrait photography for individuals, families, and groups. Perfect for professional profiles, family albums, or special occasions.',
-            image: '/assest/portrait.jpg'
-        },
-        {
-            title: 'Event Coverage',
-            description: 'Complete coverage of your events including corporate functions, birthdays, anniversaries, and more. We capture the moments that matter.',
-            image: '/assest/event.jpg'
-        },
-        {
-            title: 'Commercial Photography',
-            description: 'High-quality commercial photography for your business needs. Product photography, brand imagery, and marketing materials.',
-            image: '/assest/commercial.jpg'
-        }
-    ];
+    useEffect(() => {
+        // Update services when language changes
+        setServices([
+            {
+                title: t.services.servicesPage.serviceTypes.wedding.title,
+                description: t.services.servicesPage.serviceTypes.wedding.description,
+                image: '/assest/wedding.jpg'
+            },
+            {
+                title: t.services.servicesPage.serviceTypes.portrait.title,
+                description: t.services.servicesPage.serviceTypes.portrait.description,
+                image: '/assest/portrait.jpg'
+            },
+            {
+                title: t.services.servicesPage.serviceTypes.event.title,
+                description: t.services.servicesPage.serviceTypes.event.description,
+                image: '/assest/event.jpg'
+            },
+            {
+                title: t.services.servicesPage.serviceTypes.commercial.title,
+                description: t.services.servicesPage.serviceTypes.commercial.description,
+                image: '/assest/commercial.jpg'
+            }
+        ]);
+    }, [t]);
 
     return (
         <div>
-            <Header title="Our Services" />
+            <Header title={t.services.title} />
 
             <section className="py-16 bg-white">
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-12">
-                        <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Photography Services</h2>
+                        <h2 className="text-4xl font-bold text-gray-900 mb-4">{t.services.servicesPage.title}</h2>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            We offer a range of professional photography services to capture your special moments.
+                            {t.services.servicesPage.description}
                         </p>
                     </div>
 
@@ -73,9 +77,9 @@ const ServicesPage = () => {
             <section className="py-16 bg-white">
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-12">
-                        <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Process</h2>
+                        <h2 className="text-4xl font-bold text-gray-900 mb-4">{t.services.servicesPage.process.title}</h2>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            From booking to delivery, our process ensures a seamless experience.
+                            {t.services.servicesPage.process.description}
                         </p>
                     </div>
 
@@ -84,32 +88,32 @@ const ServicesPage = () => {
                             <div className="w-24 h-24 bg-brown-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <span className="text-brown-500 text-3xl font-bold">1</span>
                             </div>
-                            <h3 className="text-xl font-semibold mb-2">Consultation</h3>
-                            <p className="text-gray-600">We discuss your vision, requirements, and preferences.</p>
+                            <h3 className="text-xl font-semibold mb-2">{t.services.servicesPage.process.steps.consultation.title}</h3>
+                            <p className="text-gray-600">{t.services.servicesPage.process.steps.consultation.description}</p>
                         </div>
 
                         <div className="text-center max-w-xs">
                             <div className="w-24 h-24 bg-brown-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <span className="text-brown-500 text-3xl font-bold">2</span>
                             </div>
-                            <h3 className="text-xl font-semibold mb-2">Booking</h3>
-                            <p className="text-gray-600">Secure your date with a booking and select your preferred package.</p>
+                            <h3 className="text-xl font-semibold mb-2">{t.services.servicesPage.process.steps.booking.title}</h3>
+                            <p className="text-gray-600">{t.services.servicesPage.process.steps.booking.description}</p>
                         </div>
 
                         <div className="text-center max-w-xs">
                             <div className="w-24 h-24 bg-brown-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <span className="text-brown-500 text-3xl font-bold">3</span>
                             </div>
-                            <h3 className="text-xl font-semibold mb-2">Shoot Day</h3>
-                            <p className="text-gray-600">Our professional team captures your special moments.</p>
+                            <h3 className="text-xl font-semibold mb-2">{t.services.servicesPage.process.steps.shootDay.title}</h3>
+                            <p className="text-gray-600">{t.services.servicesPage.process.steps.shootDay.description}</p>
                         </div>
 
                         <div className="text-center max-w-xs">
                             <div className="w-24 h-24 bg-brown-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <span className="text-brown-500 text-3xl font-bold">4</span>
                             </div>
-                            <h3 className="text-xl font-semibold mb-2">Delivery</h3>
-                            <p className="text-gray-600">Receive your professionally edited photos and videos.</p>
+                            <h3 className="text-xl font-semibold mb-2">{t.services.servicesPage.process.steps.delivery.title}</h3>
+                            <p className="text-gray-600">{t.services.servicesPage.process.steps.delivery.description}</p>
                         </div>
                     </div>
                 </div>

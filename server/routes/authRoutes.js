@@ -37,5 +37,6 @@ router.post('/logout', authMiddleware, authController.logout);
 router.get('/profile', authMiddleware, authController.getUserProfile);
 router.patch('/profile', authMiddleware, authController.updateUserProfile);
 router.post('/avatar', authMiddleware, upload.single('avatar'), authController.uploadAvatar);
+router.delete('/avatar', authMiddleware, authController.removeAvatar);
 
 module.exports = router; 

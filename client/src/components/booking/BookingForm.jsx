@@ -3,31 +3,20 @@
 import { useState, useEffect } from 'react';
 import { useBooking } from '@/contexts/BookingContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useRouter } from 'next/navigation';
 import AuthModal from '@/components/auth/AuthModal';
-
-const serviceTypes = [
-    { value: 'Wedding Shoot', label: 'Wedding Shoot', price: 500 },
-    { value: 'Birthday Celebration', label: 'Birthday Celebration', price: 300 },
-    { value: 'Event Shoot', label: 'Event Shoot', price: 400 },
-    { value: 'Song Video Shoot', label: 'Song Video Shoot', price: 700 },
-    { value: 'Corporate Event', label: 'Corporate Event', price: 600 },
-    { value: 'Portrait Session', label: 'Portrait Session', price: 200 }
-];
-
-const packageTypes = [
-    { value: 'Traditional Wedding', label: 'Traditional Wedding', details: '250 Photos & Traditional Video', price: 49999 },
-    { value: 'Silver Package', label: 'Silver Package', details: '300 Photos, Cinematic Video & Drone Coverage', price: 75000 },
-    { value: 'Gold Package', label: 'Gold Package', details: '400 Photos, Cinematic Video, Teaser & Drone Coverage', price: 105000 }
-];
 
 const BookingForm = () => {
     const { createBooking, loading, error } = useBooking();
     const { user } = useAuth();
+    const { t } = useLanguage();
     const router = useRouter();
     const [message, setMessage] = useState({ text: '', type: '' });
     const [minDate, setMinDate] = useState('');
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [serviceTypes, setServiceTypes] = useState([]);
+    const [packageTypes, setPackageTypes] = useState([]);
 
     const [formData, setFormData] = useState({
         serviceType: '',
@@ -38,10 +27,46 @@ const BookingForm = () => {
         price: 0
     });
 
-    // Set minimum date on client-side only to prevent hydration mismatch
+    // Set minimum date and load service/package types on initial load
     useEffect(() => {
+        // Set minimum date only on client side to prevent hydration error
         setMinDate(new Date().toISOString().split('T')[0]);
-    }, []);
+
+        // Load translations once they're available
+        if (t && Object.keys(t).length > 0) {
+            // Load service types with translations
+            setServiceTypes([
+                { value: 'Wedding Shoot', label: t.booking.services.wedding.label, price: 500 },
+                { value: 'Birthday Celebration', label: t.booking.services.birthday.label, price: 300 },
+                { value: 'Event Shoot', label: t.booking.services.event.label, price: 400 },
+                { value: 'Song Video Shoot', label: t.booking.services.song.label, price: 700 },
+                { value: 'Corporate Event', label: t.booking.services.corporate.label, price: 600 },
+                { value: 'Portrait Session', label: t.booking.services.portrait.label, price: 200 }
+            ]);
+
+            // Load package types with translations
+            setPackageTypes([
+                {
+                    value: 'Traditional Wedding',
+                    label: t.booking.packages.traditional.label,
+                    details: t.booking.packages.traditional.details,
+                    price: 49999
+                },
+                {
+                    value: 'Silver Package',
+                    label: t.booking.packages.silver.label,
+                    details: t.booking.packages.silver.details,
+                    price: 75000
+                },
+                {
+                    value: 'Gold Package',
+                    label: t.booking.packages.gold.label,
+                    details: t.booking.packages.gold.details,
+                    price: 105000
+                }
+            ]);
+        }
+    }, [t]);
 
     // Update price when service type or package changes
     const handleServiceTypeChange = (e) => {
@@ -112,7 +137,7 @@ const BookingForm = () => {
         // Validate form data
         if (!formData.serviceType || !formData.packageType || !formData.date || !formData.location) {
             setMessage({
-                text: 'Please fill in all required fields',
+                text: t.booking.requiredFields,
                 type: 'error'
             });
             return;
@@ -121,7 +146,7 @@ const BookingForm = () => {
         try {
             const booking = await createBooking(formData);
             setMessage({
-                text: 'Booking created successfully! We will review your request and get back to you soon.',
+                text: t.booking.success,
                 type: 'success'
             });
 
@@ -141,7 +166,7 @@ const BookingForm = () => {
             }, 3000);
         } catch (error) {
             setMessage({
-                text: error.message || 'Failed to create booking. Please try again.',
+                text: error.message || t.booking.failure,
                 type: 'error'
             });
         }
@@ -165,11 +190,10 @@ const BookingForm = () => {
     return (
         <>
             <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-2xl mx-auto">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Book a Photography Service</h2>
+                <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">{t.booking.title}</h2>
 
                 {message.text && (
-                    <div className={`mb-6 p-4 rounded ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                        }`}>
+                    <div className={`mb-6 p-4 rounded ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                         {message.text}
                     </div>
                 )}
@@ -185,7 +209,7 @@ const BookingForm = () => {
                         {/* Service Type */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Service Type *
+                                {t.booking.serviceType} <span className="text-red-500">*</span>
                             </label>
                             <select
                                 name="serviceType"
@@ -194,7 +218,7 @@ const BookingForm = () => {
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 required
                             >
-                                <option value="">Select a service</option>
+                                <option value="">{t.booking.selectService}</option>
                                 {serviceTypes.map(service => (
                                     <option key={service.value} value={service.value}>
                                         {service.label}
@@ -206,7 +230,7 @@ const BookingForm = () => {
                         {/* Package Type */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Package Type *
+                                {t.booking.packageType} <span className="text-red-500">*</span>
                             </label>
                             <select
                                 name="packageType"
@@ -215,7 +239,7 @@ const BookingForm = () => {
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 required
                             >
-                                <option value="">Select a package</option>
+                                <option value="">{t.booking.selectPackage}</option>
                                 {packageTypes.map(pkg => (
                                     <option key={pkg.value} value={pkg.value}>
                                         {pkg.label} - ₹{pkg.price}
@@ -227,7 +251,7 @@ const BookingForm = () => {
                         {/* Date */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Event Date *
+                                {t.booking.eventDate} <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="date"
@@ -236,14 +260,14 @@ const BookingForm = () => {
                                 onChange={handleChange}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 required
-                                min={minDate} // Use state variable to prevent hydration mismatch
+                                min={minDate || ""}
                             />
                         </div>
 
                         {/* Location */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Event Location *
+                                {t.booking.eventLocation} <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="text"
@@ -251,7 +275,6 @@ const BookingForm = () => {
                                 value={formData.location}
                                 onChange={handleChange}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Enter location"
                                 required
                             />
                         </div>
@@ -260,49 +283,41 @@ const BookingForm = () => {
                     {/* Additional Requirements */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Additional Requirements
+                            {t.booking.additionalRequirements}
                         </label>
                         <textarea
                             name="additionalRequirements"
                             value={formData.additionalRequirements}
                             onChange={handleChange}
-                            rows="4"
+                            rows={4}
+                            placeholder={t.booking.additionalInfo}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Any special requests or additional information"
-                        />
+                        ></textarea>
                     </div>
 
-                    {/* Price Display */}
+                    {/* Price Display - only render client-side */}
                     {formData.price > 0 && (
                         <div className="bg-gray-50 p-4 rounded-md">
-                            <div className="flex justify-between items-center">
-                                <span className="font-medium text-gray-700">Total Price:</span>
-                                <span className="text-xl font-bold text-blue-600">₹{formData.price}</span>
-                            </div>
+                            <h3 className="text-lg font-medium text-gray-900 mb-2">{t.booking.price}</h3>
+                            <p className="text-2xl font-bold text-blue-600">₹{formData.price.toLocaleString()}</p>
                         </div>
                     )}
 
                     {/* Submit Button */}
-                    <div className="pt-2">
+                    <div className="flex justify-center">
                         <button
                             type="submit"
-                            className={`w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 ${loading ? 'opacity-70 cursor-not-allowed' : ''
-                                }`}
+                            className={`px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors ${loading ? 'opacity-75 cursor-not-allowed' : ''}`}
                             disabled={loading}
                         >
-                            {loading ? 'Processing...' : 'Book Now'}
+                            {loading ? '...' : t.booking.submitButton}
                         </button>
                     </div>
                 </form>
-
-                <div className="mt-6 text-sm text-gray-500">
-                    <p>* Required fields</p>
-                    <p className="mt-2">Note: Your booking will be pending until confirmed by our team. You will receive a confirmation once approved.</p>
-                </div>
             </div>
 
             {/* Auth Modal */}
-            <AuthModal isOpen={showAuthModal} onClose={handleAuthModalClose} />
+            {showAuthModal && <AuthModal onClose={handleAuthModalClose} />}
         </>
     );
 };

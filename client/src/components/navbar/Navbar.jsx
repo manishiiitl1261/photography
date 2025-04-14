@@ -76,7 +76,7 @@ export default function Navbar() {
 
                                     {/* Right side menu - Desktop */}
                                     <div className="hidden sm:flex items-center space-x-4">
-                                        <LanguageSwitcher />
+                                        <LanguageSwitcher variant="navbar" />
 
                                         {/* Auth Section */}
                                         {user ? (
@@ -110,7 +110,7 @@ export default function Navbar() {
 
                                     {/* Language and Auth - Mobile */}
                                     <div className="flex justify-center space-y-2 flex-col items-center mt-3">
-                                        <LanguageSwitcher />
+                                        <LanguageSwitcher variant="navbar" />
 
                                         {/* Auth Section - Mobile */}
                                         <div className="mt-2">

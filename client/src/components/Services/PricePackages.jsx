@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 // Package data based on the image provided
@@ -55,13 +55,42 @@ const extraEquipment = [
 
 const PricePackages = () => {
     const { t } = useLanguage();
+    const [packages, setPackages] = useState([]);
+    const [extraEquipment, setExtraEquipment] = useState([]);
+
+    useEffect(() => {
+        // Update packages when language changes
+        setPackages([
+            {
+                id: 'traditional',
+                title: t.pricing.priceList.weddingPackages.traditional.title,
+                price: t.pricing.priceList.weddingPackages.traditional.price,
+                features: t.pricing.priceList.weddingPackages.traditional.features
+            },
+            {
+                id: 'silver',
+                title: t.pricing.priceList.weddingPackages.silver.title,
+                price: t.pricing.priceList.weddingPackages.silver.price,
+                features: t.pricing.priceList.weddingPackages.silver.features
+            },
+            {
+                id: 'gold',
+                title: t.pricing.priceList.weddingPackages.gold.title,
+                price: t.pricing.priceList.weddingPackages.gold.price,
+                features: t.pricing.priceList.weddingPackages.gold.features
+            }
+        ]);
+
+        // Update extra equipment when language changes
+        setExtraEquipment(t.pricing.priceList.extraEquipment.items);
+    }, [t]);
 
     return (
         <div className="py-12 bg-cream-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12">
-                    <h2 className="text-4xl font-bold text-gray-900 mb-4">Price List</h2>
-                    <p className="text-xl text-gray-600">Wedding Photography & Videography</p>
+                    <h2 className="text-4xl font-bold text-gray-900 mb-4">{t.pricing.priceList.title}</h2>
+                    <p className="text-xl text-gray-600">{t.pricing.priceList.subtitle}</p>
                 </div>
 
                 {/* Wedding images showcase */}
@@ -115,7 +144,7 @@ const PricePackages = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
                         <div className="bg-brown-300 py-4">
-                            <h3 className="text-xl font-bold text-white text-center">Extra Add Equipment</h3>
+                            <h3 className="text-xl font-bold text-white text-center">{t.pricing.priceList.extraEquipment.title}</h3>
                         </div>
                         <div className="p-6">
                             <ul className="space-y-3 mb-6">
@@ -126,46 +155,46 @@ const PricePackages = () => {
                                     </li>
                                 ))}
                             </ul>
-                            <p className="text-center text-gray-600 mt-4">available on reasonable price</p>
+                            <p className="text-center text-gray-600 mt-4">{t.pricing.priceList.extraEquipment.available}</p>
                         </div>
                     </div>
 
                     {/* Contact information */}
                     <div className="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
                         <div className="bg-brown-300 py-4">
-                            <h3 className="text-xl font-bold text-white text-center">PahariWorld Photography</h3>
+                            <h3 className="text-xl font-bold text-white text-center">{t.pricing.priceList.contactInfo.title}</h3>
                         </div>
                         <div className="p-6">
-                            <h4 className="text-lg font-semibold mb-4">Contact Us:</h4>
+                            <h4 className="text-lg font-semibold mb-4">{t.pricing.priceList.contactInfo.contactUs}</h4>
                             <ul className="space-y-3">
                                 <li className="flex items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-brown-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                     </svg>
-                                    <span>+91 97600 24028</span>
+                                    <span>{t.pricing.priceList.contactInfo.phone}</span>
                                 </li>
                                 <li className="flex items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-brown-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
-                                    <span>pahariworld@gmail.com</span>
+                                    <span>{t.pricing.priceList.contactInfo.email}</span>
                                 </li>
                                 <li className="flex items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-brown-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    <span>www.pahariworld.com</span>
+                                    <span>{t.pricing.priceList.contactInfo.website}</span>
                                 </li>
                                 <li className="flex items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-brown-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
-                                    <span>Pahari Gali, Vikasnagar, DDun</span>
+                                    <span>{t.pricing.priceList.contactInfo.address}</span>
                                 </li>
                             </ul>
                             <div className="text-center mt-8">
-                                <p className="text-xl font-semibold text-brown-500">Thank You</p>
+                                <p className="text-xl font-semibold text-brown-500">{t.pricing.priceList.contactInfo.thankYou}</p>
                             </div>
                         </div>
                     </div>

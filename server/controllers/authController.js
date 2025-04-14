@@ -492,6 +492,60 @@ exports.uploadAvatar = async (req, res) => {
   }
 };
 
+// Remove avatar image
+exports.removeAvatar = async (req, res) => {
+  try {
+    // Get user ID from req.user (could be in either id or userId)
+    const userId = req.user.id || req.user.userId;
+    
+    if (!userId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'User ID not found in authentication token' 
+      });
+    }
+
+    // Get the user
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'User not found' 
+      });
+    }
+
+    // Delete avatar file if it exists and is not the default
+    if (user.avatar && user.avatar.startsWith('/uploads/') && fs.existsSync(path.join(__dirname, '..', user.avatar))) {
+      fs.unlinkSync(path.join(__dirname, '..', user.avatar));
+    }
+    
+    // Remove avatar from user
+    user.avatar = null;
+    await user.save();
+    
+    // Create a sanitized user object to return
+    const userResponse = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      isVerified: user.isVerified
+    };
+    
+    res.status(200).json({ 
+      success: true,
+      user: userResponse
+    });
+  } catch (error) {
+    logger.error('Remove avatar error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Something went wrong. Please try again.' 
+    });
+  }
+};
+
 // Generate tokens
 const generateTokens = (userId) => {
   try {

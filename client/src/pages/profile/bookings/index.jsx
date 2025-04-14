@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useBooking } from '@/contexts/BookingContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/navbar/Navbar';
 import {
@@ -29,6 +30,7 @@ const statusColors = {
 const BookingsPage = () => {
     const { userBookings, fetchUserBookings, cancelBooking, loading, error } = useBooking();
     const { user } = useAuth();
+    const { t } = useLanguage();
     const router = useRouter();
     const [message, setMessage] = useState('');
     const [sortedBookings, setSortedBookings] = useState([]);
@@ -73,22 +75,39 @@ const BookingsPage = () => {
     }, [userBookings]);
 
     const handleCancelBooking = async (bookingId) => {
-        if (window.confirm('Are you sure you want to cancel this booking?')) {
+        if (window.confirm(t.booking.cancelConfirm)) {
             try {
                 await cancelBooking(bookingId);
-                setMessage('Booking cancelled successfully');
+                setMessage(t.booking.cancelSuccess);
                 // Refresh bookings
                 fetchUserBookings();
             } catch (error) {
-                setMessage(error.message || 'Failed to cancel booking');
+                setMessage(error.message || t.booking.cancelError);
             }
         }
     };
 
     // Format date for display
     const formatDate = (dateString) => {
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+        try {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        } catch (error) {
+            // Fallback if there's an issue with date formatting
+            return dateString;
+        }
+    };
+
+    // Map status values to translation keys
+    const getTranslatedStatus = (status) => {
+        const statusMap = {
+            pending: t.booking.status.pending,
+            approved: t.booking.status.confirmed,
+            rejected: t.booking.status.rejected,
+            completed: t.booking.status.completed,
+            cancelled: t.booking.status.cancelled
+        };
+        return statusMap[status] || status;
     };
 
     return (
@@ -96,7 +115,7 @@ const BookingsPage = () => {
             <Navbar />
             <div className="container mx-auto px-4 pt-32 pb-16">
                 <div className="max-w-6xl mx-auto">
-                    <h1 className="text-3xl font-bold mb-8">My Bookings</h1>
+                    <h1 className="text-3xl font-bold mb-8">{t.booking.myBookings}</h1>
 
                     {message && (
                         <div className="mb-6 p-4 rounded bg-green-100 text-green-700">
@@ -118,13 +137,13 @@ const BookingsPage = () => {
                         <>
                             {sortedBookings.length === 0 ? (
                                 <div className="bg-white shadow rounded-lg p-6">
-                                    <p className="text-gray-500 text-center">You don't have any bookings yet.</p>
+                                    <p className="text-gray-500 text-center">{t.booking.noBookings}</p>
                                     <div className="mt-4 text-center">
                                         <button
                                             onClick={() => router.push('/Services')}
                                             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                                         >
-                                            Book a Service
+                                            {t.booking.submitButton}
                                         </button>
                                     </div>
                                 </div>
@@ -137,46 +156,46 @@ const BookingsPage = () => {
                                                     <h2 className="text-xl font-bold text-gray-800">{booking.serviceType}</h2>
                                                     <div className={`flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusColors[booking.status]}`}>
                                                         {statusIcons[booking.status]}
-                                                        <span className="ml-1 capitalize">{booking.status}</span>
+                                                        <span className="ml-1 capitalize">{getTranslatedStatus(booking.status)}</span>
                                                     </div>
                                                 </div>
 
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                                     <div>
-                                                        <h3 className="text-sm font-medium text-gray-500">Package</h3>
+                                                        <h3 className="text-sm font-medium text-gray-500">{t.booking.bookingDetails.package}</h3>
                                                         <p className="text-gray-800">{booking.packageType}</p>
                                                     </div>
                                                     <div>
-                                                        <h3 className="text-sm font-medium text-gray-500">Price</h3>
+                                                        <h3 className="text-sm font-medium text-gray-500">{t.booking.bookingDetails.price}</h3>
                                                         <p className="text-gray-800">₹{booking.price.toLocaleString()}</p>
                                                     </div>
                                                     <div>
-                                                        <h3 className="text-sm font-medium text-gray-500">Event Date</h3>
+                                                        <h3 className="text-sm font-medium text-gray-500">{t.booking.bookingDetails.eventDate}</h3>
                                                         <p className="text-gray-800">{formatDate(booking.date)}</p>
                                                     </div>
                                                     <div>
-                                                        <h3 className="text-sm font-medium text-gray-500">Location</h3>
+                                                        <h3 className="text-sm font-medium text-gray-500">{t.booking.bookingDetails.location}</h3>
                                                         <p className="text-gray-800">{booking.location}</p>
                                                     </div>
                                                 </div>
 
                                                 {booking.additionalRequirements && (
                                                     <div className="mb-4">
-                                                        <h3 className="text-sm font-medium text-gray-500">Additional Requirements</h3>
+                                                        <h3 className="text-sm font-medium text-gray-500">{t.booking.bookingDetails.requirements}</h3>
                                                         <p className="text-gray-800">{booking.additionalRequirements}</p>
                                                     </div>
                                                 )}
 
                                                 {booking.adminNotes && (
                                                     <div className="mb-4 p-3 bg-blue-50 rounded">
-                                                        <h3 className="text-sm font-medium text-gray-700">Notes from Admin</h3>
+                                                        <h3 className="text-sm font-medium text-gray-700">{t.booking.bookingDetails.adminNotes}</h3>
                                                         <p className="text-gray-800">{booking.adminNotes}</p>
                                                     </div>
                                                 )}
 
                                                 <div className="mt-4 flex justify-between items-center">
                                                     <div className="text-sm text-gray-500">
-                                                        Booked on {formatDate(booking.createdAt)}
+                                                        {typeof window !== 'undefined' ? `${t.booking.bookedOn} ${formatDate(booking.createdAt)}` : t.booking.bookedOn}
                                                     </div>
 
                                                     {booking.status === 'pending' && (
@@ -184,7 +203,7 @@ const BookingsPage = () => {
                                                             onClick={() => handleCancelBooking(booking._id)}
                                                             className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
                                                         >
-                                                            Cancel Booking
+                                                            {t.booking.cancelBooking}
                                                         </button>
                                                     )}
                                                 </div>
