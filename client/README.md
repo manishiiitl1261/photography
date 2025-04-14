@@ -1,40 +1,156 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Photography Client Application
 
-## Getting Started
+The frontend Next.js application for the Photography Portfolio & Booking Platform.
 
-First, run the development server:
+## Technology Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Next.js 15** - React framework
+- **React 19** - UI library
+- **TailwindCSS** - Utility-first CSS framework
+- **HeadlessUI** - Unstyled, accessible UI components
+- **Framer Motion** - Animation library
+- **React Icons** - Icon library
+- **TypeScript** - Type-safe JavaScript
+
+## Features
+
+- **Authentication System**
+  - Login/Register with email and password
+  - Email verification with OTP
+  - Password reset functionality
+  - Secure token management
+
+- **User Profile**
+  - Profile management
+  - Avatar upload and cropping
+  - Settings management
+
+- **Photographer Portfolio**
+  - Gallery view
+  - Image lightbox
+  - Categories and filtering
+
+- **Booking System**
+  - Service selection
+  - Scheduling calendar
+  - Payment integration
+  - Booking management
+
+- **Responsive Design**
+  - Mobile-first approach
+  - Dark/Light mode
+  - Accessible UI components
+
+## Project Structure
+
+```
+client/
+│
+├── public/              # Static assets
+│   ├── assets/
+│   └── favicon.ico
+│
+├── src/                 # Source code
+│   ├── components/      # Reusable components
+│   │   ├── auth/        # Authentication components
+│   │   ├── layout/      # Layout components
+│   │   └── ui/          # UI components
+│   │
+│   ├── contexts/        # React context providers
+│   │   ├── AuthContext.jsx
+│   │   └── LanguageContext.jsx
+│   │
+│   ├── pages/           # Next.js pages
+│   │   ├── _app.tsx     # App component
+│   │   ├── index.tsx    # Home page
+│   │   ├── profile/     # Profile pages
+│   │   └── ...
+│   │
+│   ├── styles/          # Global styles
+│   │   └── globals.css
+│   │
+│   └── translations/    # Internationalization
+│       ├── en.js
+│       └── hi.js
+│
+├── .env.local           # Environment variables
+├── next.config.ts       # Next.js configuration
+├── tailwind.config.ts   # TailwindCSS configuration
+└── package.json         # Dependencies and scripts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment Variables
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+Create a `.env.local` file in the client directory with the following variables:
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+```
+NEXT_PUBLIC_API_URL=http://localhost:5000
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+## Development
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Install dependencies:
+```
+npm install
+```
 
-## Learn More
+2. Run in development mode:
+```
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+3. Build for production:
+```
+npm run build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+4. Start production server:
+```
+npm start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Key Components
 
-## Deploy on Vercel
+### Authentication
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **LoginForm** - Handles user login with validation
+- **RegisterForm** - User registration form with password strength meter
+- **OTPVerificationForm** - Email verification with OTP input
+- **AuthModal** - Modal container for authentication forms
+- **AuthContext** - Manages authentication state and API calls
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+### User Interface
+
+- **Navbar** - Main navigation with responsive design
+- **Footer** - Site footer with links and information
+- **ErrorBoundary** - Catches JavaScript errors in components
+- **AuthWrapper** - Handles authentication-specific error states
+- **LanguageProvider** - Provides internationalization support
+
+## Authentication Flow
+
+1. User registers with email/password via RegisterForm
+2. Server sends OTP to user's email
+3. User verifies email by entering OTP in OTPVerificationForm
+4. Upon successful verification, user is logged in automatically
+5. Token refresh happens automatically when needed
+6. JWT tokens are securely stored and managed
+
+## Error Handling
+
+The application includes comprehensive error handling:
+
+- **API Errors**: Displayed with user-friendly messages
+- **Network Errors**: Handled with retry mechanisms
+- **Authentication Errors**: Automatically logs out on critical errors
+- **Form Validation**: Client-side validation prevents invalid submissions
+- **Error Boundaries**: Catches JavaScript errors to prevent crash
+
+## Internationalization
+
+The application supports multiple languages:
+
+- English (default)
+- Hindi
+
+Language can be switched using the language switcher in the navigation.

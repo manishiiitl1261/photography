@@ -5,6 +5,7 @@ import { Dialog } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
+import ErrorBoundary from './ErrorBoundary';
 
 const AuthModal = ({ isOpen, onClose }) => {
     const [showRegister, setShowRegister] = useState(false);
@@ -31,11 +32,13 @@ const AuthModal = ({ isOpen, onClose }) => {
                     </button>
 
                     <div className="p-6">
-                        {showRegister ? (
-                            <RegisterForm onClose={onClose} setShowRegister={setShowRegister} />
-                        ) : (
-                            <LoginForm onClose={onClose} setShowRegister={setShowRegister} />
-                        )}
+                        <ErrorBoundary>
+                            {showRegister ? (
+                                <RegisterForm onClose={onClose} setShowRegister={setShowRegister} />
+                            ) : (
+                                <LoginForm onClose={onClose} setShowRegister={setShowRegister} />
+                            )}
+                        </ErrorBoundary>
                     </div>
                 </Dialog.Panel>
             </div>

@@ -1,12 +1,38 @@
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Navbar from '@/components/navbar/Navbar';
 import { CameraIcon } from '@heroicons/react/24/outline';
+
+// Debounce function to prevent excessive API calls
+const debounce = <F extends (...args: any[]) => any>(func: F, wait: number) => {
+  let timeout: NodeJS.Timeout | null = null;
+  
+  const debouncedFunction = function(...args: Parameters<F>): ReturnType<F> | void {
+    const later = () => {
+      if (timeout) clearTimeout(timeout);
+      func(...args);
+    };
+    
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    return undefined;
+  };
+  
+  // Add cancel method to the debounced function
+  (debouncedFunction as any).cancel = () => {
+    if (timeout) {
+      clearTimeout(timeout);
+      timeout = null;
+    }
+  };
+  
+  return debouncedFunction as ((...args: Parameters<F>) => void) & { cancel: () => void };
+};
 
 const ProfilePage = () => {
   const { user, getUserProfile, updateProfile, uploadAvatar, getAvatarUrl } = useAuth();
@@ -21,6 +47,36 @@ const ProfilePage = () => {
     avatar: '',
   });
   const [message, setMessage] = useState({ text: '', type: '' });
+  const hasAttemptedFetch = useRef(false);
+
+  // Memoized fetch profile function with cleanup logic
+  const fetchProfile = useCallback(async () => {
+    // Skip if already attempted to avoid excessive calls
+    if (hasAttemptedFetch.current) return;
+    
+    hasAttemptedFetch.current = true;
+    
+    try {
+      const userData = await getUserProfile();
+      if (userData) {
+        setFormData({
+          name: userData.name || '',
+          email: userData.email || '',
+          avatar: userData.avatar || '',
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [getUserProfile]);
+
+  // Debounced version of fetchProfile to prevent multiple simultaneous calls
+  const debouncedFetchProfile = useCallback(
+    debounce(() => fetchProfile(), 300),
+    [fetchProfile]
+  );
 
   useEffect(() => {
     // Check if user is logged in
@@ -29,33 +85,24 @@ const ProfilePage = () => {
       return;
     }
 
-    // Fetch user profile
-    const fetchProfile = async () => {
-      try {
-        const userData = await getUserProfile();
-        if (userData) {
-          setFormData({
-            name: userData.name || '',
-            email: userData.email || '',
-            avatar: userData.avatar || '',
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-      } finally {
-        setLoading(false);
+    // Use the debounced fetch profile
+    const fetchProfileCall = debouncedFetchProfile();
+    
+    // Cleanup function to prevent state updates after unmount
+    return () => {
+      // Cancel any pending debounced calls when component unmounts
+      if (typeof fetchProfileCall === 'function' && 'cancel' in fetchProfileCall) {
+        fetchProfileCall.cancel();
       }
     };
+  }, [user, debouncedFetchProfile, router]);
 
-    fetchProfile();
-  }, [user, getUserProfile, router]);
-
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage({ text: '', type: '' });
 
@@ -65,7 +112,7 @@ const ProfilePage = () => {
         text: t.auth.profileUpdated, 
         type: 'success' 
       });
-    } catch (error) {
+    } catch (error: any) {
       setMessage({ 
         text: error.message || t.auth.updateError, 
         type: 'error' 
@@ -80,7 +127,7 @@ const ProfilePage = () => {
     }
   };
 
-  const handleFileChange = async (e) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -111,7 +158,7 @@ const ProfilePage = () => {
         text: t.auth.avatarUpdated,
         type: 'success'
       });
-    } catch (error) {
+    } catch (error: any) {
       setMessage({
         text: error.message || t.auth.avatarUpdateError,
         type: 'error'
