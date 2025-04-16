@@ -13,7 +13,7 @@ const en = {
   home: {
     greeting: "Hello!",
     welcome: "Welcome to my",
-    exploreServices: "Explore Services",
+    exploreServices: "Services",
     contactMe: "Contact Me",
     noContent: "No content available for slider.",
     sliderTitle1: "I am Arvind Rawat",

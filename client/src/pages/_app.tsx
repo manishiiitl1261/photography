@@ -39,8 +39,32 @@ function ErrorFallback({ error, resetErrorBoundary }: { error: Error, resetError
 }
 
 export default function App({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+
+  // Function to handle specific error types
+  const handleError = (error: Error) => {
+    console.error('Global error caught:', error);
+    
+    // Look for specific booking permission errors
+    if (error.message && (
+      error.message.includes('Not authorized to access all bookings') || 
+      error.message.includes('Admin access required') ||
+      error.message.includes('You do not have permission')
+    )) {
+      console.log('Handling booking permission error');
+      // Don't redirect - let the component handle this error
+      return; // This prevents the error boundary from showing
+    }
+    
+    // For all other errors, let the error boundary handle it
+    return error;
+  };
+
   return (
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <ErrorBoundary 
+      FallbackComponent={ErrorFallback} 
+      onError={handleError}
+    >
       <LanguageProvider>
         <AuthWrapper>
           <ReviewProvider>

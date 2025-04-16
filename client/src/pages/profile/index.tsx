@@ -8,6 +8,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import Navbar from '@/components/navbar/Navbar';
 import { CameraIcon } from '@heroicons/react/24/outline';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import Footer from '@/components/footer/Footer';
 
 // Debounce function to prevent excessive API calls
 const debounce = <F extends (...args: any[]) => any>(func: F, wait: number) => {
@@ -485,6 +486,7 @@ const ProfilePage = () => {
     return (
       <>
         <Navbar />
+        {/* <main className="bg-purple-200 "> */}
         <div className="container mx-auto px-4 pt-32 pb-16">
           <div className="max-w-md mx-auto">
             <h2 className="text-2xl font-bold mb-6 text-center">Email Change Verification</h2>
@@ -564,7 +566,9 @@ const ProfilePage = () => {
               </form>
             </div>
           </div>
-        </div>
+          </div>
+        {/* </main> */}
+        {/* <Footer />       */}
       </>
     );
   }
@@ -572,7 +576,8 @@ const ProfilePage = () => {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto px-4 pt-32 pb-16 bg-gray-50">
+      <main className="bg-purple-200">
+      <div className="container mx-auto px-4 pt-32 pb-16">
         <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="bg-gradient-to-r from-blue-500 to-indigo-600 py-8 px-6">
             <h1 className="text-3xl font-bold text-center text-white">{t.auth.profile}</h1>
@@ -633,7 +638,7 @@ const ProfilePage = () => {
           </div>
           
           {/* Remove Avatar Button - Only show if user has a custom avatar, not the default */}
-          {user?.avatar && user.avatar !== null && user.avatar !== undefined && user.avatar !== '' && (
+          {user?.avatar && (
             <div className="flex justify-center mt-2">
               <button
                 type="button"
@@ -713,6 +718,8 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+      </main>
+      <Footer />
     </>
   );
 };

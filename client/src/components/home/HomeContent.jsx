@@ -5,7 +5,7 @@ export const sliderContent = [
         subtitle: "Hello We are became interested in landscape photography about five years ago when I moved to United States.",
         buttonText1: "Services",
         buttonText2: "ContactUs",
-        imageSrc: "/assest/work-4.jpg",
+        imageSrc: "/assets/background_2.jpg",
     },
     {
         id: 1,
@@ -13,7 +13,7 @@ export const sliderContent = [
         subtitle: "Hello We are became interested in landscape photography about five years ago when I moved to United States.",
         buttonText1: "Services",
         buttonText2: "ContactUs",
-        imageSrc: "/assest/work-6.jpg",
+        imageSrc: "/assets/background_1.jpg",
     },
 
 ];

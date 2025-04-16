@@ -11,7 +11,7 @@ const LanguageSwitcher = ({ variant = 'navbar' }) => {
     // Language flags and labels
     const languages = {
         en: {
-            flag: "🇬🇧",
+            flag: "EN",
             label: "English"
         },
         hi: {

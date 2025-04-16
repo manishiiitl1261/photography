@@ -25,7 +25,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                     {/* Close button */}
                     <button
                         type="button"
-                        className="absolute top-2 right-2 p-2 rounded-full text-gray-500 hover:bg-gray-100"
+                        className="absolute top-2 right-2 p-2 rounded-full hover:text-white bg-red-400 text-black border border-white hover:bg-red-500 transition duration-300"
                         onClick={onClose}
                     >
                         <XMarkIcon className="h-6 w-6" aria-hidden="true" />

@@ -3,7 +3,7 @@ import Navbar from "@/components/navbar/Navbar";
 import Home from "@/components/ContactUs/Home";
 export default function index() {
     return (
-        <div className="">
+        <div className=" bg-purple-200">
             <Navbar />
             <main className=" pt-14 sm:pt-24 gap-6 mb-12 sm:mb-20">
                 <Home />

@@ -107,7 +107,7 @@ const UserProfileMenu = () => {
                         </Link>
 
                         {/* Admin Dashboard - only show for admin users */}
-                        {user.role === 'admin' && (
+                        {/* {user.role === 'admin' && (
                             <Link href="/admin/dashboard" legacyBehavior>
                                 <a
                                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -117,7 +117,7 @@ const UserProfileMenu = () => {
                                     Admin Dashboard
                                 </a>
                             </Link>
-                        )}
+                        )} */}
 
                         {/* Wallet link */}
                         <Link href="/wallet" legacyBehavior>
