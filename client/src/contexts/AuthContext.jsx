@@ -651,6 +651,75 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // Remove avatar image
+    const removeAvatar = async () => {
+        if (!user) return null;
+
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+
+            // Hardcoded URL
+            const apiUrl = 'http://localhost:5000/api/auth/avatar';
+
+            const response = await fetch(apiUrl, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                credentials: 'include'
+            });
+
+            if (response.status === 401) {
+                // Try to refresh the token
+                const refreshed = await refreshToken();
+                if (refreshed) {
+                    // Retry with new token
+                    const newToken = localStorage.getItem('token');
+                    const retryResponse = await fetch(apiUrl, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${newToken}`,
+                        },
+                        credentials: 'include'
+                    });
+
+                    if (!retryResponse.ok) {
+                        throw new Error('Failed to remove avatar after token refresh');
+                    }
+
+                    const retryData = await retryResponse.json();
+                    setUser(retryData.user);
+                    localStorage.setItem('user', JSON.stringify(retryData.user));
+                    return retryData.user;
+                } else {
+                    throw new Error('Authentication failed. Please login again.');
+                }
+            }
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to remove avatar');
+            }
+
+            // Update user in state and localStorage
+            setUser(data.user);
+            localStorage.setItem('user', JSON.stringify(data.user));
+
+            return data.user;
+        } catch (error) {
+            console.error('Error removing avatar:', error);
+            if (error.message.includes('Authentication') || error.message.includes('token')) {
+                // Clear invalid authentication data
+                logout();
+            }
+            throw error;
+        }
+    };
+
     // Verify email with OTP
     const verifyEmail = async (email, otp) => {
         setLoading(true);
@@ -755,6 +824,7 @@ export const AuthProvider = ({ children }) => {
         getUserProfile,
         updateProfile,
         uploadAvatar,
+        removeAvatar,
         getAvatarUrl,
         verifyEmail,
         resendVerificationOTP,

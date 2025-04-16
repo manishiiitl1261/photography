@@ -2,7 +2,7 @@ import { useState } from 'react';
 import ContactForm from '@/components/ContactUs/ContactForm';
 import Item from '@/components/footer/Item';
 import { ADDRESS, CONTACT } from '@/components/footer/Menu';
-import Map from '@/components/ContactUs/Map';
+// import Map from '@/components/ContactUs/Map';
 
 export default function Home() {
     const [contactUs, setContactUs] = useState('hidden');
@@ -37,7 +37,7 @@ export default function Home() {
                     <ContactForm />
                 </div>
             </div>
-            <Map />
+            {/* <Map /> */}
         </div>
     );
 }

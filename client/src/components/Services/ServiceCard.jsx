@@ -35,7 +35,7 @@ const ServiceCard = () => {
 
     return (
         <div className="overflow-hidden  gap-4 sm:gap-8 items-center my-4 sm:my-8">
-            <div className=" text-center sm:text-4xl lg:text-6xl text-4xl italic text-black">{t.services.title}</div>
+            <div className=" text-center sm:text-4xl lg:text-6xl text-4xl italic text-black font-bold">{t.services.title}</div>
             <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 overflow-hidden">
                 {services.map((service, index) => {
                     const translatedService = getTranslatedService(service);

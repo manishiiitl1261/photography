@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import AuthModal from '@/components/auth/AuthModal';
 
 const BookingForm = () => {
-    const { createBooking, loading, error } = useBooking();
+    const { createBooking, loading, error, clearErrors } = useBooking();
     const { user } = useAuth();
     const { t } = useLanguage();
     const router = useRouter();
@@ -26,6 +26,11 @@ const BookingForm = () => {
         additionalRequirements: '',
         price: 0
     });
+
+    // Clear any existing errors when component mounts
+    useEffect(() => {
+        clearErrors();
+    }, [clearErrors]);
 
     // Set minimum date and load service/package types on initial load
     useEffect(() => {
@@ -145,10 +150,6 @@ const BookingForm = () => {
 
         try {
             const booking = await createBooking(formData);
-            setMessage({
-                text: t.booking.success,
-                type: 'success'
-            });
 
             // Reset form
             setFormData({
@@ -160,11 +161,18 @@ const BookingForm = () => {
                 price: 0
             });
 
-            // Redirect to bookings page after a brief delay
+            setMessage({
+                text: t.booking.success,
+                type: 'success'
+            });
+
+            // Redirect to bookings page after successful booking
             setTimeout(() => {
+                clearErrors(); // Clear any errors before redirecting
                 router.push('/profile/bookings');
             }, 3000);
         } catch (error) {
+            console.error('Booking error:', error);
             setMessage({
                 text: error.message || t.booking.failure,
                 type: 'error'
@@ -189,135 +197,144 @@ const BookingForm = () => {
 
     return (
         <>
-            <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-2xl mx-auto">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">{t.booking.title}</h2>
-
-                {message.text && (
-                    <div className={`mb-6 p-4 rounded ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                        {message.text}
+            <div className="p-6 rounded-lg shadow-md">
+                <div className='flex flex-row justify-evenly items-center sm:mx-10'>
+                    <div className='hidden lg:block'>
+                        <img
+                            src="/assets/ChatGPT Image Apr 16, 2025, 08_46_03 PM.png"
+                            alt="booking"
+                            className="w-full h-full"
+                        />
                     </div>
-                )}
+                    <div className='w-11/12 justify-center items-center'>
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 text-center">{t.booking.title}</h2>
+                        {message.text && (
+                            <div className={`mb-6 p-4 rounded ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                {message.text}
+                            </div>
+                        )}
 
-                {error && (
-                    <div className="mb-6 p-4 rounded bg-red-100 text-red-700">
-                        {error}
+                        {error && (
+                            <div className="mb-6 p-4 rounded bg-red-100 text-red-700">
+                                {error}
+                            </div>
+                        )}
+
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {/* Service Type */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        {t.booking.serviceType} <span className="text-red-500">*</span>
+                                    </label>
+                                    <select
+                                        name="serviceType"
+                                        value={formData.serviceType}
+                                        onChange={handleServiceTypeChange}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                                        required
+                                    >
+                                        <option value="">{t.booking.selectService}</option>
+                                        {serviceTypes.map(service => (
+                                            <option key={service.value} value={service.value}>
+                                                {service.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                {/* Package Type */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        {t.booking.packageType} <span className="text-red-500">*</span>
+                                    </label>
+                                    <select
+                                        name="packageType"
+                                        value={formData.packageType}
+                                        onChange={handlePackageTypeChange}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                                        required
+                                    >
+                                        <option value="">{t.booking.selectPackage}</option>
+                                        {packageTypes.map(pkg => (
+                                            <option key={pkg.value} value={pkg.value}>
+                                                {pkg.label} - ₹{pkg.price}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                {/* Date */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        {t.booking.eventDate} <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="date"
+                                        name="date"
+                                        value={formData.date}
+                                        onChange={handleChange}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                                        required
+                                        min={minDate || ""}
+                                    />
+                                </div>
+
+                                {/* Location */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        {t.booking.eventLocation} <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="location"
+                                        value={formData.location}
+                                        onChange={handleChange}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Additional Requirements */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {t.booking.additionalRequirements}
+                                </label>
+                                <textarea
+                                    name="additionalRequirements"
+                                    value={formData.additionalRequirements}
+                                    onChange={handleChange}
+                                    rows={4}
+                                    placeholder={t.booking.additionalInfo}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                                ></textarea>
+                            </div>
+
+                            {/* Price Display - only render client-side */}
+                            {formData.price > 0 && (
+                                <div className="bg-gray-50 p-4 rounded-md">
+                                    <h3 className="text-lg font-medium text-gray-900 mb-2">{t.booking.price}</h3>
+                                    <p className="text-2xl font-bold text-blue-600">₹{formData.price.toLocaleString()}</p>
+                                </div>
+                            )}
+
+                            {/* Submit Button */}
+                            <div className="flex justify-center">
+                                <button
+                                    type="submit"
+                                    className={`px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors ${loading ? 'opacity-75 cursor-not-allowed' : ''}`}
+                                    disabled={loading}
+                                >
+                                    {loading ? '...' : t.booking.submitButton}
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Service Type */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                {t.booking.serviceType} <span className="text-red-500">*</span>
-                            </label>
-                            <select
-                                name="serviceType"
-                                value={formData.serviceType}
-                                onChange={handleServiceTypeChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                            >
-                                <option value="">{t.booking.selectService}</option>
-                                {serviceTypes.map(service => (
-                                    <option key={service.value} value={service.value}>
-                                        {service.label}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        {/* Package Type */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                {t.booking.packageType} <span className="text-red-500">*</span>
-                            </label>
-                            <select
-                                name="packageType"
-                                value={formData.packageType}
-                                onChange={handlePackageTypeChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                            >
-                                <option value="">{t.booking.selectPackage}</option>
-                                {packageTypes.map(pkg => (
-                                    <option key={pkg.value} value={pkg.value}>
-                                        {pkg.label} - ₹{pkg.price}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        {/* Date */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                {t.booking.eventDate} <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="date"
-                                name="date"
-                                value={formData.date}
-                                onChange={handleChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                                min={minDate || ""}
-                            />
-                        </div>
-
-                        {/* Location */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                {t.booking.eventLocation} <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                name="location"
-                                value={formData.location}
-                                onChange={handleChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    {/* Additional Requirements */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            {t.booking.additionalRequirements}
-                        </label>
-                        <textarea
-                            name="additionalRequirements"
-                            value={formData.additionalRequirements}
-                            onChange={handleChange}
-                            rows={4}
-                            placeholder={t.booking.additionalInfo}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        ></textarea>
-                    </div>
-
-                    {/* Price Display - only render client-side */}
-                    {formData.price > 0 && (
-                        <div className="bg-gray-50 p-4 rounded-md">
-                            <h3 className="text-lg font-medium text-gray-900 mb-2">{t.booking.price}</h3>
-                            <p className="text-2xl font-bold text-blue-600">₹{formData.price.toLocaleString()}</p>
-                        </div>
-                    )}
-
-                    {/* Submit Button */}
-                    <div className="flex justify-center">
-                        <button
-                            type="submit"
-                            className={`px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors ${loading ? 'opacity-75 cursor-not-allowed' : ''}`}
-                            disabled={loading}
-                        >
-                            {loading ? '...' : t.booking.submitButton}
-                        </button>
-                    </div>
-                </form>
+                </div>
             </div>
-
             {/* Auth Modal */}
-            {showAuthModal && <AuthModal onClose={handleAuthModalClose} />}
+            <AuthModal isOpen={showAuthModal} onClose={handleAuthModalClose} />
         </>
     );
 };

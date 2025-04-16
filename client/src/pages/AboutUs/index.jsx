@@ -8,7 +8,7 @@ export default function index() {
     const { t } = useLanguage();
 
     return (
-        <div className="">
+        <div className=" bg-purple-200">
             <Navbar />
             <main className="pt-16 gap-6">
                 <Card />

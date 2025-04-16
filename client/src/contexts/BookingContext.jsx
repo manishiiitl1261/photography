@@ -109,7 +109,9 @@ export const BookingProvider = ({ children }) => {
 
     // Fetch all bookings (admin only)
     const fetchAllBookings = async (statusFilter = '') => {
+        // Non-admin users shouldn't even try to call this API
         if (!user || user.role !== 'admin') {
+            console.warn('Non-admin user attempted to access all bookings');
             setError('Admin access required');
             return [];
         }
@@ -120,7 +122,9 @@ export const BookingProvider = ({ children }) => {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                throw new Error('Authentication required');
+                console.error('No token found for fetchAllBookings');
+                setError('Authentication required');
+                return [];
             }
 
             let apiUrl = `${baseUrl}/api/bookings/admin/all`;
@@ -137,14 +141,24 @@ export const BookingProvider = ({ children }) => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || 'Failed to fetch all bookings');
+                // Handle unauthorized access specifically for clarity
+                if (response.status === 403) {
+                    console.error('User not authorized to access all bookings');
+                    setError('You do not have permission to access all bookings');
+                    return [];
+                }
+
+                // Handle other errors
+                console.error(`Error fetching all bookings: ${data.message || 'Unknown error'}`);
+                setError(data.message || 'Failed to fetch all bookings');
+                return [];
             }
 
             setBookings(data.bookings);
             return data.bookings;
         } catch (error) {
-            setError(error.message);
             console.error('Error fetching all bookings:', error);
+            setError('Failed to connect to booking service');
             return [];
         } finally {
             setLoading(false);
@@ -154,8 +168,9 @@ export const BookingProvider = ({ children }) => {
     // Update booking status (admin only)
     const updateBookingStatus = async (bookingId, status, adminNotes = '') => {
         if (!user || user.role !== 'admin') {
+            console.error('Non-admin user attempted to update booking status');
             setError('Admin access required');
-            throw new Error('Admin access required');
+            return null;
         }
 
         setLoading(true);
@@ -164,7 +179,9 @@ export const BookingProvider = ({ children }) => {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                throw new Error('Authentication required');
+                console.error('No authentication token found');
+                setError('Authentication required');
+                return null;
             }
 
             const apiUrl = `${baseUrl}/api/bookings/admin/status/${bookingId}`;
@@ -180,16 +197,26 @@ export const BookingProvider = ({ children }) => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || 'Failed to update booking status');
+                console.error(`Failed to update booking status: ${data.message || 'Unknown error'}`);
+                setError(data.message || 'Failed to update booking status');
+                return null;
             }
 
-            // Update bookings list
-            await fetchAllBookings();
+            // Update bookings list - only if admin
+            if (user.role === 'admin') {
+                try {
+                    await fetchAllBookings();
+                } catch (fetchError) {
+                    console.error('Error refreshing bookings after status update:', fetchError);
+                    // Don't let this fail the main operation
+                }
+            }
 
             return data.booking;
         } catch (error) {
-            setError(error.message);
-            throw error;
+            console.error('Error updating booking status:', error);
+            setError('Failed to connect to booking service');
+            return null;
         } finally {
             setLoading(false);
         }
@@ -224,11 +251,10 @@ export const BookingProvider = ({ children }) => {
                 throw new Error(data.message || 'Failed to cancel booking');
             }
 
-            // Update user bookings
-            await fetchUserBookings();
-
+            // Return the data, let the component update its own UI
             return data;
         } catch (error) {
+            console.error('Error cancelling booking:', error);
             setError(error.message);
             throw error;
         } finally {
@@ -240,29 +266,65 @@ export const BookingProvider = ({ children }) => {
     useEffect(() => {
         if (user) {
             const initialLoad = async () => {
-                // Fetch user bookings once when user changes
-                await fetchUserBookings();
+                try {
+                    // Always fetch user bookings for all authenticated users
+                    await fetchUserBookings();
 
-                // If admin, also fetch all bookings
-                if (user.role === 'admin') {
-                    await fetchAllBookings();
+                    // Only attempt to fetch all bookings if explicitly admin role
+                    if (user && user.role === 'admin') {
+                        try {
+                            await fetchAllBookings();
+                        } catch (adminError) {
+                            console.error('Error loading admin bookings:', adminError);
+                            // Don't let admin booking errors affect the main operation
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error in initial booking load:', error);
+                    setError('Failed to load your bookings. Please refresh the page.');
                 }
             };
 
+            // Kickoff the initial load
             initialLoad();
         }
     }, [user]); // Only when user changes
 
+    // Create a function to clear errors
+    const clearErrors = () => {
+        setError(null);
+    };
+
+    // Create safe dummy functions for non-admins that don't cause errors
+    const safeFetchAllBookings = () => {
+        console.warn('Non-admin attempted to access fetchAllBookings');
+        return Promise.resolve([]);
+    };
+
+    const safeUpdateBookingStatus = () => {
+        console.warn('Non-admin attempted to access updateBookingStatus');
+        setError('Admin access required');
+        return Promise.resolve(null);
+    };
+
     const value = {
-        bookings,
-        userBookings,
+        // Bookings data
+        userBookings,                                     // User's own bookings
+        bookings: user?.role === 'admin' ? bookings : [], // All bookings (admin only)
+
+        // Common state
         loading,
         error,
+        clearErrors,                                     // Add the new clearErrors function
+
+        // Booking actions - available to all users
         createBooking,
         fetchUserBookings,
-        fetchAllBookings,
-        updateBookingStatus,
-        cancelBooking
+        cancelBooking,
+
+        // Admin-only functions - provide safe alternatives for non-admins
+        fetchAllBookings: user?.role === 'admin' ? fetchAllBookings : safeFetchAllBookings,
+        updateBookingStatus: user?.role === 'admin' ? updateBookingStatus : safeUpdateBookingStatus
     };
 
     return (
