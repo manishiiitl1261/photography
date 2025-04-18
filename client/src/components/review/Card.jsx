@@ -86,7 +86,7 @@ const Card = ({ name, text, stars, brand, eventImage, image, userAvatar }) => {
                     </div>
 
                     {/* Event photo */}
-                    <div className="w-full sm:w-1/3 h-32 sm:h-40 rounded-lg overflow-hidden shadow-md">
+                    <div className="w-full sm:w-1/3 h-32 sm:h-40 rounded-lg overflow-hidden">
                         {displayEventImage ? (
                             <img
                                 src={displayEventImage}
@@ -98,7 +98,7 @@ const Card = ({ name, text, stars, brand, eventImage, image, userAvatar }) => {
                                 }}
                             />
                         ) : (
-                            <div className="w-full h-full bg-gray-300 flex items-center justify-center">
+                            <div className="w-full h-full  flex items-center justify-center">
                                 <span className="text-gray-500">No Image</span>
                             </div>
                         )}
