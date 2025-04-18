@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import services from "@/components/Services/ServiceCardHelper";
+import { useServices } from "@/contexts/ServicesContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const animationVariants = {
@@ -12,6 +12,7 @@ const animationVariants = {
 
 const ServiceCard = () => {
     const { t } = useLanguage();
+    const { serviceItems, loading, error } = useServices();
 
     // Function to get translated title and description based on service type
     const getTranslatedService = (service) => {
@@ -33,20 +34,40 @@ const ServiceCard = () => {
         };
     };
 
+    // Get animation direction based on index
+    const getAnimationDirection = (index) => {
+        const directions = ['left', 'top', 'right', 'down'];
+        return directions[index % directions.length];
+    };
+
     return (
-        <div className="overflow-hidden  gap-4 sm:gap-8 items-center my-4 sm:my-8">
-            <div className=" text-center sm:text-4xl lg:text-6xl text-4xl italic text-black font-bold">{t.services.title}</div>
+        <div className="overflow-hidden gap-4 sm:gap-8 items-center my-4 sm:my-8">
+            <div className="text-center sm:text-4xl lg:text-6xl text-4xl italic text-black font-bold">{t.services.title}</div>
+
+            {loading && (
+                <div className="text-center py-4">
+                    <p>Loading services...</p>
+                </div>
+            )}
+
+            {error && (
+                <div className="text-center py-4 text-red-500">
+                    <p>Error loading services. Using default data.</p>
+                </div>
+            )}
+
             <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 overflow-hidden">
-                {services.map((service, index) => {
+                {serviceItems.map((service, index) => {
                     const translatedService = getTranslatedService(service);
+                    const animationDirection = service.animation || getAnimationDirection(index);
 
                     return (
                         <motion.div
-                            key={index}
+                            key={service._id || index}
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: false, amount: 0.3 }}
-                            variants={animationVariants[service.animation]}
+                            variants={animationVariants[animationDirection]}
                             transition={{ duration: 0.7, delay: index * 0.2, ease: "easeOut" }}
                             className="p-6 bg-slate-200 rounded-lg shadow-lg text-center hover:shadow-2xl transition-shadow duration-300"
                         >
@@ -64,7 +85,7 @@ const ServiceCard = () => {
                     );
                 })}
             </div>
-        </div >
+        </div>
     );
 };
 

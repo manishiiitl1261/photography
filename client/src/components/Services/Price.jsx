@@ -1,10 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import cardData from '@/components/Services/PriceingHelper';
+import { usePricing } from '@/contexts/PricingContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Price = () => {
     const { t, language } = useLanguage();
+    const { pricingPackages, loading, error } = usePricing();
 
     const animationVariants = {
         left: { hidden: { x: -100, opacity: 0 }, visible: { x: 0, opacity: 1 } },
@@ -73,19 +74,38 @@ const Price = () => {
         };
     };
 
+    // Get animation direction based on index
+    const getAnimationDirection = (index) => {
+        const directions = ['left', 'top', 'right', 'down'];
+        return directions[index % directions.length];
+    };
+
     return (
         <div className="overflow-hidden gap-4 sm:gap-8 items-center">
+            {loading && (
+                <div className="text-center py-4">
+                    <p>Loading pricing packages...</p>
+                </div>
+            )}
+
+            {error && (
+                <div className="text-center py-4 text-red-500">
+                    <p>Error loading pricing packages. Using default data.</p>
+                </div>
+            )}
+
             <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 overflow-hidden">
-                {cardData.map((card, index) => {
+                {pricingPackages.map((card, index) => {
                     const translatedCard = getTranslatedPackage(card);
+                    const animationDirection = card.animation || getAnimationDirection(index);
 
                     return (
                         <motion.div
-                            key={index}
+                            key={card._id || index}
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: false, amount: 0.3 }}
-                            variants={animationVariants[card.animation]}
+                            variants={animationVariants[animationDirection]}
                             transition={{ duration: 0.7, delay: index * 0.2, ease: "easeOut" }}
                             className="p-6 bg-slate-200 rounded-lg shadow-lg text-center hover:shadow-2xl transition-shadow duration-300"
                         >

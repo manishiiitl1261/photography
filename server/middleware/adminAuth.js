@@ -84,5 +84,6 @@ const authenticateAdmin = async (req, res, next) => {
 };
 
 module.exports = {
+  adminAuth: authenticateAdmin,
   authenticateAdmin
 }; 

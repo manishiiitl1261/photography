@@ -4,7 +4,16 @@ const ReviewSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Please provide a name'],
+    trim: true,
     maxlength: 50
+  },
+  email: {
+    type: String,
+    trim: true,
+    match: [
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      'Please provide a valid email',
+    ],
   },
   event: {
     type: String,
@@ -54,6 +63,10 @@ const ReviewSchema = new mongoose.Schema({
   userAvatar: {
     type: String,
     default: '/assets/avtar.png'
+  },
+  approved: {
+    type: Boolean,
+    default: null, // null means pending, true means approved, false means rejected
   },
   createdAt: {
     type: Date,

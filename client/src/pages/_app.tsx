@@ -2,7 +2,11 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ReviewProvider } from "@/contexts/ReviewContext";
+import { AdminReviewProvider } from "@/contexts/AdminReviewContext";
 import { BookingProvider } from "@/contexts/BookingContext";
+import { PortfolioProvider } from "@/contexts/PortfolioContext";
+import { ServicesProvider } from "@/contexts/ServicesContext";
+import { PricingProvider } from "@/contexts/PricingContext";
 import AuthWrapper from "@/components/auth/AuthWrapper";
 import { ErrorBoundary } from 'react-error-boundary';
 import { useRouter } from 'next/router';
@@ -40,6 +44,7 @@ function ErrorFallback({ error, resetErrorBoundary }: { error: Error, resetError
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
+  const isAdminPage = router.pathname.startsWith('/admin');
 
   // Function to handle specific error types
   const handleError = (error: Error) => {
@@ -67,11 +72,25 @@ export default function App({ Component, pageProps }: AppProps) {
     >
       <LanguageProvider>
         <AuthWrapper>
+          <PortfolioProvider>
+            <ServicesProvider>
+              <PricingProvider>
           <ReviewProvider>
+                  {isAdminPage ? (
+                    <AdminReviewProvider>
+                      <BookingProvider>
+                        <Component {...pageProps} />
+                      </BookingProvider>
+                    </AdminReviewProvider>
+                  ) : (
             <BookingProvider>
               <Component {...pageProps} />
             </BookingProvider>
+                  )}
           </ReviewProvider>
+              </PricingProvider>
+            </ServicesProvider>
+          </PortfolioProvider>
         </AuthWrapper>
       </LanguageProvider>
     </ErrorBoundary>
