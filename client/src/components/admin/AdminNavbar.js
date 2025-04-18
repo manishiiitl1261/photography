@@ -29,10 +29,14 @@ export default function AdminNavbar() {
 
   const navigation = [
     { name: 'Dashboard', href: '/admin/dashboard', current: router.pathname === '/admin/dashboard' },
+    { name: 'Portfolio', href: '/admin/portfolio', current: router.pathname === '/admin/portfolio' },
+    { name: 'Services', href: '/admin/services', current: router.pathname === '/admin/services' },
+    { name: 'Pricing', href: '/admin/pricing', current: router.pathname === '/admin/pricing' },
+    { name: 'Reviews', href: '/admin/reviews', current: router.pathname === '/admin/reviews' },
     { name: 'Users', href: '/admin/users', current: router.pathname === '/admin/users' },
     { name: 'Bookings', href: '/admin/bookings', current: router.pathname === '/admin/bookings' },
-    { name: 'Photographers', href: '/admin/photographers', current: router.pathname === '/admin/photographers' },
-    { name: 'Settings', href: '/admin/settings', current: router.pathname === '/admin/settings' },
+    // { name: 'Photographers', href: '/admin/photographers', current: router.pathname === '/admin/photographers' },
+    // { name: 'Settings', href: '/admin/settings', current: router.pathname === '/admin/settings' },
   ];
 
   return (

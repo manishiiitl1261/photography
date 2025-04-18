@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import cardData from "@/components/review/CardHelper";
 
 // Create the review context
@@ -21,26 +21,40 @@ export const ReviewProvider = ({ children }) => {
         { stars: 2, percentage: 3 },
         { stars: 1, percentage: 2 },
     ]);
+    const [lastRefresh, setLastRefresh] = useState(Date.now());
+    const [pollingEnabled, setPollingEnabled] = useState(true);
+    const consecutiveErrorsRef = useRef(0);
+    const pollingIntervalRef = useRef(null);
 
     // Fetch reviews from the API
-    const fetchReviews = async () => {
+    const fetchReviews = useCallback(async (force = false) => {
         try {
+            // Skip if already loading unless forced
+            if (loading && !force) return;
+
             setLoading(true);
             setError(null);
 
-            const response = await fetch(API_URL);
+            // Use the /approved endpoint to only get approved reviews for the public site
+            const response = await fetch(`${API_URL}/approved?t=${Date.now()}`);
+
             if (!response.ok) {
+                // If rate limited, increase backoff time
+                if (response.status === 429) {
+                    consecutiveErrorsRef.current += 1;
+                    throw new Error(`Rate limited (429): Too many requests. Will retry later.`);
+                }
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
+
+            // Reset consecutive errors on success
+            consecutiveErrorsRef.current = 0;
 
             const data = await response.json();
 
             if (data.success && data.data.length > 0) {
                 // Use only the API data instead of combining with demo data
                 const apiReviews = data.data;
-
-                // Log the received reviews for debugging
-                console.log('API Reviews:', apiReviews);
 
                 setReviews(apiReviews);
 
@@ -88,20 +102,38 @@ export const ReviewProvider = ({ children }) => {
         } catch (err) {
             console.error("Error fetching reviews:", err);
             setError(err.message);
+
             // Don't use demo data on error, use empty array instead
-            setReviews([]);
-            setAvgRating(0);
-            setReviewCount(0);
-            setRatingDistribution([
-                { stars: 5, percentage: 0 },
-                { stars: 4, percentage: 0 },
-                { stars: 3, percentage: 0 },
-                { stars: 2, percentage: 0 },
-                { stars: 1, percentage: 0 }
-            ]);
+            if (err.message.includes('Rate limited')) {
+                // Don't change reviews data on rate limit, just show error
+                console.log(`Backing off due to rate limit. Consecutive errors: ${consecutiveErrorsRef.current}`);
+            } else {
+                setReviews([]);
+                setAvgRating(0);
+                setReviewCount(0);
+                setRatingDistribution([
+                    { stars: 5, percentage: 0 },
+                    { stars: 4, percentage: 0 },
+                    { stars: 3, percentage: 0 },
+                    { stars: 2, percentage: 0 },
+                    { stars: 1, percentage: 0 }
+                ]);
+            }
         } finally {
             setLoading(false);
+            setLastRefresh(Date.now());
         }
+    }, [loading]);
+
+    // Force refresh function that can be called manually
+    const forceRefresh = () => {
+        console.log("Forcing refresh of reviews");
+        fetchReviews(true);
+    };
+
+    // Toggle polling on/off
+    const togglePolling = (enabled) => {
+        setPollingEnabled(enabled);
     };
 
     // Add a new review
@@ -133,7 +165,7 @@ export const ReviewProvider = ({ children }) => {
 
             if (data.success) {
                 // Refresh the reviews list
-                await fetchReviews();
+                await fetchReviews(true);
                 return { success: true };
             } else {
                 throw new Error(data.message || "Failed to add review");
@@ -147,9 +179,53 @@ export const ReviewProvider = ({ children }) => {
         }
     };
 
-    // Load reviews when the component mounts
+    // Setup and cleanup the polling interval with backoff
     useEffect(() => {
-        fetchReviews();
+        // Only run if polling is enabled
+        if (!pollingEnabled) {
+            if (pollingIntervalRef.current) {
+                clearInterval(pollingIntervalRef.current);
+                pollingIntervalRef.current = null;
+            }
+            return;
+        }
+
+        const setupPolling = () => {
+            if (pollingIntervalRef.current) {
+                clearInterval(pollingIntervalRef.current);
+            }
+
+            // Calculate backoff time based on consecutive errors (min 2 minutes, max 10 minutes)
+            // Exponential backoff: 2^n minutes but capped at 10 minutes
+            const backoffMinutes = Math.min(10, Math.pow(2, consecutiveErrorsRef.current));
+            const pollingTime = consecutiveErrorsRef.current > 0
+                ? backoffMinutes * 60 * 1000  // Convert minutes to ms
+                : 3 * 60 * 1000;             // Default: 3 minutes
+
+            console.log(`Setting up polling interval: ${pollingTime / 1000} seconds`);
+
+            pollingIntervalRef.current = setInterval(() => {
+                console.log("Polling for updated reviews");
+                fetchReviews();
+            }, pollingTime);
+        };
+
+        // Initial setup
+        setupPolling();
+
+        // Re-setup when consecutive errors change
+        const errorWatcher = consecutiveErrorsRef.current;
+
+        return () => {
+            if (pollingIntervalRef.current) {
+                clearInterval(pollingIntervalRef.current);
+            }
+        };
+    }, [fetchReviews, pollingEnabled, consecutiveErrorsRef.current]);
+
+    // Initial data fetch
+    useEffect(() => {
+        fetchReviews(true);
     }, []);
 
     // Context value
@@ -162,6 +238,10 @@ export const ReviewProvider = ({ children }) => {
         ratingDistribution,
         addReview,
         fetchReviews,
+        forceRefresh,
+        lastRefresh,
+        togglePolling,
+        pollingEnabled
     };
 
     return (

@@ -1,21 +1,33 @@
 const express = require('express');
 const router = express.Router();
 const { upload } = require('../config/upload'); // Import from config file
+const { adminAuth } = require('../middleware/adminAuth');
 
 const {
   getAllReviews,
   createReview,
   getReview,
   updateReview,
-  deleteReview
+  deleteReview,
+  getPendingReviews,
+  getApprovedReviews,
+  getRejectedReviews,
+  approveReview
 } = require('../controllers/reviewController');
 
-// Routes
-router.route('/').get(getAllReviews);
+// Public routes
+router.get('/', getAllReviews);
+router.get('/approved', getApprovedReviews); // Public can see only approved reviews
+router.get('/:id', getReview);
 
-// Handle file upload for review creation
-router.route('/').post(upload.single('eventImage'), createReview);
+// Create review route - open to public with file upload
+router.post('/', upload.single('eventImage'), createReview);
 
-router.route('/:id').get(getReview).patch(updateReview).delete(deleteReview);
+// Admin routes - protected by adminAuth middleware
+router.get('/admin/pending', adminAuth, getPendingReviews);
+router.get('/admin/rejected', adminAuth, getRejectedReviews);
+router.put('/:id/approve', adminAuth, approveReview);
+router.put('/:id', adminAuth, updateReview);
+router.delete('/:id', adminAuth, deleteReview);
 
 module.exports = router;

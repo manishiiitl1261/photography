@@ -13,6 +13,9 @@ const reviewRoutes = require('./routes/reviewRoutes');
 const authRoutes = require('./routes/authRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const portfolioRoutes = require('./routes/portfolioRoutes');
+const serviceRoutes = require('./routes/serviceRoutes');
+const pricingRoutes = require('./routes/pricingRoutes');
 
 // Initialize Express app
 const app = express();
@@ -81,6 +84,9 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/portfolio', portfolioRoutes);
+app.use('/api/services', serviceRoutes);
+app.use('/api/pricing', pricingRoutes);
 
 // Home route
 app.get('/', (req, res) => {

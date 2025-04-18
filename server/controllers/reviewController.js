@@ -14,7 +14,7 @@ const getAllReviews = async (req, res) => {
 // Create a new review
 const createReview = async (req, res) => {
   try {
-    const { name, event, text, rating, userId, userAvatar } = req.body;
+    const { name, email, event, text, rating, userId, userAvatar } = req.body;
     
     if (!name || !event || !text || !rating) {
       return res.status(400).json({ 
@@ -26,9 +26,11 @@ const createReview = async (req, res) => {
     // Create review data
     const reviewData = {
       name,
+      email,
       event,
       text,
       rating: parseInt(rating),
+      approved: null // Set as pending by default
     };
 
     // Add user reference if provided
@@ -41,6 +43,11 @@ const createReview = async (req, res) => {
         // If user exists and has an avatar, use it directly (unless it's overridden)
         if (userExists.avatar && !userAvatar) {
           reviewData.userAvatar = userExists.avatar;
+        }
+        
+        // If user exists and has an email, use it
+        if (userExists.email && !email) {
+          reviewData.email = userExists.email;
         }
       }
     }
@@ -120,10 +127,80 @@ const deleteReview = async (req, res) => {
   }
 };
 
+// Get pending reviews (not yet approved or rejected)
+const getPendingReviews = async (req, res) => {
+  try {
+    const reviews = await Review.find({ approved: null }).sort({ createdAt: -1 });
+    res.status(200).json({ success: true, count: reviews.length, data: reviews });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Get approved reviews only
+const getApprovedReviews = async (req, res) => {
+  try {
+    const reviews = await Review.find({ approved: true }).sort({ createdAt: -1 });
+    res.status(200).json({ success: true, count: reviews.length, data: reviews });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Get rejected reviews
+const getRejectedReviews = async (req, res) => {
+  try {
+    const reviews = await Review.find({ approved: false }).sort({ createdAt: -1 });
+    res.status(200).json({ success: true, count: reviews.length, data: reviews });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Approve or reject a review
+const approveReview = async (req, res) => {
+  try {
+    const { id: reviewId } = req.params;
+    const { approved } = req.body;
+    
+    if (typeof approved !== 'boolean') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'The approved field must be a boolean value (true or false)' 
+      });
+    }
+    
+    const review = await Review.findByIdAndUpdate(
+      reviewId, 
+      { approved }, 
+      { new: true, runValidators: true }
+    );
+    
+    if (!review) {
+      return res.status(404).json({ 
+        success: false, 
+        message: `No review with id: ${reviewId}` 
+      });
+    }
+    
+    res.status(200).json({ 
+      success: true, 
+      message: `Review ${approved ? 'approved' : 'rejected'} successfully`,
+      data: review 
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   getAllReviews,
   createReview,
   getReview,
   updateReview,
-  deleteReview
+  deleteReview,
+  getPendingReviews,
+  getApprovedReviews,
+  getRejectedReviews,
+  approveReview
 };

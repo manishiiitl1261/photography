@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { usePricing } from '@/contexts/PricingContext';
 import { motion } from "framer-motion";
 const directions = ["left", "right", "up", "down"];
 
@@ -29,8 +30,8 @@ const images = [
         alt: "Wedding Couple"
     }
 ];
-// Package data based on the image provided
-const packages = [
+// Fallback packages data
+const fallbackPackages = [
     {
         id: 'traditional',
         title: 'Traditional Wedding',
@@ -72,33 +73,44 @@ const packages = [
     }
 ];
 
-
 const PricePackages = () => {
     const { t } = useLanguage();
+    const { weddingPackages, loading, error } = usePricing();
     const [packages, setPackages] = useState([]);
+
     useEffect(() => {
-        // Update packages when language changes
-        setPackages([
-            {
-                id: 'traditional',
-                title: t.pricing.priceList.weddingPackages.traditional.title,
-                price: t.pricing.priceList.weddingPackages.traditional.price,
-                features: t.pricing.priceList.weddingPackages.traditional.features
-            },
-            {
-                id: 'silver',
-                title: t.pricing.priceList.weddingPackages.silver.title,
-                price: t.pricing.priceList.weddingPackages.silver.price,
-                features: t.pricing.priceList.weddingPackages.silver.features
-            },
-            {
-                id: 'gold',
-                title: t.pricing.priceList.weddingPackages.gold.title,
-                price: t.pricing.priceList.weddingPackages.gold.price,
-                features: t.pricing.priceList.weddingPackages.gold.features
-            }
-        ]);
-    }, [t]);
+        if (weddingPackages && weddingPackages.length > 0) {
+            // Use API data if available
+            setPackages(weddingPackages.map(pkg => ({
+                id: pkg._id,
+                title: pkg.title,
+                price: pkg.price,
+                features: pkg.features
+            })));
+        } else {
+            // Use translated fallback data
+            setPackages([
+                {
+                    id: 'traditional',
+                    title: t.pricing.priceList.weddingPackages.traditional.title,
+                    price: t.pricing.priceList.weddingPackages.traditional.price,
+                    features: t.pricing.priceList.weddingPackages.traditional.features
+                },
+                {
+                    id: 'silver',
+                    title: t.pricing.priceList.weddingPackages.silver.title,
+                    price: t.pricing.priceList.weddingPackages.silver.price,
+                    features: t.pricing.priceList.weddingPackages.silver.features
+                },
+                {
+                    id: 'gold',
+                    title: t.pricing.priceList.weddingPackages.gold.title,
+                    price: t.pricing.priceList.weddingPackages.gold.price,
+                    features: t.pricing.priceList.weddingPackages.gold.features
+                }
+            ]);
+        }
+    }, [t, weddingPackages]);
 
     return (
         <>
@@ -130,6 +142,18 @@ const PricePackages = () => {
                         );
                     })}
                 </div>
+
+                {loading && (
+                    <div className="text-center py-4">
+                        <p>Loading packages...</p>
+                    </div>
+                )}
+
+                {error && (
+                    <div className="text-center py-4 text-red-500">
+                        <p>Error loading packages. Using default data.</p>
+                    </div>
+                )}
 
                 {/* Package cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">

@@ -1,7 +1,12 @@
 const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
+const { isAdminEmail } = require('../config/createAdmin');
+const User = require('../models/User');
 
-const auth = async (req, res, next) => {
+/**
+ * Authentication middleware - verifies the JWT token
+ */
+const authenticateToken = async (req, res, next) => {
   try {
     // Get token from header
     const authHeader = req.headers.authorization;
@@ -40,8 +45,10 @@ const auth = async (req, res, next) => {
     req.user = { 
       userId: userId, 
       id: userId, // Include both formats for backward compatibility
+      email: payload.email,
       iat: payload.iat, 
-      exp: payload.exp 
+      exp: payload.exp,
+      isAdmin: payload.isAdmin || false
     };
     
     // Check token expiration (additional check besides jwt.verify)
@@ -82,4 +89,59 @@ const auth = async (req, res, next) => {
   }
 };
 
-module.exports = auth; 
+/**
+ * Admin middleware - verifies that the user is an admin
+ * Must be used after authenticateToken middleware
+ */
+const isAdmin = async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required'
+      });
+    }
+
+    // Either check the isAdmin flag from the token or lookup the email
+    if (req.user.isAdmin === true) {
+      return next();
+    }
+
+    // If we have the email in the request, check if it's an admin email
+    if (req.user.email && isAdminEmail(req.user.email)) {
+      return next();
+    }
+
+    // Otherwise we need to lookup the user's email in the database
+    const userId = req.user.id || req.user.userId;
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    if (!isAdminEmail(user.email)) {
+      logger.warn(`Unauthorized admin access attempt: ${user.email}`);
+      return res.status(403).json({
+        success: false,
+        message: 'Admin access denied'
+      });
+    }
+
+    next();
+  } catch (error) {
+    logger.error('Admin verification error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error verifying admin status'
+    });
+  }
+};
+
+module.exports = {
+  authenticateToken,
+  isAdmin
+}; 
