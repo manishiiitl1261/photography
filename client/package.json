@@ -11,6 +11,7 @@
   "dependencies": {
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
+    "axios": "^1.8.4",
     "formidable": "^3.5.2",
     "framer-motion": "^11.15.0",
     "googleapis": "^144.0.0",
@@ -18,7 +19,9 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-error-boundary": "^5.0.0",
+    "react-hot-toast": "^2.5.2",
     "react-icons": "^5.4.0",
+    "react-router-dom": "^7.5.1",
     "react-slick": "^0.30.3",
     "slick-carousel": "^1.8.1",
     "three": "^0.175.0"

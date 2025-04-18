@@ -197,13 +197,13 @@ const BookingForm = () => {
 
     return (
         <>
-            <div className="p-6 rounded-lg shadow-md">
+            <div className="p-6 rounded-lg shadow-md border-2 border-white">
                 <div className='flex flex-row justify-evenly items-center sm:mx-10'>
-                    <div className='hidden lg:block'>
+                    <div className='hidden lg:block overflow-hidden'>
                         <img
                             src="/assets/ChatGPT Image Apr 16, 2025, 08_46_03 PM.png"
                             alt="booking"
-                            className="w-full h-full"
+                            className="w-full h-full border-none"
                         />
                     </div>
                     <div className='w-11/12 justify-center items-center'>
