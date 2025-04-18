@@ -12,6 +12,7 @@ const logger = require('./utils/logger');
 const reviewRoutes = require('./routes/reviewRoutes');
 const authRoutes = require('./routes/authRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 // Initialize Express app
 const app = express();
@@ -69,6 +70,8 @@ app.use('/api/auth/verify-email', sensitiveAuthLimiter);
 app.use('/api/auth/resend-verification', sensitiveAuthLimiter);
 app.use('/api/auth/forgot-password', sensitiveAuthLimiter);
 app.use('/api/auth/reset-password', sensitiveAuthLimiter);
+app.use('/api/admin/login', sensitiveAuthLimiter);
+app.use('/api/admin/verify-otp', sensitiveAuthLimiter);
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -77,6 +80,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Home route
 app.get('/', (req, res) => {

@@ -63,16 +63,35 @@ const generateOTP = () => {
 };
 
 // Send OTP email
-const sendOTPEmail = async (email, otp) => {
+const sendOTPEmail = async (email, otp, subject = 'Email Verification Code - Photography App') => {
   try {
     console.log(`Attempting to send OTP email to ${email}`);
     const transporter = await createTransporter();
     
+    // Determine if this is for admin login
+    const isAdminLogin = subject.includes('Admin Login');
+    
     const mailOptions = {
       from: process.env.EMAIL_FROM || 'Photography App <noreply@photography.com>',
       to: email,
-      subject: 'Email Verification Code - Photography App',
-      html: `
+      subject: subject,
+      html: isAdminLogin ? 
+        `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
+          <h2 style="color: #333; text-align: center;">Admin Login Verification</h2>
+          <p>Please use the following verification code to complete your admin login:</p>
+          <div style="background-color: #f5f5f5; padding: 10px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; margin: 20px 0;">
+            ${otp}
+          </div>
+          <p>This code will expire in ${process.env.OTP_EXPIRY || 10} minutes.</p>
+          <p>If you didn't request this code, please ignore this email and contact support immediately.</p>
+          <p style="color: #666; font-size: 12px; margin-top: 30px; text-align: center;">
+            &copy; ${new Date().getFullYear()} Photography App. All rights reserved.
+          </p>
+        </div>
+        ` 
+        : 
+        `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
           <h2 style="color: #333; text-align: center;">Email Verification</h2>
           <p>Thank you for registering with Photography App. Please use the following verification code to complete your registration:</p>
@@ -85,7 +104,7 @@ const sendOTPEmail = async (email, otp) => {
             &copy; ${new Date().getFullYear()} Photography App. All rights reserved.
           </p>
         </div>
-      `
+        `
     };
     
     const info = await transporter.sendMail(mailOptions);
