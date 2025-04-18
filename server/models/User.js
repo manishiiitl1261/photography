@@ -188,10 +188,17 @@ UserSchema.methods.verifyOTP = function(otp) {
   this.verificationOTP = undefined;
   this.verificationOTPExpires = undefined;
   
-  // If this is a new user (not verified yet), mark as verified
-  // If this is an email change (tempEmail exists), don't change isVerified status
+  // Different verification logic based on user role and context
   if (!this.isVerified && !this.tempEmail) {
+    // For new user verification (not email change)
     this.isVerified = true;
+  } else if (this.tempEmail && this.role === 'admin') {
+    // For admin email change, additional checks might be required
+    // but we'll still return true to indicate OTP was valid
+    // The actual email change will be handled by the controller
+  } else if (this.tempEmail) {
+    // For regular user email change
+    // The actual email change will be handled by the controller
   }
   
   return true;

@@ -108,6 +108,12 @@ export default function Navbar() {
                                 <div className="hidden sm:flex items-center space-x-4">
                                     <LanguageSwitcher variant="navbar" />
                                     {user ? <UserProfileMenu /> : <LoginButton />}
+                                    <Link
+                                        href="/admin/login"
+                                        className="text-sm text-white hover:text-gray-300"
+                                    >
+                                        Admin
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -141,6 +147,12 @@ export default function Navbar() {
                                     <div className="mt-2">
                                         {user ? <UserProfileMenu /> : <LoginButton />}
                                     </div>
+                                    <Link
+                                        href="/admin/login"
+                                        className="text-sm text-white hover:text-gray-300 mt-2"
+                                    >
+                                        Admin
+                                    </Link>
                                 </div>
                             </div>
                         </Disclosure.Panel>

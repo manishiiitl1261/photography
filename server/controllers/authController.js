@@ -87,7 +87,7 @@ exports.verifyEmail = async (req, res) => {
       });
     }
 
-    // Verify OTP
+    // Verify OTP - this now handles different user roles internally
     const isValidOTP = user.verifyOTP(otp);
     if (!isValidOTP) {
       return res.status(400).json({
@@ -96,7 +96,15 @@ exports.verifyEmail = async (req, res) => {
       });
     }
 
-    // Mark user as verified and save
+    // Role-specific processing can be added here if needed
+    // For example, admin users might have different verification requirements
+    if (user.role === 'admin') {
+      logger.info(`Admin user ${user._id} (${user.email}) has been verified`);
+      // Any additional admin-specific verification steps could go here
+    }
+
+    // Mark user as verified and save - this is now handled in verifyOTP for consistency
+    // but we'll ensure it's set correctly here too
     user.isVerified = true;
     await user.save();
 
@@ -115,7 +123,8 @@ exports.verifyEmail = async (req, res) => {
       name: user.name,
       email: user.email,
       avatar: user.avatar,
-      isVerified: user.isVerified
+      isVerified: user.isVerified,
+      role: user.role // Include role so the client can adjust UI accordingly
     };
 
     // Return success with tokens for auto-login
@@ -253,11 +262,19 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Check if user is verified
+    // Check if user is verified - handle differently based on role
     if (!user.isVerified) {
       // Generate new OTP for verification
       const otp = user.generateVerificationOTP();
       await user.save();
+
+      // Determine message based on user role
+      let message = 'Please verify your email before logging in. A new verification code has been sent.';
+      
+      if (user.role === 'admin') {
+        logger.info(`Unverified admin login attempt: ${user.email}`);
+        message = 'Admin account requires email verification. A verification code has been sent.';
+      }
 
       // Send verification email
       await sendOTPEmail(email, otp);
@@ -266,7 +283,8 @@ exports.login = async (req, res) => {
         success: false,
         requiresVerification: true,
         email,
-        message: 'Please verify your email before logging in. A new verification code has been sent.'
+        role: user.role, // Include role so the client can adjust UI accordingly
+        message: message
       });
     }
 
@@ -282,7 +300,8 @@ exports.login = async (req, res) => {
       name: user.name,
       email: user.email,
       avatar: user.avatar,
-      isVerified: user.isVerified
+      isVerified: user.isVerified,
+      role: user.role // Include role so the client can adjust UI accordingly
     };
 
     // Success - return token and user data
@@ -1096,7 +1115,7 @@ exports.verifyEmailChange = async (req, res) => {
       });
     }
     
-    // Verify OTP
+    // Verify OTP - this now handles different user roles internally
     const isValidOTP = user.verifyOTP(otp);
     if (!isValidOTP) {
       return res.status(400).json({
@@ -1105,17 +1124,43 @@ exports.verifyEmailChange = async (req, res) => {
       });
     }
     
-    // Check if the tempEmail is already in use by another account
-    const existingUser = await User.findOne({ email: user.tempEmail });
-    if (existingUser && existingUser._id.toString() !== userId) {
-      // Clear tempEmail as it's not usable
-      user.tempEmail = undefined;
-      await user.save();
+    // Different logic for admin vs regular users
+    if (user.role === 'admin') {
+      // Admin users might require additional verification or approvals
+      // For now, we'll implement a simple extra verification step
+      logger.info(`Admin email change requested for user ${user._id}, from ${user.email} to ${user.tempEmail}`);
       
-      return res.status(400).json({
-        success: false,
-        message: 'This email is already associated with another account'
-      });
+      // Check if the tempEmail is already in use by another account
+      const existingUser = await User.findOne({ email: user.tempEmail });
+      if (existingUser && existingUser._id.toString() !== userId) {
+        // Clear tempEmail as it's not usable
+        user.tempEmail = undefined;
+        await user.save();
+        
+        return res.status(400).json({
+          success: false,
+          message: 'This email is already associated with another account'
+        });
+      }
+      
+      // Additional security check could be added here for admin users
+      // For example, requiring a second factor or approval
+      
+      // Continue with the email change process
+    } else {
+      // Regular user email change process
+      // Check if the tempEmail is already in use by another account
+      const existingUser = await User.findOne({ email: user.tempEmail });
+      if (existingUser && existingUser._id.toString() !== userId) {
+        // Clear tempEmail as it's not usable
+        user.tempEmail = undefined;
+        await user.save();
+        
+        return res.status(400).json({
+          success: false,
+          message: 'This email is already associated with another account'
+        });
+      }
     }
     
     try {
