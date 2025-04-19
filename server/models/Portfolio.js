@@ -9,6 +9,14 @@ const portfolioSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  title: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    default: ''
+  },
   order: {
     type: Number,
     default: 0
@@ -17,9 +25,23 @@ const portfolioSchema = new mongoose.Schema({
     type: String,
     default: 'general'
   },
+  tags: {
+    type: [String],
+    default: []
+  },
   featured: {
     type: Boolean,
     default: false
+  },
+  quality: {
+    type: String,
+    enum: ['high', 'medium', 'low'],
+    default: 'high'
+  },
+  resize: {
+    type: String,
+    enum: ['none', 'small', 'medium', 'large'],
+    default: 'none'
   },
   createdAt: {
     type: Date,

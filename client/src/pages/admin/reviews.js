@@ -341,117 +341,116 @@ export default function AdminReviews() {
             </div>
           )}
           
+          {/* Reviews container with fixed height and scrolling */}
           {!loading && getFilteredReviews().length > 0 && (
             <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-              {getFilteredReviews().map((review) => (
-                <div key={review._id} className="border-t border-gray-200 p-6">
-                  <div className="flex flex-col md:flex-row justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center mb-2">
-                        {review.userAvatar ? (
-                          <img 
-                            src={review.userAvatar.startsWith('http') ? review.userAvatar : `${process.env.NEXT_PUBLIC_API_URL}${review.userAvatar}`} 
-                            alt={review.name} 
-                            className="h-10 w-10 rounded-full mr-3"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = "/assets/avtar.png";
-                            }}
-                          />
-                        ) : (
-                          <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center mr-3">
-                            <span className="text-gray-500 text-sm">{review.name ? review.name.charAt(0).toUpperCase() : '?'}</span>
-                          </div>
-                        )}
-                        <div>
-                          <h3 className="text-lg font-medium text-gray-900">{review.name}</h3>
-                          <div className="flex items-center">
-                            {getRatingStars(review.rating)}
-                            <span className="ml-2 text-sm text-gray-600">{review.event}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <p className="text-gray-700 mt-2">{review.text}</p>
-                      {review.eventImage && (
-                        <div className="mt-4">
-                          <img 
-                            src={`${process.env.NEXT_PUBLIC_API_URL}${review.eventImage}`} 
-                            alt="Event" 
-                            className="h-32 w-auto rounded-md"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.style.display = 'none';
-                            }}
-                          />
-                        </div>
-                      )}
-                      <div className="mt-4 text-sm text-gray-500">
-                        Submitted: {new Date(review.createdAt).toLocaleDateString()}
-                      </div>
-                    </div>
-                    <div className="flex flex-col mt-4 md:mt-0 md:ml-6 space-y-2">
-                      <div className="mb-2">{getApprovalStatus(review)}</div>
-                      <div className="flex space-x-2">
-                        {review.approved !== true && (
-                          <button
-                            onClick={() => handleApprove(review._id, true)}
-                            disabled={approveLoading[review._id] || reviewActionInProgress}
-                            className={`${
-                              approveLoading[review._id] 
-                                ? 'bg-green-200 cursor-not-allowed' 
-                                : 'bg-green-100 hover:bg-green-200'
-                            } text-green-800 py-1 px-3 rounded text-sm flex items-center`}
-                          >
-                            {approveLoading[review._id] ? (
-                              <>
-                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-green-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Processing...
-                              </>
-                            ) : 'Approve'}
-                          </button>
-                        )}
-                        {review.approved !== false && (
-                          <button
-                            onClick={() => handleApprove(review._id, false)}
-                            disabled={approveLoading[review._id] || reviewActionInProgress}
-                            className={`${
-                              approveLoading[review._id] 
-                                ? 'bg-red-200 cursor-not-allowed' 
-                                : 'bg-red-100 hover:bg-red-200'
-                            } text-red-800 py-1 px-3 rounded text-sm flex items-center`}
-                          >
-                            {approveLoading[review._id] ? (
-                              <>
-                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-red-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Processing...
-                              </>
-                            ) : 'Reject'}
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleDelete(review._id)}
-                          disabled={deleteLoading || reviewActionInProgress}
-                          className="bg-gray-100 hover:bg-gray-200 text-gray-700 py-1 px-3 rounded text-sm"
-                        >
-                          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                              fillRule="evenodd"
-                              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                              clipRule="evenodd"
+              <div className="border-b border-gray-200 px-6 py-4 bg-gray-50">
+                <h3 className="text-lg font-medium text-gray-900">
+                  {activeTab === 'all' ? 'All' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Reviews 
+                  <span className="ml-2 text-sm text-gray-500">({getFilteredReviews().length} total)</span>
+                </h3>
+              </div>
+              
+              <div className="h-[600px] overflow-y-auto">
+                {getFilteredReviews().map((review) => (
+                  <div key={review._id} className="border-t border-gray-200 p-6 hover:bg-gray-50">
+                    <div className="flex flex-col md:flex-row justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center mb-2">
+                          {review.userAvatar ? (
+                            <img 
+                              src={review.userAvatar.startsWith('http') ? review.userAvatar : `${process.env.NEXT_PUBLIC_API_URL}${review.userAvatar}`} 
+                              alt={review.name} 
+                              className="h-10 w-10 rounded-full mr-3"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = "/assets/avtar.png";
+                              }}
                             />
-                          </svg>
-                        </button>
+                          ) : (
+                            <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center mr-3">
+                              <span className="text-gray-500 text-sm">{review.name ? review.name.charAt(0).toUpperCase() : '?'}</span>
+                            </div>
+                          )}
+                          <div>
+                            <h3 className="text-lg font-medium text-gray-900">{review.name}</h3>
+                            <div className="flex items-center">
+                              {getRatingStars(review.rating)}
+                              <span className="ml-2 text-sm text-gray-600">{review.event}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <p className="text-gray-700 mt-2">{review.text}</p>
+                        {review.eventImage && (
+                          <div className="mt-4">
+                            <img 
+                              src={review.eventImage.startsWith('http') 
+                                ? review.eventImage 
+                                : `${process.env.NEXT_PUBLIC_API_URL}${review.eventImage}`} 
+                              alt="Event" 
+                              className="h-32 w-auto rounded-md"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.style.display = 'none';
+                              }}
+                            />
+                          </div>
+                        )}
+                        <div className="mt-4 text-sm text-gray-500">
+                          Submitted: {new Date(review.createdAt).toLocaleDateString()}
+                        </div>
+                      </div>
+                      <div className="flex flex-col mt-4 md:mt-0 md:ml-6 space-y-2">
+                        <div className="mb-2">{getApprovalStatus(review)}</div>
+                        <div className="flex space-x-2">
+                          {review.approved !== true && (
+                            <button
+                              onClick={() => handleApprove(review._id, true)}
+                              disabled={approveLoading[review._id] || reviewActionInProgress}
+                              className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+                            >
+                              {approveLoading[review._id] ? (
+                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                              ) : "Approve"}
+                            </button>
+                          )}
+                          
+                          {review.approved !== false && (
+                            <button
+                              onClick={() => handleApprove(review._id, false)}
+                              disabled={approveLoading[review._id] || reviewActionInProgress}
+                              className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
+                            >
+                              {approveLoading[review._id] ? (
+                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                              ) : "Reject"}
+                            </button>
+                          )}
+                          
+                          <button
+                            onClick={() => handleDelete(review._id)}
+                            disabled={deleteLoading || reviewActionInProgress}
+                            className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                          >
+                            {deleteLoading ? (
+                              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                            ) : "Delete"}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           )}
         </div>

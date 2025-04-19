@@ -16,6 +16,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const portfolioRoutes = require('./routes/portfolioRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const pricingRoutes = require('./routes/pricingRoutes');
+const testCloudinaryRoutes = require('./testCloudinary');
 
 // Initialize Express app
 const app = express();
@@ -34,6 +35,9 @@ app.use(cors({
 }));
 app.use(cookieParser());
 app.use(morgan('combined', { stream: logger.stream }));
+
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 // CSRF error handler - must be before any routes
 app.use(handleCSRFError);
@@ -87,6 +91,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/pricing', pricingRoutes);
+app.use('/api/test-cloudinary', testCloudinaryRoutes);
 
 // Home route
 app.get('/', (req, res) => {

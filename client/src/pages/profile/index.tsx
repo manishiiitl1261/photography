@@ -9,6 +9,7 @@ import Navbar from '@/components/navbar/Navbar';
 import { CameraIcon } from '@heroicons/react/24/outline';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import Footer from '@/components/footer/Footer';
+import { getAvatarUrl } from '@/utils/imageUtils';
 
 // Debounce function to prevent excessive API calls
 const debounce = <F extends (...args: any[]) => any>(func: F, wait: number) => {

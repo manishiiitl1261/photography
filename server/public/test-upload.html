@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudinary Upload Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #357abf;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f8f8f8;
+            min-height: 100px;
+            display: none;
+        }
+        #imagePreview {
+            max-width: 100%;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cloudinary Upload Test</h1>
+    
+    <div class="form-group">
+        <h2>1. Test Cloudinary Credentials</h2>
+        <button id="testCredentials">Test Credentials</button>
+    </div>
+
+    <div class="form-group">
+        <h2>2. Test Image Upload</h2>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <label for="testImage">Select an image:</label>
+            <input type="file" id="testImage" name="testImage" accept="image/*" required>
+            <br><br>
+            <button type="submit">Upload Image</button>
+        </form>
+    </div>
+
+    <div id="result">
+        <h3>Response:</h3>
+        <pre id="responseData"></pre>
+        <img id="imagePreview" src="" alt="Uploaded image preview">
+    </div>
+
+    <script>
+        document.getElementById('testCredentials').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/test-cloudinary/check-credentials');
+                const data = await response.json();
+                
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('responseData').textContent = JSON.stringify(data, null, 2);
+                document.getElementById('imagePreview').style.display = 'none';
+            } catch (error) {
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('responseData').textContent = 'Error: ' + error.message;
+                document.getElementById('imagePreview').style.display = 'none';
+            }
+        });
+
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const fileInput = document.getElementById('testImage');
+            
+            if (!fileInput.files[0]) {
+                alert('Please select a file');
+                return;
+            }
+            
+            formData.append('testImage', fileInput.files[0]);
+            
+            try {
+                const response = await fetch('/api/test-cloudinary/test-upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('responseData').textContent = JSON.stringify(data, null, 2);
+                
+                // Display the uploaded image if the upload was successful
+                if (data.success && data.url) {
+                    document.getElementById('imagePreview').src = data.url;
+                    document.getElementById('imagePreview').style.display = 'block';
+                } else {
+                    document.getElementById('imagePreview').style.display = 'none';
+                }
+            } catch (error) {
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('responseData').textContent = 'Error: ' + error.message;
+                document.getElementById('imagePreview').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html> 

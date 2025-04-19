@@ -42,7 +42,11 @@ export const AdminReviewProvider = ({ children }) => {
             const token = localStorage.getItem('token');
 
             if (!token) {
-                throw new Error("No authentication token found");
+                // Instead of throwing an error, set an appropriate error message and return early
+                console.log("No authentication token found - user needs to log in");
+                setError("Please log in to view admin content");
+                setLoading(false);
+                return;
             }
 
             // Fetch all reviews with cache-busting parameter
@@ -116,7 +120,10 @@ export const AdminReviewProvider = ({ children }) => {
             const token = localStorage.getItem('token');
 
             if (!token) {
-                throw new Error("No authentication token found");
+                console.log("No authentication token found for status update - user needs to log in");
+                setError("Authentication required. Please log in again.");
+                setLoading(false);
+                return { success: false, error: "Authentication required" };
             }
 
             const response = await fetch(`${API_URL}/${reviewId}/approve`, {
@@ -170,7 +177,10 @@ export const AdminReviewProvider = ({ children }) => {
             const token = localStorage.getItem('token');
 
             if (!token) {
-                throw new Error("No authentication token found");
+                console.log("No authentication token found for delete - user needs to log in");
+                setError("Authentication required. Please log in again.");
+                setLoading(false);
+                return { success: false, error: "Authentication required" };
             }
 
             const response = await fetch(`${API_URL}/${reviewId}`, {

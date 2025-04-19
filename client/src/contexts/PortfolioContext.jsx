@@ -1,15 +1,22 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import photos from "@/components/Portfolio/Photo";
 
 // Create the portfolio context
 const PortfolioContext = createContext();
 
-// Base URL for the API
-const API_URL = "http://localhost:5000/api/portfolio";
+// Get API URL from environment or use default
+const API_URL = process.env.NEXT_PUBLIC_API_URL
+    ? `${process.env.NEXT_PUBLIC_API_URL}/api/portfolio`
+    : "/api/portfolio";
+
+// Helper function to get the authentication token
+const getAuthHeaders = () => {
+    const token = localStorage.getItem('token');
+    return token ? { "Authorization": `Bearer ${token}` } : {};
+};
 
 // Provider component to wrap the application
 export const PortfolioProvider = ({ children }) => {
-    const [portfolioItems, setPortfolioItems] = useState(photos);
+    const [portfolioItems, setPortfolioItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -26,19 +33,20 @@ export const PortfolioProvider = ({ children }) => {
 
             const data = await response.json();
 
-            if (data.success && data.data.length > 0) {
-                // Use the API data if available
-                setPortfolioItems(data.data);
+            if (data.success) {
+                // Map the data to ensure id property exists for admin panel compatibility
+                const formattedData = data.data.map(item => ({
+                    ...item,
+                    id: item._id // Ensure id property exists for compatibility
+                }));
+                setPortfolioItems(formattedData);
             } else {
-                // If no API data, fall back to local data
-                console.log("No portfolio items found in API, using local data");
-                setPortfolioItems(photos);
+                throw new Error(data.message || "Failed to fetch portfolio items");
             }
         } catch (err) {
             console.error("Error fetching portfolio items:", err);
-            setError(err.message);
-            // Fall back to local data on error
-            setPortfolioItems(photos);
+            setError("Failed to load portfolio items. Please try again later.");
+            setPortfolioItems([]); // Empty array instead of falling back to static data
         } finally {
             setLoading(false);
         }
@@ -53,17 +61,30 @@ export const PortfolioProvider = ({ children }) => {
             // Check if itemData is FormData (for file uploads)
             const isFormData = itemData instanceof FormData;
 
+            // Get auth headers
+            const authHeaders = getAuthHeaders();
+
+            // Check if we have a token
+            if (!authHeaders.Authorization) {
+                throw new Error("Authentication required. Please log in again.");
+            }
+
             const response = await fetch(API_URL, {
                 method: "POST",
                 // Don't set Content-Type for FormData, browser will set it with boundary
-                headers: isFormData ? undefined : {
+                headers: isFormData ? authHeaders : {
                     "Content-Type": "application/json",
+                    ...authHeaders
                 },
                 body: isFormData ? itemData : JSON.stringify(itemData),
+                credentials: 'include'
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                if (response.status === 401) {
+                    throw new Error("Authentication expired. Please log in again.");
+                }
+                throw new Error(`API error: ${response.status}. Please try again.`);
             }
 
             const data = await response.json();
@@ -90,12 +111,25 @@ export const PortfolioProvider = ({ children }) => {
             setLoading(true);
             setError(null);
 
+            // Get auth headers
+            const authHeaders = getAuthHeaders();
+
+            // Check if we have a token
+            if (!authHeaders.Authorization) {
+                throw new Error("Authentication required. Please log in again.");
+            }
+
             const response = await fetch(`${API_URL}/${itemId}`, {
                 method: "DELETE",
+                headers: authHeaders,
+                credentials: 'include'
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                if (response.status === 401) {
+                    throw new Error("Authentication expired. Please log in again.");
+                }
+                throw new Error(`API error: ${response.status}. Please try again.`);
             }
 
             const data = await response.json();
@@ -125,22 +159,30 @@ export const PortfolioProvider = ({ children }) => {
             // Check if itemData is FormData (for file uploads)
             const isFormData = itemData instanceof FormData;
 
-            // If it's FormData, append the ID
-            if (isFormData) {
-                itemData.append('id', itemId);
+            // Get auth headers
+            const authHeaders = getAuthHeaders();
+
+            // Check if we have a token
+            if (!authHeaders.Authorization) {
+                throw new Error("Authentication required. Please log in again.");
             }
 
             const response = await fetch(`${API_URL}/${itemId}`, {
                 method: "PUT",
                 // Don't set Content-Type for FormData
-                headers: isFormData ? undefined : {
+                headers: isFormData ? authHeaders : {
                     "Content-Type": "application/json",
+                    ...authHeaders
                 },
                 body: isFormData ? itemData : JSON.stringify(itemData),
+                credentials: 'include'
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                if (response.status === 401) {
+                    throw new Error("Authentication expired. Please log in again.");
+                }
+                throw new Error(`API error: ${response.status}. Please try again.`);
             }
 
             const data = await response.json();

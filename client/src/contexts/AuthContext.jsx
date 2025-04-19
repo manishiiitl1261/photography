@@ -149,7 +149,21 @@ export const AuthProvider = ({ children }) => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || 'Registration failed');
+                // Handle email already in use specifically
+                if (data.message && data.message.toLowerCase().includes('email already in use')) {
+                    setError(data.message);
+                    return {
+                        success: false,
+                        error: data.message,
+                        emailExists: true
+                    };
+                }
+                // Handle other errors
+                setError(data.message || 'Registration failed');
+                return {
+                    success: false,
+                    error: data.message || 'Registration failed'
+                };
             }
 
             // Check if email verification is required
@@ -176,8 +190,12 @@ export const AuthProvider = ({ children }) => {
             setError(null);
             return data;
         } catch (error) {
-            setError(error.message);
-            throw error;
+            console.error('Registration error:', error);
+            setError(error.message || 'An unexpected error occurred');
+            return {
+                success: false,
+                error: error.message || 'An unexpected error occurred'
+            };
         } finally {
             setLoading(false);
         }
