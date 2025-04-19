@@ -2,6 +2,7 @@ const Portfolio = require('../models/Portfolio');
 const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
+const { deleteImage, getPublicIdFromUrl } = require('../config/cloudinary');
 
 // Helper function to handle file uploads
 const handleFileUpload = (file) => {
@@ -79,30 +80,54 @@ exports.getPortfolioItem = async (req, res) => {
 // Create a new portfolio item
 exports.createPortfolioItem = async (req, res) => {
   try {
-    let portfolioData = { ...req.body };
+    const { title, description, category, tags } = req.body;
     
-    // Handle file upload if present
-    if (req.file) {
-      const filePath = await handleFileUpload(req.file);
-      portfolioData.src = filePath;
+    // Validate required fields
+    if (!title || !category) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide title and category'
+      });
     }
     
-    // Get the count of existing items for ordering
-    const count = await Portfolio.countDocuments();
-    portfolioData.order = count;
+    // Check if image was uploaded
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please upload an image'
+      });
+    }
     
-    const portfolioItem = await Portfolio.create(portfolioData);
+    // With Cloudinary, the image URL comes from req.file.path
+    const imageUrl = req.file.path;
+    
+    // Convert tags string to array if it exists
+    const tagArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
+    
+    // Process quality and resize options
+    const { quality, resize } = req.body;
+    
+    // Create portfolio item
+    const portfolioItem = await Portfolio.create({
+      title,
+      description: description || '',
+      category,
+      tags: tagArray,
+      src: imageUrl,
+      alt: title, // Use title as alt text
+      quality: quality || 'high',
+      resize: resize || 'none'
+    });
     
     res.status(201).json({
       success: true,
-      message: 'Portfolio item created successfully',
       data: portfolioItem
     });
   } catch (error) {
-    console.error('Error creating portfolio item:', error);
+    console.error('Create portfolio item error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to create portfolio item',
+      message: 'Error creating portfolio item',
       error: error.message
     });
   }
@@ -111,7 +136,12 @@ exports.createPortfolioItem = async (req, res) => {
 // Update a portfolio item
 exports.updatePortfolioItem = async (req, res) => {
   try {
-    let portfolioItem = await Portfolio.findById(req.params.id);
+    const { id } = req.params;
+    const { title, description, category, tags, quality, resize } = req.body;
+    
+    // Find the item to update
+    const portfolioItem = await Portfolio.findById(id);
+    
     if (!portfolioItem) {
       return res.status(404).json({
         success: false,
@@ -119,39 +149,45 @@ exports.updatePortfolioItem = async (req, res) => {
       });
     }
     
-    let updateData = { ...req.body };
+    // Update fields
+    if (title) {
+      portfolioItem.title = title;
+      portfolioItem.alt = title; // Update alt text with title
+    }
+    if (description !== undefined) portfolioItem.description = description;
+    if (category) portfolioItem.category = category;
+    if (tags) {
+      portfolioItem.tags = tags.split(',').map(tag => tag.trim());
+    }
+    if (quality) portfolioItem.quality = quality;
+    if (resize) portfolioItem.resize = resize;
     
-    // Handle file upload if present
+    // If there's a new image, update it and delete the old one
     if (req.file) {
-      // Delete old file if it exists
-      if (portfolioItem.src && portfolioItem.src.startsWith('/uploads/')) {
-        const oldFilePath = path.join(__dirname, '../public', portfolioItem.src);
-        if (fs.existsSync(oldFilePath)) {
-          fs.unlinkSync(oldFilePath);
+      // If the old image is from Cloudinary, delete it
+      if (portfolioItem.src && portfolioItem.src.includes('cloudinary.com')) {
+        const publicId = getPublicIdFromUrl(portfolioItem.src);
+        if (publicId) {
+          await deleteImage(publicId);
         }
       }
       
-      const filePath = await handleFileUpload(req.file);
-      updateData.src = filePath;
+      // Update with new Cloudinary image URL
+      portfolioItem.src = req.file.path;
     }
     
-    // Update the portfolio item
-    const updatedItem = await Portfolio.findByIdAndUpdate(
-      req.params.id,
-      { ...updateData, updatedAt: Date.now() },
-      { new: true, runValidators: true }
-    );
+    // Save the updated item
+    await portfolioItem.save();
     
     res.status(200).json({
       success: true,
-      message: 'Portfolio item updated successfully',
-      data: updatedItem
+      data: portfolioItem
     });
   } catch (error) {
-    console.error('Error updating portfolio item:', error);
+    console.error('Update portfolio item error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to update portfolio item',
+      message: 'Error updating portfolio item',
       error: error.message
     });
   }
@@ -160,7 +196,11 @@ exports.updatePortfolioItem = async (req, res) => {
 // Delete a portfolio item
 exports.deletePortfolioItem = async (req, res) => {
   try {
-    const portfolioItem = await Portfolio.findById(req.params.id);
+    const { id } = req.params;
+    
+    // Find the item to delete
+    const portfolioItem = await Portfolio.findById(id);
+    
     if (!portfolioItem) {
       return res.status(404).json({
         success: false,
@@ -168,25 +208,29 @@ exports.deletePortfolioItem = async (req, res) => {
       });
     }
     
-    // Delete the file if it exists
-    if (portfolioItem.src && portfolioItem.src.startsWith('/uploads/')) {
-      const filePath = path.join(__dirname, '../public', portfolioItem.src);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
+    // Delete the associated image if it exists
+    if (portfolioItem.src) {
+      // If the image is from Cloudinary, delete it
+      if (portfolioItem.src.includes('cloudinary.com')) {
+        const publicId = getPublicIdFromUrl(portfolioItem.src);
+        if (publicId) {
+          await deleteImage(publicId);
+        }
       }
     }
     
-    await Portfolio.findByIdAndDelete(req.params.id);
+    // Delete the portfolio item
+    await Portfolio.findByIdAndDelete(id);
     
     res.status(200).json({
       success: true,
       message: 'Portfolio item deleted successfully'
     });
   } catch (error) {
-    console.error('Error deleting portfolio item:', error);
+    console.error('Delete portfolio item error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to delete portfolio item',
+      message: 'Error deleting portfolio item',
       error: error.message
     });
   }

@@ -119,24 +119,30 @@ const RegisterForm = ({ onClose, setShowRegister }) => {
             const { confirmPassword, ...userData } = formData;
             const result = await register(userData);
 
+            // Check if registration was successful
+            if (!result.success && result.error) {
+                // Handle specific case of email already existing
+                if (result.emailExists) {
+                    setError(result.error || 'Email already in use. Please login instead.');
+                    return;
+                }
+
+                // Handle other errors
+                setError(result.error);
+                return;
+            }
+
             // Check if email verification is required
             if (result && result.requiresVerification) {
                 setRegisteredEmail(result.email);
                 setShowVerification(true);
-            } else {
+            } else if (result.success || result.token) {
                 console.log('Registration successful!');
                 onClose(); // Close modal on successful registration
             }
         } catch (error) {
-            console.error('Registration error:', error);
-
-            // Check if the error message indicates verification is needed
-            if (error.message && error.message.includes('verification')) {
-                setRegisteredEmail(formData.email);
-                setShowVerification(true);
-            } else {
-                setError(error.message);
-            }
+            console.error('Registration validation error:', error);
+            setError(error.message);
         } finally {
             setLoading(false);
         }

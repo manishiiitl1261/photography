@@ -3,7 +3,7 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const { authenticateToken } = require('../middleware/auth');
 const { loginRateLimit, passwordStrengthValidator } = require('../middleware/accountProtection');
-const { upload } = require('../config/upload'); // Update import to use the config file
+const { cloudinaryUpload } = require('../config/cloudinary');
 
 // Apply account protection middleware
 router.use(loginRateLimit());
@@ -36,7 +36,7 @@ router.post('/logout', authenticateToken, authController.logout);
 // Protected routes
 router.get('/profile', authenticateToken, authController.getUserProfile);
 router.patch('/profile', authenticateToken, authController.updateUserProfile);
-router.post('/avatar', authenticateToken, upload.single('avatar'), authController.uploadAvatar);
+router.post('/avatar', authenticateToken, cloudinaryUpload.single('avatar'), authController.uploadAvatar);
 router.delete('/avatar', authenticateToken, authController.removeAvatar);
 
 module.exports = router; 

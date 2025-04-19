@@ -450,9 +450,6 @@ exports.uploadAvatar = async (req, res) => {
     const userId = req.user.id || req.user.userId;
     
     if (!userId) {
-      // Remove the uploaded file if user ID not found
-      fs.unlinkSync(req.file.path);
-      
       return res.status(400).json({ 
         success: false, 
         message: 'User ID not found in authentication token' 
@@ -463,24 +460,43 @@ exports.uploadAvatar = async (req, res) => {
     const user = await User.findById(userId);
     
     if (!user) {
-      // Remove the uploaded file if user not found
-      fs.unlinkSync(req.file.path);
-      
       return res.status(404).json({ 
         success: false, 
         message: 'User not found' 
       });
     }
 
-    // Delete old avatar if it exists and is not the default
-    if (user.avatar && user.avatar.startsWith('/uploads/') && fs.existsSync(path.join(__dirname, '..', user.avatar))) {
-      fs.unlinkSync(path.join(__dirname, '..', user.avatar));
+    // Store old avatar URL to check for reviews later
+    const oldAvatarUrl = user.avatar;
+
+    // If user has an existing Cloudinary avatar, delete it ONLY if no reviews are using it
+    if (oldAvatarUrl && oldAvatarUrl.includes('cloudinary.com')) {
+      // First check if any reviews are using this avatar
+      const Review = require('../models/Review');
+      const reviewsUsingAvatar = await Review.countDocuments({ userAvatar: oldAvatarUrl });
+      
+      if (reviewsUsingAvatar === 0) {
+        // Safe to delete as no reviews are using this avatar
+        const { getPublicIdFromUrl, deleteImage } = require('../config/cloudinary');
+        const publicId = getPublicIdFromUrl(oldAvatarUrl);
+        if (publicId) {
+          console.log(`Deleting unused avatar image: ${publicId}`);
+          await deleteImage(publicId);
+        }
+      } else {
+        console.log(`Keeping old avatar as ${reviewsUsingAvatar} reviews are using it`);
+      }
+    }
+    // Delete old avatar local file if it's a local file
+    else if (oldAvatarUrl && oldAvatarUrl.startsWith('/uploads/') && fs.existsSync(path.join(__dirname, '..', oldAvatarUrl))) {
+      fs.unlinkSync(path.join(__dirname, '..', oldAvatarUrl));
     }
     
-    // Update user with new avatar path
-    const avatarPath = `/uploads/${req.file.filename}`;
+    // The Cloudinary URL is now available in req.file.path
+    const avatarUrl = req.file.path;
     
-    user.avatar = avatarPath;
+    // Update user with new avatar path
+    user.avatar = avatarUrl;
     await user.save();
     
     // Create a sanitized user object to return
@@ -498,11 +514,6 @@ exports.uploadAvatar = async (req, res) => {
     });
   } catch (error) {
     logger.error('Upload avatar error:', error);
-    
-    // Clean up file if there was an error
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
     
     res.status(500).json({ 
       success: false, 
@@ -534,9 +545,30 @@ exports.removeAvatar = async (req, res) => {
       });
     }
 
-    // Delete avatar file if it exists and is not the default
-    if (user.avatar && user.avatar.startsWith('/uploads/') && fs.existsSync(path.join(__dirname, '..', user.avatar))) {
-      fs.unlinkSync(path.join(__dirname, '..', user.avatar));
+    // Store the current avatar URL
+    const oldAvatarUrl = user.avatar;
+
+    // If user has a Cloudinary avatar, check if we can delete it
+    if (oldAvatarUrl && oldAvatarUrl.includes('cloudinary.com')) {
+      // First check if any reviews are using this avatar
+      const Review = require('../models/Review');
+      const reviewsUsingAvatar = await Review.countDocuments({ userAvatar: oldAvatarUrl });
+      
+      if (reviewsUsingAvatar === 0) {
+        // Safe to delete as no reviews are using this avatar
+        const { getPublicIdFromUrl, deleteImage } = require('../config/cloudinary');
+        const publicId = getPublicIdFromUrl(oldAvatarUrl);
+        if (publicId) {
+          console.log(`Deleting unused avatar image: ${publicId}`);
+          await deleteImage(publicId);
+        }
+      } else {
+        console.log(`Keeping old avatar as ${reviewsUsingAvatar} reviews are using it`);
+      }
+    }
+    // Delete local avatar file if it exists and is not the default
+    else if (oldAvatarUrl && oldAvatarUrl.startsWith('/uploads/') && fs.existsSync(path.join(__dirname, '..', oldAvatarUrl))) {
+      fs.unlinkSync(path.join(__dirname, '..', oldAvatarUrl));
     }
     
     // Remove avatar from user

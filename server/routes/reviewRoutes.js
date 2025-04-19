@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { upload } = require('../config/upload'); // Import from config file
+const { cloudinaryUpload } = require('../config/cloudinary');
 const { adminAuth } = require('../middleware/adminAuth');
 
 const {
@@ -20,8 +20,8 @@ router.get('/', getAllReviews);
 router.get('/approved', getApprovedReviews); // Public can see only approved reviews
 router.get('/:id', getReview);
 
-// Create review route - open to public with file upload
-router.post('/', upload.single('eventImage'), createReview);
+// Create review route - now using Cloudinary for storage
+router.post('/', cloudinaryUpload.single('eventImage'), createReview);
 
 // Admin routes - protected by adminAuth middleware
 router.get('/admin/pending', adminAuth, getPendingReviews);
