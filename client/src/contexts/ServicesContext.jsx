@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import services from "@/components/Services/ServiceCardHelper";
+import { getAuthHeaders, handleAuthError } from "../utils/authHelpers";
+import { useLanguage } from "./LanguageContext";
 
 // Create the services context
 const ServicesContext = createContext();
@@ -9,9 +10,10 @@ const API_URL = "http://localhost:5000/api/services";
 
 // Provider component to wrap the application
 export const ServicesProvider = ({ children }) => {
-    const [serviceItems, setServiceItems] = useState(services);
+    const [serviceItems, setServiceItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { language } = useLanguage(); // Access current language
 
     // Fetch service items from the API
     const fetchServiceItems = async () => {
@@ -19,26 +21,27 @@ export const ServicesProvider = ({ children }) => {
             setLoading(true);
             setError(null);
 
-            const response = await fetch(API_URL);
+            // Add language parameter to the request
+            const response = await fetch(`${API_URL}?lang=${language}`);
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                handleAuthError(response);
             }
 
             const data = await response.json();
 
             if (data.success && data.data.length > 0) {
-                // Use the API data if available
+                // Use the API data
                 setServiceItems(data.data);
             } else {
-                // If no API data, fall back to local data
-                console.log("No service items found in API, using local data");
-                setServiceItems(services);
+                // If no API data, set empty array and show error
+                setServiceItems([]);
+                setError("No service items found in database. Please add services from the admin panel or run the database seed script.");
             }
         } catch (err) {
             console.error("Error fetching service items:", err);
             setError(err.message);
-            // Fall back to local data on error
-            setServiceItems(services);
+            // Set empty array on error
+            setServiceItems([]);
         } finally {
             setLoading(false);
         }
@@ -52,14 +55,12 @@ export const ServicesProvider = ({ children }) => {
 
             const response = await fetch(API_URL, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify(itemData),
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                handleAuthError(response);
             }
 
             const data = await response.json();
@@ -88,10 +89,11 @@ export const ServicesProvider = ({ children }) => {
 
             const response = await fetch(`${API_URL}/${itemId}`, {
                 method: "DELETE",
+                headers: getAuthHeaders()
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                handleAuthError(response);
             }
 
             const data = await response.json();
@@ -120,14 +122,12 @@ export const ServicesProvider = ({ children }) => {
 
             const response = await fetch(`${API_URL}/${itemId}`, {
                 method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify(itemData),
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                handleAuthError(response);
             }
 
             const data = await response.json();
@@ -148,10 +148,10 @@ export const ServicesProvider = ({ children }) => {
         }
     };
 
-    // Load service items when the component mounts
+    // Load service items when the component mounts or language changes
     useEffect(() => {
         fetchServiceItems();
-    }, []);
+    }, [language]); // Reload when language changes
 
     // Context value
     const value = {

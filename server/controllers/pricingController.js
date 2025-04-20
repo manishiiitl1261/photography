@@ -5,14 +5,34 @@ const { validatePackage } = require('../validators/pricingValidator');
 // Get all pricing packages
 exports.getAllPricePackages = async (req, res) => {
   try {
+    const lang = req.query.lang || 'en'; // Default to English if no language specified
+    
     const pricePackages = await PricePackage.find({ 
       active: true,
       packageType: 'standard'
     }).sort({ order: 1, createdAt: -1 });
+
+    // Process translations if they exist
+    const processedPackages = pricePackages.map(pkg => {
+      const packageObj = pkg.toObject();
+      
+      // If translations exist for this language, use them
+      if (packageObj.translations && packageObj.translations.has(lang)) {
+        const translation = packageObj.translations.get(lang);
+        return {
+          ...packageObj,
+          title: translation.title || packageObj.title,
+          price: translation.price || packageObj.price,
+          features: translation.features || packageObj.features
+        };
+      }
+      
+      return packageObj;
+    });
     
     res.status(200).json({
       success: true,
-      data: pricePackages
+      data: processedPackages
     });
   } catch (error) {
     console.error('Error fetching price packages:', error);
@@ -27,14 +47,34 @@ exports.getAllPricePackages = async (req, res) => {
 // Get all wedding pricing packages
 exports.getWeddingPackages = async (req, res) => {
   try {
+    const lang = req.query.lang || 'en'; // Default to English if no language specified
+    
     const weddingPackages = await PricePackage.find({ 
       active: true,
       packageType: 'wedding'
     }).sort({ order: 1, createdAt: -1 });
+
+    // Process translations if they exist
+    const processedPackages = weddingPackages.map(pkg => {
+      const packageObj = pkg.toObject();
+      
+      // If translations exist for this language, use them
+      if (packageObj.translations && packageObj.translations.has(lang)) {
+        const translation = packageObj.translations.get(lang);
+        return {
+          ...packageObj,
+          title: translation.title || packageObj.title,
+          price: translation.price || packageObj.price,
+          features: translation.features || packageObj.features
+        };
+      }
+      
+      return packageObj;
+    });
     
     res.status(200).json({
       success: true,
-      data: weddingPackages
+      data: processedPackages
     });
   } catch (error) {
     console.error('Error fetching wedding packages:', error);
@@ -206,18 +246,28 @@ exports.updateOrder = async (req, res) => {
     }
     
     const updates = items.map(item => {
+      // Handle both id and _id fields for compatibility
+      const itemId = item._id || item.id;
+      
+      if (!itemId) {
+        console.error('Missing ID field in item:', item);
+        return Promise.resolve(null); // Skip items with no ID
+      }
+      
       return PricePackage.findByIdAndUpdate(
-        item.id,
+        itemId,
         { order: item.order, updatedAt: Date.now() },
         { new: true }
       );
     });
     
-    await Promise.all(updates);
+    // Filter out null promises (items with no ID)
+    const results = await Promise.all(updates.filter(Boolean));
     
     res.status(200).json({
       success: true,
-      message: 'Price packages order updated successfully'
+      message: 'Price packages order updated successfully',
+      data: results
     });
   } catch (error) {
     console.error('Error updating price packages order:', error);
@@ -362,16 +412,29 @@ exports.updatePackagesOrder = async (req, res) => {
     
     // Update each package order
     const updatePromises = packages.map(pkg => {
+      // Handle both id and _id fields for compatibility
+      const pkgId = pkg._id || pkg.id;
+      
+      if (!pkgId) {
+        console.error('Missing ID field in package:', pkg);
+        return Promise.resolve(null); // Skip items with no ID
+      }
+      
       return Pricing.findByIdAndUpdate(
-        pkg.id,
+        pkgId,
         { order: pkg.order },
         { new: true }
       );
     });
     
-    await Promise.all(updatePromises);
+    // Filter out null promises (items with no ID)
+    const results = await Promise.all(updatePromises.filter(Boolean));
     
-    res.status(200).json({ success: true, message: 'Packages order updated' });
+    res.status(200).json({ 
+      success: true, 
+      message: 'Packages order updated',
+      data: results
+    });
   } catch (error) {
     console.error('Error updating packages order:', error);
     res.status(500).json({ success: false, error: 'Server error' });

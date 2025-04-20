@@ -1,22 +1,24 @@
 const mongoose = require('mongoose');
 
-const serviceSchema = new mongoose.Schema({
+const ServiceSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true
+    required: [true, 'Please provide a service title'],
+    trim: true
   },
   description: {
     type: String,
-    required: true
+    required: [true, 'Please provide a service description'],
+    trim: true
   },
   icon: {
     type: String,
-    required: true
+    required: [true, 'Please provide an icon']
   },
   animation: {
     type: String,
-    enum: ['left', 'right', 'top', 'down'],
-    default: 'left'
+    default: 'left',
+    enum: ['left', 'right', 'top', 'down']
   },
   order: {
     type: Number,
@@ -25,6 +27,14 @@ const serviceSchema = new mongoose.Schema({
   active: {
     type: Boolean,
     default: true
+  },
+  translations: {
+    type: Map,
+    of: new mongoose.Schema({
+      title: { type: String, required: true },
+      description: { type: String, required: true }
+    }, { _id: false }),
+    default: {}
   },
   createdAt: {
     type: Date,
@@ -36,14 +46,13 @@ const serviceSchema = new mongoose.Schema({
   }
 });
 
-// Update the 'updatedAt' field on save
-serviceSchema.pre('save', function(next) {
+// Update the updatedAt field before saving
+ServiceSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
   next();
 });
 
-const Service = mongoose.model('Service', serviceSchema);
-module.exports = Service; 
+module.exports = mongoose.model('Service', ServiceSchema); 
  
  
  

@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { usePricing } from '@/contexts/PricingContext';
 import { motion } from "framer-motion";
+import { useRouter } from 'next/router';
+
 const directions = ["left", "right", "up", "down"];
 
 const animationVariants = {
@@ -30,57 +32,17 @@ const images = [
         alt: "Wedding Couple"
     }
 ];
-// Fallback packages data
-const fallbackPackages = [
-    {
-        id: 'traditional',
-        title: 'Traditional Wedding',
-        price: '49,999',
-        features: [
-            'Traditional Photo',
-            'Traditional Video',
-            'Traditional Highlights',
-            '250 Photos Album with Acrylic Pad',
-            '2 Photo Frame'
-        ]
-    },
-    {
-        id: 'silver',
-        title: 'Silver Package',
-        price: '75,000',
-        features: [
-            'Traditional Photo',
-            'Traditional Video',
-            'Cinematic Video Highlights',
-            '300 Photos Album with Acrylic Pad',
-            '2 Photo Frame',
-            'Drone Coverage'
-        ]
-    },
-    {
-        id: 'gold',
-        title: 'Gold Package',
-        price: '1,05,000',
-        features: [
-            'Traditional & Candid Photos',
-            'Traditional & Cinematic Videos',
-            'Cinematic Teaser',
-            'Highlights Video & Reels',
-            'Edited Photos',
-            '400 Photos Album with Bug + Mini Album',
-            'Drone Coverage'
-        ]
-    }
-];
 
 const PricePackages = () => {
     const { t } = useLanguage();
     const { weddingPackages, loading, error } = usePricing();
+    const router = useRouter();
+    const isAdmin = router.pathname.startsWith('/admin');
     const [packages, setPackages] = useState([]);
 
     useEffect(() => {
         if (weddingPackages && weddingPackages.length > 0) {
-            // Use API data if available
+            // Use API data
             setPackages(weddingPackages.map(pkg => ({
                 id: pkg._id,
                 title: pkg.title,
@@ -88,40 +50,21 @@ const PricePackages = () => {
                 features: pkg.features
             })));
         } else {
-            // Use translated fallback data
-            setPackages([
-                {
-                    id: 'traditional',
-                    title: t.pricing.priceList.weddingPackages.traditional.title,
-                    price: t.pricing.priceList.weddingPackages.traditional.price,
-                    features: t.pricing.priceList.weddingPackages.traditional.features
-                },
-                {
-                    id: 'silver',
-                    title: t.pricing.priceList.weddingPackages.silver.title,
-                    price: t.pricing.priceList.weddingPackages.silver.price,
-                    features: t.pricing.priceList.weddingPackages.silver.features
-                },
-                {
-                    id: 'gold',
-                    title: t.pricing.priceList.weddingPackages.gold.title,
-                    price: t.pricing.priceList.weddingPackages.gold.price,
-                    features: t.pricing.priceList.weddingPackages.gold.features
-                }
-            ]);
+            // Set empty array when no data is available
+            setPackages([]);
         }
-    }, [t, weddingPackages]);
+    }, [weddingPackages]);
 
     return (
         <>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center">
-                    <h2 className="text-center  text-3xl sm:text-5xl font-bold mb-2 sm:mb-4 lg:mb-6 italic text-black">{t.pricing.priceList.title}</h2>
+                    <h2 className="text-center text-3xl sm:text-5xl font-bold mb-2 sm:mb-4 lg:mb-6 italic text-black">{t.pricing.priceList.title}</h2>
                     <p className="text-xl text-black mb-2">{t.pricing.priceList.subtitle}</p>
                 </div>
 
                 {/* Wedding images showcase */}
-                <div className="grid grid-cols-3 gap-4 p-2  mb-6 sm:mb-8 overflow-hidden">
+                <div className="grid grid-cols-3 gap-4 p-2 mb-6 sm:mb-8 overflow-hidden">
                     {images.map((photo, index) => {
                         const direction = directions[index % directions.length];
                         return (
@@ -136,7 +79,7 @@ const PricePackages = () => {
                                 <img
                                     src={photo.src}
                                     alt={photo.alt}
-                                    className="w-full h-full  object-cover duration-300 hover:scale-105 cursor-pointer"
+                                    className="w-full h-full object-cover duration-300 hover:scale-105 cursor-pointer"
                                 />
                             </motion.div>
                         );
@@ -144,41 +87,65 @@ const PricePackages = () => {
                 </div>
 
                 {loading && (
-                    <div className="text-center py-4">
-                        <p>Loading packages...</p>
+                    <div className="flex justify-center items-center py-10">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+                        <p className="ml-3 text-gray-700">Loading wedding packages...</p>
                     </div>
                 )}
 
                 {error && (
-                    <div className="text-center py-4 text-red-500">
-                        <p>Error loading packages. Using default data.</p>
+                    <div className="text-center py-10 px-4">
+                        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mx-auto max-w-2xl">
+                            <p className="font-bold">Error</p>
+                            <p>{error}</p>
+                            {isAdmin && (
+                                <p className="mt-2">
+                                    Please add wedding packages from the admin panel or run the database seed script.
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {!loading && !error && packages.length === 0 && (
+                    <div className="text-center py-10">
+                        <p className="text-gray-500">No wedding packages available at the moment.</p>
+                        {isAdmin && (
+                            <p className="mt-2 text-gray-500">
+                                Please add wedding packages from the admin panel or run the database seed script.
+                            </p>
+                        )}
                     </div>
                 )}
 
                 {/* Package cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
-                    {packages.map((pkg) => (
-                        <div
-                            key={pkg.id}
-                            className="shadow-md rounded-lg overflow-hidden border border-gray-200 transition-transform hover:scale-105 p-3 bg-gray-100"
-                        >
-                            <h3 className="text-xl font-bold text-black text-center">{pkg.title}</h3>
-                            <div className="p-6">
-                                <ul className="space-y-2 mb-2 min-h-56">
-                                    {pkg.features.map((feature, index) => (
-                                        <li key={index} className="flex items-start text-black">
-                                            <span className="text-black mr-2">•</span>
-                                            <span>{feature}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                                <div className="text-center mt-2 pt-2 border-t border-black">
-                                    <p className="text-xl sm:text-2xl font-bold text-black">₹{pkg.price}/ Only</p>
+                {packages.length > 0 && (
+                    <div className="max-h-[calc(100vh-250px)] md:max-h-[80vh] overflow-y-auto pr-2 mt-6 border-2 border-white rounded-lg">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-8 mb-12 p-4 sm:p-6  xl:p-8">
+                            {packages.map((pkg) => (
+                                <div
+                                    key={pkg.id}
+                                    className="shadow-md rounded-lg overflow-hidden border border-gray-200 transition-transform hover:scale-105 p-2 cursor-pointer bg-gray-100"
+                                >
+                                    <h3 className="text-xl font-bold text-black text-center">{pkg.title}</h3>
+                                    <div className="p-2">
+                                        <ul className="space-y-2 mb-2 min-h-56">
+                                            {pkg.features.map((feature, index) => (
+                                                <li key={index} className="flex items-start text-black">
+                                                    <span className="text-black mr-2">•</span>
+                                                    <span>{feature}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                        <div className="text-center mt-2 pt-2 border-t border-black">
+                                            <p className="text-xl sm:text-2xl font-bold text-black">{pkg.price}</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            ))}
                         </div>
-                    ))}
-                </div>
+                    </div>
+                )}
             </div>
         </>
     );

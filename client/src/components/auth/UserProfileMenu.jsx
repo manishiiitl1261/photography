@@ -120,7 +120,7 @@ const UserProfileMenu = () => {
                         )} */}
 
                         {/* Wallet link */}
-                        <Link href="/wallet" legacyBehavior>
+                        {/* <Link href="/wallet" legacyBehavior>
                             <a
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                 onClick={() => setIsDropdownOpen(false)}
@@ -128,7 +128,7 @@ const UserProfileMenu = () => {
                                 <CreditCardIcon className="h-4 w-4 mr-2" />
                                 {t.auth.wallet}
                             </a>
-                        </Link>
+                        </Link> */}
 
                         {/* Logout button */}
                         <button

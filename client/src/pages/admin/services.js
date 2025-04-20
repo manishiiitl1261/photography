@@ -21,11 +21,22 @@ export default function AdminServices() {
     title: '',
     description: '',
     icon: '',
-    animation: 'left'
+    animation: '',
+    active: true,
+    order: 0,
+    translations: {
+      hi: {
+        title: '',
+        description: ''
+      }
+    }
   });
   const [submitLoading, setSubmitLoading] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  // Form tabs
+  const [activeFormTab, setActiveFormTab] = useState('main'); // 'main', 'hi'
 
   useEffect(() => {
     const checkAdminAuth = async () => {
@@ -76,7 +87,15 @@ export default function AdminServices() {
       title: '',
       description: '',
       icon: '',
-      animation: 'left'
+      animation: '',
+      active: true,
+      order: 0,
+      translations: {
+        hi: {
+          title: '',
+          description: ''
+        }
+      }
     });
     setFormOpen(true);
     setSubmitError(null);
@@ -89,7 +108,12 @@ export default function AdminServices() {
       title: item.title || '',
       description: item.description || '',
       icon: item.icon || '',
-      animation: item.animation || 'left'
+      animation: item.animation || '',
+      active: item.active || true,
+      order: item.order || 0,
+      translations: {
+        hi: item.translations?.hi || { title: '', description: '' }
+      }
     });
     setFormOpen(true);
     setSubmitError(null);
@@ -103,7 +127,15 @@ export default function AdminServices() {
       title: '',
       description: '',
       icon: '',
-      animation: 'left'
+      animation: '',
+      active: true,
+      order: 0,
+      translations: {
+        hi: {
+          title: '',
+          description: ''
+        }
+      }
     });
     setSubmitError(null);
     setSubmitSuccess(false);
@@ -137,8 +169,8 @@ export default function AdminServices() {
 
       let result;
       if (editingItem) {
-        // Update existing item
-        result = await updateServiceItem(editingItem.id, newItem);
+        // Update existing item - use _id instead of id
+        result = await updateServiceItem(editingItem._id, newItem);
       } else {
         // Add new item
         result = await addServiceItem(newItem);
@@ -229,52 +261,61 @@ export default function AdminServices() {
             </div>
           )}
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {serviceItems.map((item) => (
-              <div key={item.id} className="bg-white rounded-lg shadow overflow-hidden">
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center">
-                      <span className="text-3xl mr-3">{item.icon}</span>
-                      <h3 className="text-lg font-medium text-gray-900">{item.title}</h3>
+          <div className="max-h-[70vh] overflow-y-auto pr-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {serviceItems.map((item) => (
+                <div key={item._id} className="bg-white rounded-lg shadow overflow-hidden">
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center">
+                        <span className="text-3xl mr-3">{item.icon}</span>
+                        <h3 className="text-lg font-medium text-gray-900">{item.title}</h3>
+                      </div>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => openEditForm(item)}
+                          className="text-indigo-600 hover:text-indigo-900"
+                          title="Edit"
+                        >
+                          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleDelete(item._id)}
+                          className="text-red-600 hover:text-red-900"
+                          title="Delete"
+                        >
+                          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => openEditForm(item)}
-                        className="text-indigo-600 hover:text-indigo-900"
-                        title="Edit"
-                      >
-                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                        </svg>
-                      </button>
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className="text-red-600 hover:text-red-900"
-                        title="Delete"
-                      >
-                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
+                    <p className="text-gray-600 text-sm">{item.description}</p>
+                    <div className="mt-3 text-sm text-gray-500">
+                      Animation: <span className="font-medium">{item.animation}</span>
                     </div>
-                  </div>
-                  <p className="text-gray-600 text-sm">{item.description}</p>
-                  <div className="mt-3 text-sm text-gray-500">
-                    Animation: <span className="font-medium">{item.animation}</span>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </main>
       
       {/* Add/Edit Form Modal */}
       {formOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-4">
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              closeForm();
+            }
+          }}
+        >
+          <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4 sticky top-0 bg-white pt-2 z-10">
               <h2 className="text-xl font-semibold">
                 {editingItem ? 'Edit Service' : 'Add New Service'}
               </h2>
@@ -288,102 +329,190 @@ export default function AdminServices() {
               </button>
             </div>
             
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
-                  Service Title *
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  name="title"
-                  value={newItem.title}
-                  onChange={handleInputChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  placeholder="e.g., Photography"
-                  required
-                />
-              </div>
-              
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
-                  Description *
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={newItem.description}
-                  onChange={handleInputChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  placeholder="Describe the service..."
-                  rows="3"
-                  required
-                ></textarea>
-              </div>
-              
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="icon">
-                  Icon (emoji or symbol) *
-                </label>
-                <input
-                  type="text"
-                  id="icon"
-                  name="icon"
-                  value={newItem.icon}
-                  onChange={handleInputChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  placeholder="e.g., 📷"
-                  required
-                />
-              </div>
-              
-              <div className="mb-6">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="animation">
-                  Animation Type
-                </label>
-                <select
-                  id="animation"
-                  name="animation"
-                  value={newItem.animation}
-                  onChange={handleInputChange}
-                  className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            {/* Tabs for languages */}
+            <div className="mb-6 border-b border-gray-200">
+              <nav className="-mb-px flex">
+                <button
+                  className={`py-2 px-4 border-b-2 font-medium text-sm ${
+                    activeFormTab === 'main'
+                      ? 'border-indigo-500 text-indigo-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                  onClick={() => setActiveFormTab('main')}
                 >
-                  {animationOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option.charAt(0).toUpperCase() + option.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                  English (Main)
+                </button>
+                <button
+                  className={`ml-8 py-2 px-4 border-b-2 font-medium text-sm ${
+                    activeFormTab === 'hi'
+                      ? 'border-indigo-500 text-indigo-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                  onClick={() => setActiveFormTab('hi')}
+                >
+                  Hindi
+                </button>
+              </nav>
+            </div>
+            
+            <form onSubmit={handleSubmit}>
+              {/* Main content (English) */}
+              {activeFormTab === 'main' && (
+                <>
+                  <div className="mb-4">
+                    <label htmlFor="title" className="block text-gray-700 text-sm font-bold mb-2">
+                      Title <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="title"
+                      name="title"
+                      value={newItem.title}
+                      onChange={handleInputChange}
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      required
+                    />
+                  </div>
+                  
+                  <div className="mb-4">
+                    <label htmlFor="description" className="block text-gray-700 text-sm font-bold mb-2">
+                      Description <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      value={newItem.description}
+                      onChange={handleInputChange}
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"
+                      required
+                    />
+                  </div>
+                  
+                  <div className="mb-4">
+                    <label htmlFor="icon" className="block text-gray-700 text-sm font-bold mb-2">
+                      Icon <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="icon"
+                      name="icon"
+                      value={newItem.icon}
+                      onChange={handleInputChange}
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      placeholder="Emoji or icon character"
+                      required
+                    />
+                  </div>
+                  
+                  <div className="mb-6">
+                    <label htmlFor="animation" className="block text-gray-700 text-sm font-bold mb-2">
+                      Animation Effect
+                    </label>
+                    <select
+                      id="animation"
+                      name="animation"
+                      value={newItem.animation}
+                      onChange={handleInputChange}
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    >
+                      {animationOptions.map(option => (
+                        <option key={option} value={option}>
+                          {option.charAt(0).toUpperCase() + option.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              )}
+              
+              {/* Hindi Translations */}
+              {activeFormTab === 'hi' && (
+                <>
+                  <div className="mb-4">
+                    <label htmlFor="title-hi" className="block text-gray-700 text-sm font-bold mb-2">
+                      Hindi Title
+                    </label>
+                    <input
+                      type="text"
+                      id="title-hi"
+                      value={newItem.translations.hi.title}
+                      onChange={(e) => {
+                        setNewItem({
+                          ...newItem,
+                          translations: {
+                            ...newItem.translations,
+                            hi: {
+                              ...newItem.translations.hi,
+                              title: e.target.value
+                            }
+                          }
+                        });
+                      }}
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    />
+                  </div>
+                  
+                  <div className="mb-4">
+                    <label htmlFor="description-hi" className="block text-gray-700 text-sm font-bold mb-2">
+                      Hindi Description
+                    </label>
+                    <textarea
+                      id="description-hi"
+                      value={newItem.translations.hi.description}
+                      onChange={(e) => {
+                        setNewItem({
+                          ...newItem,
+                          translations: {
+                            ...newItem.translations,
+                            hi: {
+                              ...newItem.translations.hi,
+                              description: e.target.value
+                            }
+                          }
+                        });
+                      }}
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32"
+                    />
+                  </div>
+                </>
+              )}
               
               {submitError && (
-                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-                  <p>{submitError}</p>
+                <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
+                  {submitError}
                 </div>
               )}
               
               {submitSuccess && (
-                <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
-                  <p>Service saved successfully!</p>
+                <div className="mb-4 p-3 bg-green-100 text-green-700 rounded">
+                  Service {editingItem ? 'updated' : 'added'} successfully!
                 </div>
               )}
               
-              <div className="flex justify-end space-x-3">
+              <div className="flex justify-end">
                 <button
                   type="button"
                   onClick={closeForm}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                  className="mr-2 px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-100"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
+                  className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 flex items-center"
                   disabled={submitLoading}
-                  className={`px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-                    submitLoading ? 'opacity-70 cursor-not-allowed' : ''
-                  }`}
                 >
-                  {submitLoading ? 'Saving...' : 'Save'}
+                  {submitLoading ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Saving...
+                    </>
+                  ) : (
+                    'Save'
+                  )}
                 </button>
               </div>
             </form>

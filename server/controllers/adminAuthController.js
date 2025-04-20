@@ -115,12 +115,16 @@ exports.verifyAdminOTP = async (req, res) => {
       });
     }
 
+    // Set the role to admin
+    user.role = 'admin';
+    
     // Generate admin JWT token
     const adminToken = jwt.sign(
       { 
         id: user._id,
         email: user.email,
-        isAdmin: true // Explicitly mark as admin
+        role: 'admin', // Explicitly set role in token
+        isAdmin: true // Additional explicit marker
       },
       process.env.JWT_SECRET,
       { expiresIn: '1d' } // 1 day for admin sessions

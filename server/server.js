@@ -16,6 +16,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const portfolioRoutes = require('./routes/portfolioRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const pricingRoutes = require('./routes/pricingRoutes');
+const adminUserRoutes = require('./routes/adminUserRoutes');
 const testCloudinaryRoutes = require('./testCloudinary');
 
 // Initialize Express app
@@ -91,6 +92,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/pricing', pricingRoutes);
+app.use('/api/admin-user', adminUserRoutes);
 app.use('/api/test-cloudinary', testCloudinaryRoutes);
 
 // Home route
