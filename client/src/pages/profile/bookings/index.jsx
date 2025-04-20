@@ -10,9 +10,11 @@ import {
     CheckCircleIcon,
     XCircleIcon,
     ClockIcon,
-    CreditCardIcon
+    CreditCardIcon,
+    ChatBubbleBottomCenterTextIcon
 } from '@heroicons/react/24/outline';
 import Footer from '@/components/footer/Footer';
+
 const statusIcons = {
     pending: <ClockIcon className="h-5 w-5 text-yellow-500" />,
     approved: <CheckCircleIcon className="h-5 w-5 text-green-500" />,
@@ -35,6 +37,7 @@ const BookingsPage = () => {
     const [message, setMessage] = useState('');
     const [sortedBookings, setSortedBookings] = useState([]);
     const [buttonLoading, setButtonLoading] = useState({});
+    const [refreshInterval, setRefreshInterval] = useState(null);
 
     useEffect(() => {
         // Clear any existing errors
@@ -59,7 +62,24 @@ const BookingsPage = () => {
         };
 
         loadBookings();
-        // Only run this effect when the component mounts or user changes
+
+        // Set up a refresh interval for bookings (every 30 seconds)
+        const interval = setInterval(() => {
+            if (user) {
+                fetchUserBookings().catch(error => {
+                    console.error('Error refreshing user bookings:', error);
+                });
+            }
+        }, 30000);
+
+        setRefreshInterval(interval);
+
+        // Clean up interval on unmount
+        return () => {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        };
     }, [user, router, clearErrors]);
 
     // Sort bookings when they change
@@ -94,8 +114,9 @@ const BookingsPage = () => {
                 await cancelBooking(bookingId);
 
                 // Update the state directly for immediate UI feedback
+                // Use _id for consistent MongoDB ID reference
                 setSortedBookings(prevBookings =>
-                    prevBookings.filter(booking => booking._id !== bookingId)
+                    prevBookings.filter(booking => booking._id.toString() !== bookingId.toString())
                 );
 
                 // Show success message
@@ -138,6 +159,56 @@ const BookingsPage = () => {
         return statusMap[status] || status;
     };
 
+    // Render a status tag with appropriate styling
+    const renderStatusTag = (status) => {
+        return (
+            <div className={`flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusColors[status]}`}>
+                {statusIcons[status]}
+                <span className="ml-1 capitalize">{getTranslatedStatus(status)}</span>
+            </div>
+        );
+    };
+
+    // Render status description
+    const renderStatusDescription = (booking) => {
+        // Default status descriptions if translations are not available
+        const defaultDescriptions = {
+            pending: "Your booking request is pending approval.",
+            approved: "Your booking has been approved. We look forward to seeing you!",
+            rejected: "We're sorry, but your booking request was not approved.",
+            completed: "Your booking has been completed. Thank you for choosing our services!"
+        };
+
+        switch (booking.status) {
+            case 'pending':
+                return (
+                    <p className="text-sm text-yellow-600">
+                        {t.booking?.statusDescription?.pending || defaultDescriptions.pending}
+                    </p>
+                );
+            case 'approved':
+                return (
+                    <p className="text-sm text-green-600">
+                        {t.booking?.statusDescription?.approved || defaultDescriptions.approved}
+                    </p>
+                );
+            case 'rejected':
+                return (
+                    <p className="text-sm text-red-600">
+                        {t.booking?.statusDescription?.rejected || defaultDescriptions.rejected}
+                    </p>
+                );
+            case 'completed':
+                return (
+                    <p className="text-sm text-blue-600">
+                        {t.booking?.statusDescription?.completed || defaultDescriptions.completed}
+                    </p>
+                );
+            default:
+                return null;
+        }
+    };
+
     const renderBookingsList = () => {
         if (loading) {
             return (
@@ -170,10 +241,11 @@ const BookingsPage = () => {
                         <div className="p-6">
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-xl font-bold text-gray-800">{booking.serviceType}</h2>
-                                <div className={`flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusColors[booking.status]}`}>
-                                    {statusIcons[booking.status]}
-                                    <span className="ml-1 capitalize">{getTranslatedStatus(booking.status)}</span>
-                                </div>
+                                {renderStatusTag(booking.status)}
+                            </div>
+
+                            <div className="mb-3">
+                                {renderStatusDescription(booking)}
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -203,9 +275,12 @@ const BookingsPage = () => {
                             )}
 
                             {booking.adminNotes && (
-                                <div className="mb-4 p-3 bg-blue-50 rounded">
-                                    <h3 className="text-sm font-medium text-gray-700">{t.booking.bookingDetails.adminNotes}</h3>
-                                    <p className="text-gray-800">{booking.adminNotes}</p>
+                                <div className="mb-4 p-3 bg-blue-50 rounded flex items-start">
+                                    <ChatBubbleBottomCenterTextIcon className="h-5 w-5 text-blue-500 mr-2 mt-0.5" />
+                                    <div>
+                                        <h3 className="text-sm font-medium text-gray-700">{t.booking.bookingDetails.adminNotes}</h3>
+                                        <p className="text-gray-800">{booking.adminNotes}</p>
+                                    </div>
                                 </div>
                             )}
 

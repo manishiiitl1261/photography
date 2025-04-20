@@ -2,6 +2,21 @@
 
 A full-stack application for photographers to showcase their work and for clients to book photography services.
 
+## Recent Updates
+
+**Dynamic Data Implementation:**
+We've refactored services and pricing components to fetch data dynamically from the database instead of using static content files. This applies to both user-facing and admin components. Benefits include:
+- Centralized data management through the database
+- Real-time updates without code changes
+- Consistent data across user and admin views
+- Easier content management through the admin panel
+
+A seed script has been added to quickly populate the database with initial services and pricing data:
+```bash
+cd photography/server
+npm run seed
+```
+
 ## Project Overview
 
 This application is built with a modern tech stack:
@@ -37,6 +52,11 @@ This application is built with a modern tech stack:
   - Client feedback
   - Star ratings
   - Testimonials
+
+- **Dynamic Content Management**
+  - Services and packages managed via database
+  - Admin dashboard for content updates
+  - Responsive content display
 
 ## Project Structure
 
@@ -75,6 +95,12 @@ This project is organized into two main directories:
 4. Configure environment variables:
    - Create `.env` in the server directory (see `.env.example`)
    - Create `.env.local` in the client directory (see `.env.example`)
+
+5. Seed the database with initial services and pricing data:
+   ```
+   cd photography/server
+   npm run seed
+   ```
 
 ### Running the Application
 

@@ -13,7 +13,9 @@ export default function AdminPricing() {
     error, 
     addPricingPackage, 
     updatePricingPackage, 
-    deletePricingPackage 
+    deletePricingPackage,
+    addWeddingPackage,
+    updateWeddingPackage 
   } = usePricing();
   
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -27,7 +29,8 @@ export default function AdminPricing() {
     title: '',
     price: '',
     features: [''],
-    animation: 'left'
+    animation: 'left',
+    packageType: 'standard'
   });
   const [submitLoading, setSubmitLoading] = useState(false);
   const [submitError, setSubmitError] = useState(null);
@@ -81,12 +84,21 @@ export default function AdminPricing() {
 
   const openAddForm = () => {
     setEditingPackage(null);
-    setNewPackage({
+    
+    // Create the package data object for a new package
+    const packageData = {
       title: '',
       price: '',
       features: [''],
-      animation: 'left'
-    });
+      packageType: activeTab
+    };
+    
+    // Only add animation for standard packages
+    if (activeTab === 'standard') {
+      packageData.animation = 'left';
+    }
+    
+    setNewPackage(packageData);
     setFormOpen(true);
     setSubmitError(null);
     setSubmitSuccess(false);
@@ -94,12 +106,21 @@ export default function AdminPricing() {
 
   const openEditForm = (pkg) => {
     setEditingPackage(pkg);
-    setNewPackage({
+    
+    // Create the package data object for editing
+    const packageData = {
       title: pkg.title || '',
       price: pkg.price || '',
       features: pkg.features || [''],
-      animation: pkg.animation || 'left'
-    });
+      packageType: pkg.packageType || activeTab
+    };
+    
+    // Only add animation for standard packages
+    if (pkg.packageType === 'standard' || activeTab === 'standard') {
+      packageData.animation = pkg.animation || 'left';
+    }
+    
+    setNewPackage(packageData);
     setFormOpen(true);
     setSubmitError(null);
     setSubmitSuccess(false);
@@ -108,12 +129,21 @@ export default function AdminPricing() {
   const closeForm = () => {
     setFormOpen(false);
     setEditingPackage(null);
-    setNewPackage({
+    
+    // Create empty package data
+    const packageData = {
       title: '',
       price: '',
       features: [''],
-      animation: 'left'
-    });
+      packageType: activeTab
+    };
+    
+    // Only add animation for standard packages
+    if (activeTab === 'standard') {
+      packageData.animation = 'left';
+    }
+    
+    setNewPackage(packageData);
     setSubmitError(null);
     setSubmitSuccess(false);
   };
@@ -171,13 +201,32 @@ export default function AdminPricing() {
         throw new Error('Empty features are not allowed');
       }
 
+      // Prepare package data
+      const packageToSave = {
+        ...newPackage,
+        packageType: activeTab
+      };
+
+      // For wedding packages, we don't need animation
+      if (activeTab === 'wedding') {
+        delete packageToSave.animation;
+      }
+
       let result;
       if (editingPackage) {
         // Update existing package
-        result = await updatePricingPackage(editingPackage.id, newPackage);
+        if (activeTab === 'wedding') {
+          result = await updateWeddingPackage(editingPackage._id, packageToSave);
+        } else {
+          result = await updatePricingPackage(editingPackage._id, packageToSave);
+        }
       } else {
         // Add new package
-        result = await addPricingPackage(newPackage);
+        if (activeTab === 'wedding') {
+          result = await addWeddingPackage(packageToSave);
+        } else {
+          result = await addPricingPackage(packageToSave);
+        }
       }
 
       if (result.success) {
@@ -187,11 +236,11 @@ export default function AdminPricing() {
           closeForm();
         }, 1500);
       } else {
-        setSubmitError(result.error || 'Failed to save pricing package');
+        setSubmitError(result.error || `Failed to save ${activeTab} package`);
       }
     } catch (error) {
-      console.error('Error submitting pricing package:', error);
-      setSubmitError(error.message || 'An error occurred while saving the pricing package');
+      console.error(`Error submitting ${activeTab} package:`, error);
+      setSubmitError(error.message || `An error occurred while saving the ${activeTab} package`);
     } finally {
       setSubmitLoading(false);
     }
@@ -242,7 +291,7 @@ export default function AdminPricing() {
               onClick={openAddForm}
               className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
             >
-              Add New Package
+              Add New {activeTab === 'wedding' ? 'Wedding' : 'Standard'} Package
             </button>
           </div>
           
@@ -293,50 +342,52 @@ export default function AdminPricing() {
           )}
           
           {activeTab === 'standard' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {pricingPackages.map((pkg) => (
-                <div key={pkg.id} className="bg-white rounded-lg shadow overflow-hidden">
-                  <div className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="text-lg font-medium text-gray-900">{pkg.title}</h3>
-                        <p className="text-2xl font-bold text-indigo-600 mt-1">{pkg.price}</p>
+            <div className="max-h-[70vh] overflow-y-auto pr-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {pricingPackages.map((pkg) => (
+                  <div key={pkg._id} className="bg-white rounded-lg shadow overflow-hidden">
+                    <div className="p-6">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h3 className="text-lg font-medium text-gray-900">{pkg.title}</h3>
+                          <p className="text-2xl font-bold text-indigo-600 mt-1">{pkg.price}</p>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => openEditForm(pkg)}
+                            className="text-indigo-600 hover:text-indigo-900"
+                            title="Edit"
+                          >
+                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() => handleDelete(pkg._id)}
+                            className="text-red-600 hover:text-red-900"
+                            title="Delete"
+                          >
+                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => openEditForm(pkg)}
-                          className="text-indigo-600 hover:text-indigo-900"
-                          title="Edit"
-                        >
-                          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() => handleDelete(pkg.id)}
-                          className="text-red-600 hover:text-red-900"
-                          title="Delete"
-                        >
-                          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
+                      <ul className="mt-4 space-y-2">
+                        {pkg.features.map((feature, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="flex-shrink-0 h-5 w-5 text-indigo-500">•</span>
+                            <span className="ml-2 text-gray-600">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="mt-3 text-sm text-gray-500">
+                        Animation: <span className="font-medium">{pkg.animation}</span>
                       </div>
-                    </div>
-                    <ul className="mt-4 space-y-2">
-                      {pkg.features.map((feature, index) => (
-                        <li key={index} className="flex items-start">
-                          <span className="flex-shrink-0 h-5 w-5 text-indigo-500">•</span>
-                          <span className="ml-2 text-gray-600">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="mt-3 text-sm text-gray-500">
-                      Animation: <span className="font-medium">{pkg.animation}</span>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           )}
           
@@ -348,47 +399,49 @@ export default function AdminPricing() {
           )}
           
           {activeTab === 'wedding' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {weddingPackages.map((pkg) => (
-                <div key={pkg.id} className="bg-white rounded-lg shadow overflow-hidden">
-                  <div className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="text-lg font-medium text-gray-900">{pkg.title}</h3>
-                        <p className="text-2xl font-bold text-indigo-600 mt-1">{pkg.price}</p>
+            <div className="max-h-[70vh] overflow-y-auto pr-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {weddingPackages.map((pkg) => (
+                  <div key={pkg._id} className="bg-white rounded-lg shadow overflow-hidden">
+                    <div className="p-6">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h3 className="text-lg font-medium text-gray-900">{pkg.title}</h3>
+                          <p className="text-2xl font-bold text-indigo-600 mt-1">{pkg.price}</p>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => openEditForm(pkg)}
+                            className="text-indigo-600 hover:text-indigo-900"
+                            title="Edit"
+                          >
+                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() => handleDelete(pkg._id)}
+                            className="text-red-600 hover:text-red-900"
+                            title="Delete"
+                          >
+                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => openEditForm(pkg)}
-                          className="text-indigo-600 hover:text-indigo-900"
-                          title="Edit"
-                        >
-                          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() => handleDelete(pkg.id)}
-                          className="text-red-600 hover:text-red-900"
-                          title="Delete"
-                        >
-                          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      </div>
+                      <ul className="mt-4 space-y-2">
+                        {pkg.features.map((feature, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="flex-shrink-0 h-5 w-5 text-indigo-500">•</span>
+                            <span className="ml-2 text-gray-600">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                    <ul className="mt-4 space-y-2">
-                      {pkg.features.map((feature, index) => (
-                        <li key={index} className="flex items-start">
-                          <span className="flex-shrink-0 h-5 w-5 text-indigo-500">•</span>
-                          <span className="ml-2 text-gray-600">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -396,11 +449,20 @@ export default function AdminPricing() {
       
       {/* Add/Edit Form Modal */}
       {formOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-4">
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              closeForm();
+            }
+          }}
+        >
+          <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4 sticky top-0 bg-white pt-2 z-10">
               <h2 className="text-xl font-semibold">
-                {editingPackage ? 'Edit Pricing Package' : 'Add New Pricing Package'}
+                {editingPackage 
+                  ? `Edit ${activeTab === 'wedding' ? 'Wedding' : 'Standard'} Package` 
+                  : `Add New ${activeTab === 'wedding' ? 'Wedding' : 'Standard'} Package`}
               </h2>
               <button
                 onClick={closeForm}
@@ -484,24 +546,27 @@ export default function AdminPricing() {
                 </button>
               </div>
               
-              <div className="mb-6">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="animation">
-                  Animation Type
-                </label>
-                <select
-                  id="animation"
-                  name="animation"
-                  value={newPackage.animation}
-                  onChange={handleInputChange}
-                  className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                >
-                  {animationOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option.charAt(0).toUpperCase() + option.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {/* Only show animation field for standard packages */}
+              {activeTab === 'standard' && (
+                <div className="mb-6">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="animation">
+                    Animation Type
+                  </label>
+                  <select
+                    id="animation"
+                    name="animation"
+                    value={newPackage.animation}
+                    onChange={handleInputChange}
+                    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  >
+                    {animationOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option.charAt(0).toUpperCase() + option.slice(1)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
               
               {submitError && (
                 <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
@@ -511,11 +576,11 @@ export default function AdminPricing() {
               
               {submitSuccess && (
                 <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
-                  <p>Pricing package saved successfully!</p>
+                  <p>{activeTab === 'wedding' ? 'Wedding' : 'Standard'} package saved successfully!</p>
                 </div>
               )}
               
-              <div className="flex justify-end space-x-3">
+              <div className="flex justify-end space-x-3 sticky bottom-0 bg-white pb-2 pt-4 mt-4 border-t">
                 <button
                   type="button"
                   onClick={closeForm}

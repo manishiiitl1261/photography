@@ -2,6 +2,7 @@ const { StatusCodes } = require('http-status-codes');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const logger = require('../utils/logger');
+const { isAdminEmail } = require('../config/createAdmin');
 
 const authenticateUser = async (req, res, next) => {
   try {
@@ -23,15 +24,27 @@ const authenticateUser = async (req, res, next) => {
       
       console.log('JWT decoded token:', decoded);
 
-      // Attach user to request object
+      // Check if this is an admin email
+      const adminStatus = decoded.email ? isAdminEmail(decoded.email) : false;
+
+      // Standardize user ID to ensure _id is always available
+      const userId = decoded.id || decoded.userId;
+      
+      // Attach user to request object with consistent ID format
       req.user = {
-        userId: decoded.userId || decoded.id,
+        _id: userId,         // Primary ID field (MongoDB standard)
+        userId: userId,      // Include for backward compatibility
+        id: userId,          // Include for backward compatibility
         email: decoded.email,
         name: decoded.name,
-        role: decoded.role || 'user' // Default to 'user' if role is not in token
+        // Set role based on the email allowlist, not from token
+        role: adminStatus ? 'admin' : 'user'
       };
       
-      console.log('User object attached to request:', req.user);
+      console.log('User object attached to request:', {
+        ...req.user,
+        isAdmin: adminStatus
+      });
 
       next();
     } catch (error) {
@@ -51,9 +64,10 @@ const authenticateUser = async (req, res, next) => {
   }
 };
 
-// Middleware to check if user is admin
+// Middleware to check if user is admin using email allowlist
 const authorizeAdmin = (req, res, next) => {
-  if (req.user.role !== 'admin') {
+  // Check if email is in admin list
+  if (!req.user.email || !isAdminEmail(req.user.email)) {
     return res.status(403).json({
       success: false,
       message: 'Admin access required'

@@ -1,13 +1,13 @@
 const Booking = require('../models/Booking');
 const User = require('../models/User');
 const { StatusCodes } = require('http-status-codes');
+const { sendBookingNotificationToAdmin, sendBookingStatusUpdateToUser } = require('../utils/emailService');
 
 // Create a new booking
 const createBooking = async (req, res) => {
   try {
-    // Get user ID from authenticated request
-    // Check all possible fields in the req.user object
-    const userId = req.user.userId || req.user.id || req.user._id;
+    // Get user ID from authenticated request - standardize to _id
+    const userId = req.user._id || req.user.userId || req.user.id;
     
     console.log('Creating booking with user ID:', userId);
     console.log('Request user object:', req.user);
@@ -31,6 +31,24 @@ const createBooking = async (req, res) => {
     
     const booking = await Booking.create(bookingData);
     
+    // Send email notification to admins
+    try {
+      // Fetch full user data to include in email
+      const user = await User.findById(userId);
+      if (user) {
+        sendBookingNotificationToAdmin(booking, user)
+          .then(success => {
+            console.log(`Admin notification ${success ? 'sent' : 'failed'} for booking: ${booking._id}`);
+          })
+          .catch(error => {
+            console.error('Error in admin notification:', error);
+          });
+      }
+    } catch (emailError) {
+      console.error('Error preparing admin notification email:', emailError);
+      // Don't return an error to client if email fails
+    }
+    
     res.status(201).json({ 
       success: true,
       booking 
@@ -48,7 +66,8 @@ const createBooking = async (req, res) => {
 // Get all bookings for the current user
 const getUserBookings = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    // Standardize to _id
+    const userId = req.user._id || req.user.userId || req.user.id;
     
     const bookings = await Booking.find({ user: userId })
       .sort({ createdAt: -1 }); // Most recent first
@@ -72,7 +91,8 @@ const getUserBookings = async (req, res) => {
 const getBooking = async (req, res) => {
   try {
     const { id: bookingId } = req.params;
-    const userId = req.user.userId;
+    // Standardize to _id
+    const userId = req.user._id || req.user.userId || req.user.id;
     
     const booking = await Booking.findById(bookingId);
     
@@ -85,7 +105,8 @@ const getBooking = async (req, res) => {
     
     // Regular users can only access their own bookings
     // Admins can access any booking
-    if (booking.user.toString() !== userId && req.user.role !== 'admin') {
+    // Convert both to strings for comparison
+    if (booking.user.toString() !== userId.toString() && req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to access this booking'
@@ -110,7 +131,8 @@ const getBooking = async (req, res) => {
 const updateBooking = async (req, res) => {
   try {
     const { id: bookingId } = req.params;
-    const userId = req.user.userId;
+    // Standardize to _id
+    const userId = req.user._id || req.user.userId || req.user.id;
     
     // Find the booking
     const booking = await Booking.findById(bookingId);
@@ -124,7 +146,8 @@ const updateBooking = async (req, res) => {
     
     // Regular users can only update their own bookings
     // and only certain fields (not status)
-    if (booking.user.toString() !== userId && req.user.role !== 'admin') {
+    // Convert both to strings for comparison
+    if (booking.user.toString() !== userId.toString() && req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to update this booking'
@@ -188,7 +211,8 @@ const updateBooking = async (req, res) => {
 const deleteBooking = async (req, res) => {
   try {
     const { id: bookingId } = req.params;
-    const userId = req.user.userId;
+    // Standardize to _id
+    const userId = req.user._id || req.user.userId || req.user.id;
     
     const booking = await Booking.findById(bookingId);
     
@@ -201,7 +225,8 @@ const deleteBooking = async (req, res) => {
     
     // Regular users can only delete their own pending bookings
     // Admins can delete any booking
-    if (booking.user.toString() !== userId && req.user.role !== 'admin') {
+    // Convert both to strings for comparison
+    if (booking.user.toString() !== userId.toString() && req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to delete this booking'
@@ -232,17 +257,15 @@ const deleteBooking = async (req, res) => {
   }
 };
 
-// Admin functions
 // Get all bookings (admin only)
 const getAllBookings = async (req, res) => {
   try {
-    // Check if user is admin
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({
-        success: false,
-        message: 'Not authorized to access all bookings'
-      });
-    }
+    // Admin check is now done in the route middleware
+    // We just log the user info here for debugging
+    console.log('getAllBookings called by user:', {
+      email: req.user?.email,
+      userId: req.user?._id || req.user?.userId || req.user?.id
+    });
     
     // Support filtering by status
     const filter = {};
@@ -250,17 +273,70 @@ const getAllBookings = async (req, res) => {
       filter.status = req.query.status;
     }
     
-    const bookings = await Booking.find(filter)
-      .populate('user', 'name email')
-      .sort({ createdAt: -1 });
+    console.log('Admin fetching bookings with filter:', filter);
     
-    res.status(200).json({
-      success: true,
-      count: bookings.length,
-      bookings
-    });
+    // First, check if there are any bookings at all
+    const totalCount = await Booking.countDocuments({});
+    console.log(`Total bookings in database (unfiltered): ${totalCount}`);
+    
+    if (totalCount === 0) {
+      return res.status(200).json({
+        success: true,
+        count: 0,
+        bookings: []
+      });
+    }
+    
+    // Fetch bookings
+    try {
+      // First try with explicit population
+      const bookings = await Booking.find(filter)
+        .populate({
+          path: 'user',
+          select: 'name email',
+          model: User
+        })
+        .sort({ createdAt: -1 });
+      
+      console.log(`Found ${bookings.length} bookings matching filter`);
+      
+      // Debug the first booking if any
+      if (bookings.length > 0) {
+        const sampleBooking = { ...bookings[0].toObject() };
+        // Remove potentially large fields for logging
+        if (sampleBooking.user) {
+          sampleBooking.user = { 
+            _id: sampleBooking.user._id,
+            name: sampleBooking.user.name, 
+            email: sampleBooking.user.email 
+          };
+        }
+        console.log('Sample booking:', JSON.stringify(sampleBooking, null, 2));
+      }
+      
+      return res.status(200).json({
+        success: true,
+        count: bookings.length,
+        bookings
+      });
+    } catch (populateError) {
+      console.error('Error with user population, trying without:', populateError);
+      
+      // If population fails, try without it
+      const bookings = await Booking.find(filter)
+        .sort({ createdAt: -1 });
+      
+      console.log(`Found ${bookings.length} bookings (without population)`);
+      
+      return res.status(200).json({
+        success: true,
+        count: bookings.length,
+        bookings,
+        warning: 'User data could not be populated'
+      });
+    }
   } catch (error) {
-    console.error('Error fetching all bookings:', error);
+    console.error('Error in getAllBookings:', error);
     res.status(500).json({
       success: false,
       message: 'Unable to fetch bookings, please try again later.',
@@ -290,6 +366,26 @@ const updateBookingStatus = async (req, res) => {
       });
     }
     
+    // Find current booking to know the previous status
+    const currentBooking = await Booking.findById(bookingId);
+    if (!currentBooking) {
+      return res.status(404).json({
+        success: false,
+        message: `No booking found with id ${bookingId}`
+      });
+    }
+    
+    const previousStatus = currentBooking.status;
+    
+    // Only update if status is actually changing
+    if (previousStatus === status && (!adminNotes || adminNotes === currentBooking.adminNotes)) {
+      return res.status(200).json({
+        success: true,
+        message: 'No changes to apply',
+        booking: currentBooking
+      });
+    }
+    
     const updateData = { status };
     if (adminNotes) {
       updateData.adminNotes = adminNotes;
@@ -301,11 +397,24 @@ const updateBookingStatus = async (req, res) => {
       { new: true, runValidators: true }
     );
     
-    if (!booking) {
-      return res.status(404).json({
-        success: false,
-        message: `No booking found with id ${bookingId}`
-      });
+    // Send email notification to user if status changed
+    if (previousStatus !== status) {
+      try {
+        // Fetch the user to get their email
+        const user = await User.findById(currentBooking.user);
+        if (user) {
+          sendBookingStatusUpdateToUser(booking, user, previousStatus)
+            .then(success => {
+              console.log(`Status update notification ${success ? 'sent' : 'failed'} to user: ${user.email}`);
+            })
+            .catch(error => {
+              console.error('Error in status update notification:', error);
+            });
+        }
+      } catch (emailError) {
+        console.error('Error preparing status update notification:', emailError);
+        // Don't return an error to client if email fails
+      }
     }
     
     res.status(200).json({

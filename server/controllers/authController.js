@@ -602,14 +602,22 @@ const generateTokens = (userId) => {
   try {
     // Create access token (short-lived)
     const accessToken = jwt.sign(
-      { id: userId },
+      { 
+        _id: userId,      // Primary MongoDB ID
+        id: userId,       // Include for backward compatibility
+        userId: userId    // Include for backward compatibility
+      },
       process.env.JWT_SECRET,
       { expiresIn: '15m' } // 15 minutes
     );
 
     // Create refresh token (long-lived)
     const refreshToken = jwt.sign(
-      { id: userId },
+      { 
+        _id: userId,      // Primary MongoDB ID
+        id: userId,       // Include for backward compatibility
+        userId: userId    // Include for backward compatibility
+      },
       process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
       { expiresIn: '7d' } // 7 days
     );
@@ -979,7 +987,9 @@ exports.validateResetToken = async (req, res) => {
 const createToken = (user) => {
   const token = jwt.sign(
     { 
-      userId: user._id,
+      _id: user._id,      // Primary MongoDB ID
+      userId: user._id,   // Include for backward compatibility
+      id: user._id,       // Include for backward compatibility
       name: user.name,
       email: user.email,
       role: user.role
@@ -989,7 +999,9 @@ const createToken = (user) => {
   );
   
   console.log('Created JWT token with payload:', { 
-    userId: user._id,
+    _id: user._id,        // Primary MongoDB ID
+    userId: user._id,     // Include for backward compatibility
+    id: user._id,         // Include for backward compatibility
     name: user.name,
     email: user.email,
     role: user.role

@@ -3,10 +3,29 @@ const Service = require('../models/Service');
 // Get all services
 exports.getAllServices = async (req, res) => {
   try {
+    const lang = req.query.lang || 'en'; // Default to English if no language specified
     const services = await Service.find({ active: true }).sort({ order: 1, createdAt: -1 });
+    
+    // Process translations if they exist
+    const processedServices = services.map(service => {
+      const serviceObj = service.toObject();
+      
+      // If translations exist for this language, use them
+      if (serviceObj.translations && serviceObj.translations.has(lang)) {
+        const translation = serviceObj.translations.get(lang);
+        return {
+          ...serviceObj,
+          title: translation.title || serviceObj.title,
+          description: translation.description || serviceObj.description
+        };
+      }
+      
+      return serviceObj;
+    });
+    
     res.status(200).json({
       success: true,
-      data: services
+      data: processedServices
     });
   } catch (error) {
     console.error('Error fetching services:', error);
@@ -64,11 +83,25 @@ exports.getService = async (req, res) => {
 exports.createService = async (req, res) => {
   try {
     // Validate required fields
-    const { title, description, icon } = req.body;
+    const { title, description, icon, translations } = req.body;
     if (!title || !description || !icon) {
       return res.status(400).json({
         success: false,
         message: 'Title, description, and icon are required'
+      });
+    }
+    
+    // Process translations - convert from object to Map
+    let processedTranslations = {};
+    if (translations && typeof translations === 'object') {
+      // Convert regular object to Map-compatible format
+      Object.keys(translations).forEach(lang => {
+        if (translations[lang].title || translations[lang].description) {
+          processedTranslations[lang] = {
+            title: translations[lang].title || '',
+            description: translations[lang].description || ''
+          };
+        }
       });
     }
     
@@ -77,6 +110,7 @@ exports.createService = async (req, res) => {
     
     const serviceData = {
       ...req.body,
+      translations: processedTranslations,
       order: count
     };
     
@@ -106,6 +140,23 @@ exports.updateService = async (req, res) => {
         success: false,
         message: 'Service not found'
       });
+    }
+    
+    // Process translations - convert from object to Map
+    let processedTranslations = {};
+    if (req.body.translations && typeof req.body.translations === 'object') {
+      // Convert regular object to Map-compatible format
+      Object.keys(req.body.translations).forEach(lang => {
+        if (req.body.translations[lang].title || req.body.translations[lang].description) {
+          processedTranslations[lang] = {
+            title: req.body.translations[lang].title || '',
+            description: req.body.translations[lang].description || ''
+          };
+        }
+      });
+      
+      // Update the translations field only
+      req.body.translations = processedTranslations;
     }
     
     const updatedService = await Service.findByIdAndUpdate(
@@ -169,18 +220,28 @@ exports.updateOrder = async (req, res) => {
     }
     
     const updates = items.map(item => {
+      // Handle both id and _id fields for compatibility
+      const itemId = item._id || item.id;
+      
+      if (!itemId) {
+        console.error('Missing ID field in item:', item);
+        return Promise.resolve(null); // Skip items with no ID
+      }
+      
       return Service.findByIdAndUpdate(
-        item.id,
+        itemId,
         { order: item.order, updatedAt: Date.now() },
         { new: true }
       );
     });
     
-    await Promise.all(updates);
+    // Filter out null promises (items with no ID)
+    const results = await Promise.all(updates.filter(Boolean));
     
     res.status(200).json({
       success: true,
-      message: 'Services order updated successfully'
+      message: 'Services order updated successfully',
+      data: results
     });
   } catch (error) {
     console.error('Error updating services order:', error);

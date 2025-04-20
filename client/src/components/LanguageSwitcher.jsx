@@ -36,8 +36,8 @@ const LanguageSwitcher = ({ variant = 'navbar' }) => {
                 onClick={() => changeLanguage(nextLanguage)}
                 aria-label={`Switch to ${languages[nextLanguage].label}`}
             >
-                <span className="text-base">{languages[language].flag}</span>
-                <span>{language === 'en' ? t.language.english : t.language.hindi}</span>
+                {/* <span className="text-base">{languages[language].flag === 'EN' ? 'ह' : 'EN'}</span> */}
+                <span>{language === 'en' ? t.language.hindi : t.language.english}</span>
             </button>
         </div>
     );

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import pricingData from "@/components/Services/PriceingHelper";
+import { getAuthHeaders, handleAuthError } from "../utils/authHelpers";
+import { useLanguage } from "./LanguageContext";
 
 // Create the pricing context
 const PricingContext = createContext();
@@ -9,10 +10,11 @@ const API_URL = "http://localhost:5000/api/pricing";
 
 // Provider component to wrap the application
 export const PricingProvider = ({ children }) => {
-    const [pricingPackages, setPricingPackages] = useState(pricingData);
+    const [pricingPackages, setPricingPackages] = useState([]);
     const [weddingPackages, setWeddingPackages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { language } = useLanguage(); // Access current language
 
     // Fetch pricing packages from the API
     const fetchPricingPackages = async () => {
@@ -20,36 +22,41 @@ export const PricingProvider = ({ children }) => {
             setLoading(true);
             setError(null);
 
-            // Get all packages
-            const response = await fetch(`${API_URL}/packages/all`);
+            // Get all packages with language parameter
+            const response = await fetch(`${API_URL}/packages/all?lang=${language}`);
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                handleAuthError(response);
             }
 
             const data = await response.json();
 
             if (data.success && data.data.length > 0) {
-                // Use the API data if available
+                // Use the API data
                 setPricingPackages(data.data);
             } else {
-                // If no API data, fall back to local data
-                console.log("No pricing packages found in API, using local data");
-                setPricingPackages(pricingData);
+                // If no API data, set empty array and show error
+                setPricingPackages([]);
+                setError("No pricing packages found in database. Please add packages from the admin panel or run the database seed script.");
             }
 
-            // Also fetch wedding-specific packages
-            const weddingResponse = await fetch(`${API_URL}/packages/wedding`);
+            // Also fetch wedding-specific packages with language parameter
+            const weddingResponse = await fetch(`${API_URL}/packages/wedding?lang=${language}`);
             if (weddingResponse.ok) {
                 const weddingData = await weddingResponse.json();
                 if (weddingData.success && weddingData.data.length > 0) {
                     setWeddingPackages(weddingData.data);
+                } else {
+                    setWeddingPackages([]);
                 }
+            } else {
+                setWeddingPackages([]);
             }
         } catch (err) {
             console.error("Error fetching pricing packages:", err);
             setError(err.message);
-            // Fall back to local data on error
-            setPricingPackages(pricingData);
+            // Set empty arrays on error
+            setPricingPackages([]);
+            setWeddingPackages([]);
         } finally {
             setLoading(false);
         }
@@ -63,14 +70,12 @@ export const PricingProvider = ({ children }) => {
 
             const response = await fetch(`${API_URL}/packages`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify(packageData),
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                handleAuthError(response);
             }
 
             const data = await response.json();
@@ -99,10 +104,11 @@ export const PricingProvider = ({ children }) => {
 
             const response = await fetch(`${API_URL}/packages/${packageId}`, {
                 method: "DELETE",
+                headers: getAuthHeaders()
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                handleAuthError(response);
             }
 
             const data = await response.json();
@@ -131,14 +137,12 @@ export const PricingProvider = ({ children }) => {
 
             const response = await fetch(`${API_URL}/packages/${packageId}`, {
                 method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify(packageData),
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                handleAuthError(response);
             }
 
             const data = await response.json();
@@ -170,14 +174,12 @@ export const PricingProvider = ({ children }) => {
 
             const response = await fetch(`${API_URL}/packages`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify(packageData),
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                handleAuthError(response);
             }
 
             const data = await response.json();
@@ -206,14 +208,12 @@ export const PricingProvider = ({ children }) => {
 
             const response = await fetch(`${API_URL}/packages/${packageId}`, {
                 method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify(packageData),
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                handleAuthError(response);
             }
 
             const data = await response.json();
@@ -234,10 +234,10 @@ export const PricingProvider = ({ children }) => {
         }
     };
 
-    // Load pricing packages when the component mounts
+    // Load pricing packages when the component mounts or language changes
     useEffect(() => {
         fetchPricingPackages();
-    }, []);
+    }, [language]); // Reload when language changes
 
     // Context value
     const value = {
@@ -248,9 +248,9 @@ export const PricingProvider = ({ children }) => {
         addPricingPackage,
         deletePricingPackage,
         updatePricingPackage,
-        addWeddingPackage,
-        updateWeddingPackage,
         fetchPricingPackages,
+        addWeddingPackage,
+        updateWeddingPackage
     };
 
     return (
@@ -263,7 +263,7 @@ export const PricingProvider = ({ children }) => {
 // Custom hook to use the pricing context
 export const usePricing = () => {
     const context = useContext(PricingContext);
-    if (!context) {
+    if (context === undefined) {
         throw new Error("usePricing must be used within a PricingProvider");
     }
     return context;
