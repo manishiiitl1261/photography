@@ -8,7 +8,7 @@ const en = {
     aboutUs: "About Us",
     contactUs: "Contact Us",
   },
-  
+
   // Home Page
   home: {
     greeting: "Hello!",
@@ -18,94 +18,111 @@ const en = {
     noContent: "No content available for slider.",
     sliderTitle1: "I am Arvind Rawat",
     sliderTitle2: "Pahadi World Photography",
-    sliderSubtitle: "We started having an Interest in Landscape Photography about five years ago when I moved to the United States."
+    sliderSubtitle:
+      "We started having an Interest in Landscape Photography about five years ago when I moved to the United States.",
   },
-  
+
   // Portfolio
   portfolio: {
     title: "Portfolio",
     viewMore: "View More",
   },
-  
+
   // Services
   services: {
     title: "Our Services",
     subtitle: "What We Offer",
-    description: "We provide professional photography services for all your needs",
+    description:
+      "We provide professional photography services for all your needs",
     learnMore: "Learn More",
     serviceList: {
       photography: {
         title: "Photography",
-        description: "Professional photography services for all occasions with high-quality equipment and expert techniques."
+        description:
+          "Professional photography services for all occasions with high-quality equipment and expert techniques.",
       },
       videography: {
         title: "Videography",
-        description: "Professional video production for events, commercials, and personal projects with creative storytelling."
+        description:
+          "Professional video production for events, commercials, and personal projects with creative storytelling.",
       },
       drone: {
         title: "Drone Photography",
-        description: "Aerial photography and videography providing stunning overhead perspectives for your special events."
+        description:
+          "Aerial photography and videography providing stunning overhead perspectives for your special events.",
       },
       product: {
         title: "Product Photography",
-        description: "High-quality product photography for e-commerce, catalogs, and marketing materials to showcase your products."
+        description:
+          "High-quality product photography for e-commerce, catalogs, and marketing materials to showcase your products.",
       },
       lighting: {
         title: "Lighting Setup",
-        description: "Expert lighting setup services for studio shoots, events, and productions for the perfect ambiance."
+        description:
+          "Expert lighting setup services for studio shoots, events, and productions for the perfect ambiance.",
       },
       editing: {
         title: "Video Editing",
-        description: "Professional video editing services to transform your raw footage into polished final products."
-      }
+        description:
+          "Professional video editing services to transform your raw footage into polished final products.",
+      },
     },
     servicesPage: {
       title: "Our Photography Services",
-      description: "We offer a range of professional photography services to capture your special moments.",
+      description:
+        "We offer a range of professional photography services to capture your special moments.",
       serviceTypes: {
         wedding: {
           title: "Wedding Photography",
-          description: "Capture your special day with our professional wedding photography services. We offer a range of packages to suit your needs and budget."
+          description:
+            "Capture your special day with our professional wedding photography services. We offer a range of packages to suit your needs and budget.",
         },
         portrait: {
           title: "Portrait Photography",
-          description: "Professional portrait photography for individuals, families, and groups. Perfect for professional profiles, family albums, or special occasions."
+          description:
+            "Professional portrait photography for individuals, families, and groups. Perfect for professional profiles, family albums, or special occasions.",
         },
         event: {
           title: "Event Coverage",
-          description: "Complete coverage of your events including corporate functions, birthdays, anniversaries, and more. We capture the moments that matter."
+          description:
+            "Complete coverage of your events including corporate functions, birthdays, anniversaries, and more. We capture the moments that matter.",
         },
         commercial: {
           title: "Commercial Photography",
-          description: "High-quality commercial photography for your business needs. Product photography, brand imagery, and marketing materials."
-        }
+          description:
+            "High-quality commercial photography for your business needs. Product photography, brand imagery, and marketing materials.",
+        },
       },
       process: {
         title: "Our Process",
-        description: "From booking to delivery, our process ensures a seamless experience.",
+        description:
+          "From booking to delivery, our process ensures a seamless experience.",
         steps: {
           consultation: {
             title: "Consultation",
-            description: "We discuss your vision, requirements, and preferences."
+            description:
+              "We discuss your vision, requirements, and preferences.",
           },
           booking: {
             title: "Booking",
-            description: "Secure your date with a booking and select your preferred package."
+            description:
+              "Secure your date with a booking and select your preferred package.",
           },
           shootDay: {
             title: "Shoot Day",
-            description: "Our professional team captures your special moments."
+            description: "Our professional team captures your special moments.",
           },
           delivery: {
             title: "Delivery",
-            description: "Receive your professionally edited photos and videos."
-          }
-        }
+            description:
+              "Receive your professionally edited photos and videos.",
+          },
+        },
       },
-      bookSession: "Book Your Photography Session"
-    }
+      bookSession: "Book Your Photography Session",
+    },
   },
-  
+
   // Pricing
   pricing: {
     title: "Pricing Plans",
@@ -140,7 +157,7 @@ const en = {
       portrait: {
         title: "Portrait Session",
         price: "₹16000",
-      }
+      },
     },
     priceList: {
       title: "Price List",
@@ -154,8 +171,8 @@ const en = {
             "Traditional Video",
             "Traditional Highlights",
             "250 Photos Album with Acrylic Pad",
-            "2 Photo Frame"
-          ]
+            "2 Photo Frame",
+          ],
         },
         silver: {
           title: "Silver Package",
@@ -166,8 +183,8 @@ const en = {
             "Cinematic Video Highlights",
             "300 Photos Album with Acrylic Pad",
             "2 Photo Frame",
-            "Drone Coverage"
-          ]
+            "Drone Coverage",
+          ],
         },
         gold: {
           title: "Gold Package",
@@ -179,18 +196,14 @@ const en = {
             "Highlights Video & Reels",
             "Edited Photos",
             "400 Photos Album with Bug + Mini Album",
-            "Drone Coverage"
-          ]
-        }
+            "Drone Coverage",
+          ],
+        },
       },
       extraEquipment: {
         title: "Extra Add Equipment",
         available: "available on reasonable price",
-        items: [
-          "LED WALL",
-          "SAME DAY EDIT",
-          "PLASMA TV"
-        ]
+        items: ["LED WALL", "SAME DAY EDIT", "PLASMA TV"],
       },
       contactInfo: {
         title: "PahariWorld Photography",
@@ -199,11 +212,11 @@ const en = {
         phone: "+91 97600 24028",
         email: "pahariworld@gmail.com",
         website: "www.pahariworld.com",
-        address: "Pahari Gali, Vikasnagar, DDun"
-      }
-    }
+        address: "Pahari Gali, Vikasnagar, DDun",
+      },
+    },
   },
-  
+
   // Booking Form
   booking: {
     title: "Book a Photography Service",
@@ -212,11 +225,13 @@ const en = {
     eventDate: "Event Date",
     eventLocation: "Event Location",
     additionalRequirements: "Additional Requirements",
-    additionalInfo: "Any specific requirements or special requests",
+    additionalInfo:
+      "like LED Wall, Plasma TV,Same Day Edit, etc. (available on reasonable price)",
     price: "Price",
     submitButton: "Book Now",
     requiredFields: "Please fill in all required fields",
-    success: "Booking created successfully! We will review your request and get back to you soon.",
+    success:
+      "Booking created successfully! We will review your request and get back to you soon.",
     failure: "Failed to create booking. Please try again.",
     loginRequired: "You must be logged in to create a booking",
     selectService: "Select a service",
@@ -224,43 +239,43 @@ const en = {
     packages: {
       traditional: {
         label: "Traditional Wedding",
-        details: "250 Photos & Traditional Video"
+        details: "250 Photos & Traditional Video",
       },
       silver: {
         label: "Silver Package",
-        details: "300 Photos, Cinematic Video & Drone Coverage"
+        details: "300 Photos, Cinematic Video & Drone Coverage",
       },
       gold: {
         label: "Gold Package",
-        details: "400 Photos, Cinematic Video, Teaser & Drone Coverage"
-      }
+        details: "400 Photos, Cinematic Video, Teaser & Drone Coverage",
+      },
     },
     services: {
       wedding: {
-        label: "Wedding Shoot"
+        label: "Wedding Shoot",
       },
       birthday: {
-        label: "Birthday Celebration"
+        label: "Birthday Celebration",
       },
       event: {
-        label: "Event Shoot"
+        label: "Event Shoot",
       },
       song: {
-        label: "Song Video Shoot"
+        label: "Song Video Shoot",
       },
       corporate: {
-        label: "Corporate Event"
+        label: "Corporate Event",
       },
       portrait: {
-        label: "Portrait Session"
-      }
+        label: "Portrait Session",
+      },
     },
     status: {
       pending: "Pending",
       confirmed: "Confirmed",
       completed: "Completed",
       cancelled: "Cancelled",
-      rejected: "Rejected"
+      rejected: "Rejected",
     },
     myBookings: "My Bookings",
     noBookings: "You don't have any bookings yet.",
@@ -276,10 +291,10 @@ const en = {
       location: "Location",
       requirements: "Additional Requirements",
       adminNotes: "Notes from Admin",
-      status: "Status"
-    }
+      status: "Status",
+    },
   },
-  
+
   // About Us
   aboutUs: {
     title: "About Us",
@@ -287,7 +302,7 @@ const en = {
     description: "A professional photographer based in India",
     experience: "Years of Experience",
     teamTitle: "OUR MEMBERS",
-    teamDescription: "Meet our talented photographers"
+    teamDescription: "Meet our talented photographers",
   },
 
   // Contact Us
@@ -299,14 +314,15 @@ const en = {
     formMessage: "Message",
     submitButton: "Send Message",
   },
-  
+
   // Reviews
   reviews: {
     title: "Customer Reviews",
     subtitle: "What Our Customers Say",
     peopleThink: "What People Think of Us",
     ratings: "Ratings & Reviews",
-    verified: "Ratings & reviews are verified and are from people who use the same type of device",
+    verified:
+      "Ratings & reviews are verified and are from people who use the same type of device",
     clientSay: "Our Client Say",
     yourReview: "Your Review",
     comment: {
@@ -316,7 +332,8 @@ const en = {
       rating: "Rating",
       postComment: "Post Comment",
       fillFields: "Please fill in all required fields!",
-      success: "🎉 Congratulations! Your review has been successfully submitted.",
+      success:
+        "🎉 Congratulations! Your review has been successfully submitted.",
       submitError: "Error submitting review. Please try again.",
       submitting: "Submitting...",
       eventImage: "Event Picture",
@@ -324,10 +341,10 @@ const en = {
       imageRequirements: "PNG, JPG, GIF up to 5MB",
       imageTypeError: "Only image files are accepted!",
       imageSizeError: "Image must be less than 5MB",
-      reviewingAs: "Reviewing as"
-    }
+      reviewingAs: "Reviewing as",
+    },
   },
-  
+
   // Footer
   footer: {
     copyright: "© 2025 Photography. All rights reserved.",
@@ -338,7 +355,8 @@ const en = {
     createdBy: "Created By:",
     quickLinks: "Quick Links",
     suggestion: "Feel free to provide your suggestion",
-    suggestionSuccess: "🎉 Congratulations! Your review has been successfully submitted."
+    suggestionSuccess:
+      "🎉 Congratulations! Your review has been successfully submitted.",
   },
 
   // Language Selector
@@ -384,10 +402,11 @@ const en = {
     avatarUpdated: "Profile picture successfully updated!",
     avatarUpdateError: "Failed to update profile picture. Please try again.",
     removePhoto: "Remove photo",
-    removeAvatarConfirm: "Are you sure you want to remove your profile picture?",
+    removeAvatarConfirm:
+      "Are you sure you want to remove your profile picture?",
     avatarRemoved: "Profile picture removed successfully",
-    avatarRemoveError: "Failed to remove profile picture. Please try again."
-  }
+    avatarRemoveError: "Failed to remove profile picture. Please try again.",
+  },
 };
 
 export default en;

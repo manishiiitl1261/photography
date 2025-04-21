@@ -3,6 +3,7 @@ import Navbar from "@/components/navbar/Navbar";
 import Card from "@/components/AboutUs/Card";
 import Member from "@/components/AboutUs/Member";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { TeamMemberProvider } from "@/contexts/TeamMemberContext";
 
 export default function index() {
     const { t } = useLanguage();
@@ -12,7 +13,9 @@ export default function index() {
             <Navbar />
             <main className="pt-16 gap-6">
                 <Card />
-                <Member />
+                <TeamMemberProvider>
+                    <Member />
+                </TeamMemberProvider>
             </main>
             <Footer />
         </div>
