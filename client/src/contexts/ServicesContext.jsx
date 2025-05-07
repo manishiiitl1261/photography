@@ -6,7 +6,7 @@ import { useLanguage } from "./LanguageContext";
 const ServicesContext = createContext();
 
 // Base URL for the API
-const API_URL = "http://localhost:5000/api/services";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/services`;
 
 // Provider component to wrap the application
 export const ServicesProvider = ({ children }) => {

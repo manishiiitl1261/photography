@@ -5,7 +5,7 @@ import { createContext, useState, useContext, useEffect } from 'react';
 // Define baseUrl with fallback - ensure it's hardcoded as a fallback
 const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 // Always use this direct URL for authentication calls to prevent proxy issues
-const directServerUrl = 'http://localhost:5000';
+const directServerUrl = `${process.env.NEXT_PUBLIC_API_URL}`;
 
 const AuthContext = createContext();
 
@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }) => {
             }
 
             // Hardcoded URL
-            const apiUrl = 'http://localhost:5000/api/auth/refresh';
+            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`;
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -135,7 +135,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(true);
         try {
             // Hardcoded URL - no environment variables
-            const apiUrl = 'http://localhost:5000/api/auth/register';
+            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`;
             console.log('Registration attempt with direct URL:', apiUrl);
 
             const response = await fetch(apiUrl, {
@@ -207,7 +207,7 @@ export const AuthProvider = ({ children }) => {
         setError(null);
         try {
             // Hardcoded URL - no environment variables or baseUrl
-            const apiUrl = 'http://localhost:5000/api/auth/login';
+            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`;
             console.log('Login attempt with direct URL:', apiUrl);
             console.log('Credentials:', { email: credentials.email, passwordLength: credentials.password?.length });
 
@@ -341,7 +341,7 @@ export const AuthProvider = ({ children }) => {
             // Try to call logout endpoint if we have a token
             if (token) {
                 // Hardcoded URL
-                const apiUrl = 'http://localhost:5000/api/auth/logout';
+                const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`;
 
                 await fetch(apiUrl, {
                     method: 'POST',
@@ -383,7 +383,7 @@ export const AuthProvider = ({ children }) => {
             }
 
             // Hardcoded URL
-            const apiUrl = 'http://localhost:5000/api/auth/profile';
+            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/profile`;
 
             const response = await fetch(apiUrl, {
                 headers: {
@@ -473,7 +473,7 @@ export const AuthProvider = ({ children }) => {
             }
 
             // Use regular profile update endpoint for all changes
-            const apiUrl = 'http://localhost:5000/api/auth/profile';
+            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/profile`;
 
             const response = await fetch(apiUrl, {
                 method: 'PATCH',
@@ -607,7 +607,7 @@ export const AuthProvider = ({ children }) => {
             formData.append('avatar', imageFile);
 
             // Hardcoded URL
-            const apiUrl = 'http://localhost:5000/api/auth/avatar';
+            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/avatar`;
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -680,7 +680,7 @@ export const AuthProvider = ({ children }) => {
             }
 
             // Hardcoded URL
-            const apiUrl = 'http://localhost:5000/api/auth/avatar';
+            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/avatar`;
 
             const response = await fetch(apiUrl, {
                 method: 'DELETE',
@@ -744,7 +744,7 @@ export const AuthProvider = ({ children }) => {
         setError(null);
         try {
             // Hardcoded URL
-            const apiUrl = 'http://localhost:5000/api/auth/verify-email';
+            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/verify-email`;
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -789,7 +789,7 @@ export const AuthProvider = ({ children }) => {
         setError(null);
         try {
             // Hardcoded URL
-            const apiUrl = 'http://localhost:5000/api/auth/resend-verification';
+            const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/resend-verification`;
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -822,7 +822,7 @@ export const AuthProvider = ({ children }) => {
 
         // If avatar path starts with /uploads/, it's from the server
         if (avatarPath.startsWith('/uploads/')) {
-            return `http://localhost:5000${avatarPath}`;
+            return `${process.env.NEXT_PUBLIC_API_URL}${avatarPath}`;
         }
 
         // Otherwise, use the path as is (might be a full URL or local path)
