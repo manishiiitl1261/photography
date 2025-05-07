@@ -5,7 +5,7 @@ import cardData from "@/components/review/CardHelper";
 const ReviewContext = createContext();
 
 // Base URL for the API
-const API_URL = "http://localhost:5000/api/reviews";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/reviews`;
 
 // Provider component to wrap the application
 export const ReviewProvider = ({ children }) => {

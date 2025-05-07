@@ -4,9 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 const PortfolioContext = createContext();
 
 // Get API URL from environment or use default
-const API_URL = process.env.NEXT_PUBLIC_API_URL
-    ? `${process.env.NEXT_PUBLIC_API_URL}/api/portfolio`
-    : "/api/portfolio";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/portfolio`;
 
 // Helper function to get the authentication token
 const getAuthHeaders = () => {
