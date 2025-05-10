@@ -135,7 +135,7 @@ const PortfolioGrid = () => {
                             <button
                                 key={category}
                                 onClick={() => handleCategoryChange(category)}
-                                className={`px-4 py-2 rounded-full ${activeCategory === category
+                                className={`px-4 py-2 rounded-full text-black ${activeCategory === category
                                     ? "bg-lime-400 text-white"
                                     : "bg-gray-200 hover:bg-gray-300"
                                     }`}
@@ -158,7 +158,7 @@ const PortfolioGrid = () => {
                                 id="sort-select"
                                 value={sortBy}
                                 onChange={handleSortChange}
-                                className="border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-lime-400"
+                                className="border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-lime-400 text-black"
                             >
                                 <option value="newest">Newest First</option>
                                 <option value="oldest">Oldest First</option>
