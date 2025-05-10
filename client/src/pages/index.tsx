@@ -8,7 +8,7 @@ import { sliderContent } from "@/components/home/HomeContent";
 // import ServiceCard from "@/components/Services/ServiceCard";
 import PricePackages from "@/components/Services/PricePackages";
 import Price from "@/components/Services/Price";
-import BookingForm from "@/components/booking/BookingForm"; 
+import BookingForm from "@/components/booking/BookingForm";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Home() {
@@ -18,16 +18,19 @@ export default function Home() {
       <Navbar />
       <main className="pt-16 gap-6">
         <HomeC sliderContent={sliderContent} />
-        {/* <Gallary /> */}
-        {/* <ServiceCard /> */}
-                <PricePackages />
-                <Price />
-                <div id="booking-form-section" className="w-full py-12 px-4 sm:px-6 lg:px-8">
-                    <div className="mx-auto">
-                        <h2 className="text-xl sm:text-3xl font-bold text-center mb-4 sm:mb-8 text-black">{t.services.servicesPage.bookSession}</h2>
-                        <BookingForm />
-                    </div>
-                </div>
+        <PricePackages />
+        <Price />
+        <div
+          id="booking-form-section"
+          className="w-full py-12 px-4 sm:px-6 lg:px-8"
+        >
+          <div className="mx-auto">
+            <h2 className="text-xl sm:text-3xl font-bold text-center mb-4 sm:mb-8 text-black">
+              {t.services.servicesPage.bookSession}
+            </h2>
+            <BookingForm />
+          </div>
+        </div>
         {/* <Card /> */}
         <Review />
       </main>

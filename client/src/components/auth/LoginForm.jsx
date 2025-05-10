@@ -97,7 +97,7 @@ const LoginForm = ({ onClose, setShowRegister }) => {
     // Handle resend OTP
     const handleResendOTP = async (email) => {
         try {
-            const response = await fetch('http://localhost:5000/api/auth/resend-verification', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/resend-verification`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -146,7 +146,7 @@ const LoginForm = ({ onClose, setShowRegister }) => {
         setForgotPasswordMessage('');
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/forgot-password', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/forgot-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

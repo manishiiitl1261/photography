@@ -717,8 +717,8 @@ export default function AdminMembers() {
                           </p>
                           <p>1. Select an image using the file upload field</p>
                           <p>
-                            2. Click "Test Upload Only" to test just the image
-                            upload part
+                            2. Click &quot;Test Upload Only&quot; to test just
+                            the image upload part
                           </p>
                         </div>
                       )}
@@ -784,8 +784,8 @@ export default function AdminMembers() {
                                 colSpan="6"
                                 className="px-6 py-4 text-center text-sm text-gray-500"
                               >
-                                No team members found. Add some using the "Add
-                                Team Member" button.
+                                No team members found. Add some using the
+                                &quot;Add Team Member&quot; button.
                               </td>
                             </tr>
                           ) : (

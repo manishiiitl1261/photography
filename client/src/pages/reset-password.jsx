@@ -37,7 +37,7 @@ const ResetPassword = () => {
         // Validate token
         const validateToken = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/auth/validate-reset-token', {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/validate-reset-token`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -153,7 +153,7 @@ const ResetPassword = () => {
         setMessage('');
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/reset-password', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/reset-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -279,8 +279,8 @@ const ResetPassword = () => {
                         </label>
                         <input
                             className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${formData.confirmPassword && formData.password !== formData.confirmPassword
-                                    ? 'border-red-500'
-                                    : ''
+                                ? 'border-red-500'
+                                : ''
                                 }`}
                             id="confirmPassword"
                             type="password"

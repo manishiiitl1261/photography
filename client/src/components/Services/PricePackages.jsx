@@ -57,7 +57,7 @@ const PricePackages = () => {
 
     return (
         <>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mt-4 sm:mt-6 lg:mt-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center">
                     <h2 className="text-center text-3xl sm:text-5xl font-bold mb-2 sm:mb-4 lg:mb-6 italic text-black">{t.pricing.priceList.title}</h2>
                     <p className="text-xl text-black mb-2">{t.pricing.priceList.subtitle}</p>
