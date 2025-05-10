@@ -271,7 +271,7 @@ export default function AdminBookings() {
                 id="status-filter"
                 value={statusFilter}
                 onChange={handleStatusFilterChange}
-                className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="rounded-md border-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm text-black"
               >
                 <option value="">All Bookings</option>
                 {statusOptions.map((option) => (
@@ -329,7 +329,7 @@ export default function AdminBookings() {
             </div>
           )}
 
-          <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+          <div className="max-h-[70vh] overflow-y-auto shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
             <table className="min-w-full divide-y divide-gray-300">
               <thead className="bg-gray-50">
                 <tr>

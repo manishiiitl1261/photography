@@ -108,7 +108,8 @@ const ProfilePage = () => {
     }
 
     // Use the debounced fetch profile
-
+    const fetchProfileCall = debouncedFetchProfile();
+    console.log(fetchProfileCall);
     // Cleanup function to prevent state updates after unmount
     return () => {
       // Cancel any pending debounced calls when component unmounts
@@ -254,7 +255,7 @@ const ProfilePage = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/change-email",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/change-email`,
         {
           method: "POST",
           headers: {

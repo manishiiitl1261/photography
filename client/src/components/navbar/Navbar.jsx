@@ -57,7 +57,7 @@ export default function Navbar() {
                     <>
                         <div className="flex h-16 items-center sm:justify-between px-4 sm:px-6 lg:px-8">
                             {/* Mobile menu button */}
-                            <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                            <div className="absolute inset-y-0 left-0 flex items-center lg:hidden">
                                 <Disclosure.Button className="absolute top-4 left-4 inline-flex items-center justify-center rounded-md p-2 text-white hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                                     <span className="sr-only">Open main menu</span>
                                     {open ? (
@@ -80,7 +80,7 @@ export default function Navbar() {
                                 </div>
 
                                 {/* Desktop Navigation */}
-                                <div className="hidden sm:ml-6 md:block justify-center">
+                                <div className="hidden sm:ml-6 lg:block justify-center">
                                     <div className="flex space-x-4">
                                         {navigation.map((item) => {
                                             const isActive = pathname === item.href;
@@ -105,21 +105,23 @@ export default function Navbar() {
                                 </div>
 
                                 {/* Right Side (Language + Auth) */}
-                                <div className="hidden sm:flex items-center space-x-4">
+                                <div className="sm:flex items-center space-x-4">
                                     <LanguageSwitcher variant="navbar" />
-                                    {user ? <UserProfileMenu /> : <LoginButton />}
-                                    <Link
-                                        href="/admin/login"
-                                        className="text-sm text-white hover:text-gray-300"
-                                    >
-                                        Admin
-                                    </Link>
+                                    <div className="hidden lg:block space-x-4">
+                                        {user ? <UserProfileMenu /> : <LoginButton />}
+                                        <Link
+                                            href="/admin/login"
+                                            className="text-sm text-white hover:text-gray-300"
+                                        >
+                                            Admin
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Mobile Navigation */}
-                        <Disclosure.Panel className="sm:hidden">
+                        <Disclosure.Panel className="lg:hidden">
                             <div className="space-y-1 px-2 pb-3 pt-2 gap-2">
                                 {navigation.map((item) => {
                                     const isActive = pathname === item.href;
@@ -143,7 +145,6 @@ export default function Navbar() {
 
                                 {/* Mobile - Language + Auth */}
                                 <div className="flex justify-center space-y-2 flex-col items-center mt-3">
-                                    <LanguageSwitcher variant="navbar" />
                                     <div className="mt-2">
                                         {user ? <UserProfileMenu /> : <LoginButton />}
                                     </div>
