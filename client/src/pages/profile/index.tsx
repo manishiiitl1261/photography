@@ -9,7 +9,6 @@ import Navbar from "@/components/navbar/Navbar";
 import { CameraIcon } from "@heroicons/react/24/outline";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import Footer from "@/components/footer/Footer";
-import { getAvatarUrl } from "@/utils/imageUtils";
 
 // Debounce function to prevent excessive API calls
 const debounce = <F extends (...args: unknown[]) => unknown>(
@@ -109,7 +108,6 @@ const ProfilePage = () => {
     }
 
     // Use the debounced fetch profile
-    const fetchProfileCall = debouncedFetchProfile();
 
     // Cleanup function to prevent state updates after unmount
     return () => {
@@ -307,20 +305,6 @@ const ProfilePage = () => {
         type: "error",
       });
     }
-  };
-
-  // Handle successful email verification
-  const handleVerificationSuccess = (data: unknown) => {
-    setShowVerification(false);
-    setVerificationEmail("");
-
-    setMessage({
-      text: "Email changed successfully!",
-      type: "success",
-    });
-
-    // Refresh user data
-    getUserProfile();
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
