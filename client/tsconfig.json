@@ -30,7 +30,7 @@
     "src/pages/_document.jsx",
     "src/pages/index.jsx",
     ".next/types/**/*.ts",
-    "next.config.ts"
+    "next.config.js"
   ],
   "exclude": ["node_modules"]
 }
