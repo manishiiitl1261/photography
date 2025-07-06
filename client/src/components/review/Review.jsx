@@ -11,14 +11,14 @@ export default function Review() {
 
   return (
     <div className="flex flex-col p-4 gap-16">
-      <h1 className="font-bold text-5xl text-center p italic text-black">
+      <h1 className="font-bold sm:text-5xl text-3xl text-center p italic text-black">
         {t.reviews.peopleThink}
       </h1>
       <div className=" flex xl:flex-row flex-col justify-evenly">
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-8 sm:gap-12 mt-4">
             <div className="flex flex-col gap-4">
-              <h1 className="text-3xl font-bold text-center text-black">{t.reviews.ratings}</h1>
+              <h1 className="text-2xl font-bold text-center text-black">{t.reviews.ratings}</h1>
               <p className=" text-center font-medium text-black">
                 {t.reviews.verified}
               </p>

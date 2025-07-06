@@ -86,7 +86,7 @@ const Card = ({ name, text, stars, brand, eventImage, image, userAvatar }) => {
                     </div>
 
                     {/* Event photo */}
-                    <div className="w-full sm:w-1/3 h-60 rounded-lg overflow-hidden">
+                    <div className="w-full sm:w-1/3 h-60 sm:h-44 rounded-lg overflow-hidden">
                         {displayEventImage ? (
                             <img
                                 src={displayEventImage}
