@@ -1,14 +1,15 @@
 /**
  * List of predefined admin email addresses
- * 
+ *
  * This file contains manually defined email addresses that have admin access.
  * Authentication checks against this list instead of using role-based permissions.
  */
 
 const adminEmails = [
-  'admin@photography.com',
-  'superadmin@photography.com',
-  'manishrawat3703@gmail.com',
+  "admin@photography.com",
+  "superadmin@photography.com",
+  "manishrawat3703@gmail.com",
+  "pahariworld@gmail.com",
   // Add more admin emails as needed
 ];
 
@@ -23,5 +24,5 @@ const isAdminEmail = (email) => {
 
 module.exports = {
   adminEmails,
-  isAdminEmail
-}; 
+  isAdminEmail,
+};
