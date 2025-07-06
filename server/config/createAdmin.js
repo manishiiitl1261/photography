@@ -6,8 +6,6 @@
  */
 
 const adminEmails = [
-  "admin@photography.com",
-  "superadmin@photography.com",
   "manishrawat3703@gmail.com",
   "pahariworld@gmail.com",
   // Add more admin emails as needed
