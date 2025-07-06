@@ -62,20 +62,20 @@ const HomeC = ({ sliderContent }) => {
                                 </div>
 
                                 {/* Content */}
-                                <div className="relative z-10 h-full flex flex-col justify-center items-start p-10 md:p-20 text-white">
+                                <div className="relative z-10 h-full flex flex-col justify-center items-start py-10 px-8  md:py-20 text-white">
                                     <p className="text-lg md:text-xl uppercase font-semibold mb-4 text-white">
-                                        {slide.id === 1 ? t.home.greeting : t.home.welcome}
+                                        {slide.id === 2 ? t.home.greeting : t.home.welcome}
                                     </p>
                                     <h1 className="text-4xl md:text-6xl font-bold mb-6 text-lime-400 italic">
-                                        {slide.id === 1 ? t.home.sliderTitle1 : t.home.sliderTitle2}
+                                        {slide.id === 1 ? t.home.sliderTitle2 : t.home.sliderTitle1}
                                     </h1>
                                     <p className="text-md md:text-lg mb-8 max-w-md text-white">
-                                        {t.home.sliderSubtitle}
+                                        {slide.id === 2 ? t.home.sliderSubtitle : t.home.sliderSubtitle2}
                                     </p>
                                     <div className="flex space-x-4">
                                         <a
                                             className="border border-white px-6 py-2 rounded-md hover:bg-white hover:text-black transition duration-300 text-white"
-                                            href="/ContactUs"
+                                            href="/Services"
                                         >
                                             {t.home.exploreServices}
                                         </a>

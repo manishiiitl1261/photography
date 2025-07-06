@@ -62,14 +62,14 @@ const Card = () => {
                     {/* List Section */}
                     <ul className="space-y-4 text-gray-800 text-center lg:text-left">
                         <li className="flex items-center justify-center lg:justify-start">
-                            <span className="mr-2 text-lime-600">✔</span> 12 {t.aboutUs.experience}
+                            <span className="mr-2 text-lime-600">✔</span> 12+ {t.aboutUs.experience}
                         </li>
                         <li className="flex items-center justify-center lg:justify-start">
-                            <span className="mr-2 text-lime-600">✔</span> {t.footer.phone}: +105 773 321 7771
+                            <span className="mr-2 text-lime-600">✔</span> {t.footer.phone}: +91 9760024028
                         </li>
                         <li className="flex items-center justify-center lg:justify-start">
                             <span className="mr-2 text-lime-600">✔</span> {t.footer.email}:
-                            demo@example.com
+                            pahariworld@gmail.com
                         </li>
                     </ul>
                 </motion.div>
@@ -89,7 +89,7 @@ const Card = () => {
                     {/* Background dotted pattern */}
                     <div className="absolute -top-4 -left-4 -z-10 w-40 h-40 sm:w-60 sm:h-60 bg-dotted-pattern bg-repeat opacity-20"></div>
                     <Image
-                        src="/assest/admin2.jpg"
+                        src="/assets/Arvind_Admin.jpeg"
                         alt="Photographer"
                         width={1080}
                         height={1350}

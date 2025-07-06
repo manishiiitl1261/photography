@@ -15,7 +15,7 @@ const SocialIcons = () => {
         duration-300 "
       >
         {" "}
-        <a href="https://www.youtube.com/@ThakurSaabVlogs/" target="_blank">
+        <a href="https://m.facebook.com/PahariWorldRecords/" target="_blank">
           {" "}
           <FaFacebook className="text-2xl cursor-pointer hover:text-blue-600 duration-500" />
         </a>

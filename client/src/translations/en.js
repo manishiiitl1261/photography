@@ -18,8 +18,10 @@ const en = {
     noContent: "No content available for slider.",
     sliderTitle1: "I am Arvind Rawat",
     sliderTitle2: "Pahadi World Photography",
-    sliderSubtitle:
-      "We started having an Interest in Landscape Photography about five years ago when I moved to the United States.",
+    sliderSubtitle2: `We don’t just take pictures—we tell stories. From joyful weddings to scenic mountains, every frame is crafted with love.
+    Specialties: ✨ Wedding & Pre-Wedding • 🎉 Events • 🌄 Pahadi Portraits • 📷 Candid Moments`,
+
+    sliderSubtitle: `Hi, I'm Arvind — a passionate photographer from the hills. I love capturing real emotions and natural beauty through my lens. Let's turn your moments into memories.`,
   },
 
   // Portfolio

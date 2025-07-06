@@ -459,7 +459,7 @@ export default function AdminMembers() {
 
           {/* Member Form Modal */}
           {formOpen && (
-            <div className="fixed z-10 inset-0 overflow-y-auto">
+            <div className="fixed z-10 inset-0 overflow-y-auto mt-10">
               <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                 {/* Background overlay */}
                 <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
@@ -512,7 +512,7 @@ export default function AdminMembers() {
                             value={formData.name}
                             onChange={handleInputChange}
                             required
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            className="text-black mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                           />
                         </div>
 
@@ -530,7 +530,7 @@ export default function AdminMembers() {
                             value={formData.role}
                             onChange={handleInputChange}
                             required
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            className="text-black mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                           />
                         </div>
 
@@ -548,7 +548,7 @@ export default function AdminMembers() {
                               name="image"
                               accept="image/*"
                               onChange={handleFileChange}
-                              className="hidden"
+                              className="hidden text-black"
                             />
                             <label
                               htmlFor="image"
@@ -588,7 +588,7 @@ export default function AdminMembers() {
                             id="animation"
                             value={formData.animation}
                             onChange={handleInputChange}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            className="text-black mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                           >
                             <option value="left">Left</option>
                             <option value="right">Right</option>
@@ -610,7 +610,7 @@ export default function AdminMembers() {
                             id="order"
                             value={formData.order}
                             onChange={handleInputChange}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            className="text-black mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                           />
                         </div>
 
@@ -621,7 +621,7 @@ export default function AdminMembers() {
                             id="isActive"
                             checked={formData.isActive}
                             onChange={handleInputChange}
-                            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded "
                           />
                           <label
                             htmlFor="isActive"

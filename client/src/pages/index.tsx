@@ -7,9 +7,10 @@ import { sliderContent } from "@/components/home/HomeContent";
 // import Card from "@/components/AboutUs/Card";
 // import ServiceCard from "@/components/Services/ServiceCard";
 import PricePackages from "@/components/Services/PricePackages";
-import Price from "@/components/Services/Price";
+// import Price from "@/components/Services/Price";
 import BookingForm from "@/components/booking/BookingForm";
 import { useLanguage } from "@/contexts/LanguageContext";
+import PortfolioGrid from "@/components/Portfolio/PortfolioGrid";
 
 export default function Home() {
   const { t } = useLanguage();
@@ -18,8 +19,9 @@ export default function Home() {
       <Navbar />
       <main className="pt-16 gap-6">
         <HomeC sliderContent={sliderContent} />
+        <PortfolioGrid />
         <PricePackages />
-        <Price />
+        {/* <Price /> */}
         <div
           id="booking-form-section"
           className="w-full py-12 px-4 sm:px-6 lg:px-8"

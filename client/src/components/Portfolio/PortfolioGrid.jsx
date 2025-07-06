@@ -123,7 +123,7 @@ const PortfolioGrid = () => {
                     <div className="flex flex-wrap justify-center gap-4 mb-6">
                         <button
                             onClick={() => handleCategoryChange("all")}
-                            className={`px-4 py-2 rounded-full ${activeCategory === "all"
+                            className={`px-4 py-1 rounded-full ${activeCategory === "all"
                                 ? "bg-lime-400 text-white"
                                 : "bg-gray-200 hover:bg-gray-300"
                                 }`}
@@ -135,7 +135,7 @@ const PortfolioGrid = () => {
                             <button
                                 key={category}
                                 onClick={() => handleCategoryChange(category)}
-                                className={`px-4 py-2 rounded-full text-black ${activeCategory === category
+                                className={`px-4 py-1 rounded-full text-black ${activeCategory === category
                                     ? "bg-lime-400 text-white"
                                     : "bg-gray-200 hover:bg-gray-300"
                                     }`}
@@ -186,7 +186,7 @@ const PortfolioGrid = () => {
                                     >
                                         {/* Image Container */}
                                         <div
-                                            className="h-52 overflow-hidden bg-gray-100 cursor-pointer"
+                                            className="h-64 overflow-hidden bg-gray-100 cursor-pointer"
                                             onClick={() => openFullImage(item)}
                                         >
                                             <img

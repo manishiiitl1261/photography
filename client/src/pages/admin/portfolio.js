@@ -506,7 +506,7 @@ export default function AdminPortfolio() {
                     key={item.id || item._id}
                     className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 flex flex-col"
                   >
-                    <div className="h-48 bg-gray-100 relative">
+                    <div className="h-64 bg-gray-100 relative">
                       <img
                         src={item.src}
                         alt={item.alt || item.title || "Portfolio image"}

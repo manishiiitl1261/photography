@@ -107,7 +107,7 @@ export default function Navbar() {
                                 {/* Right Side (Language + Auth) */}
                                 <div className="sm:flex items-center space-x-4">
                                     <LanguageSwitcher variant="navbar" />
-                                    <div className="hidden lg:block space-x-4">
+                                    <div className="hidden lg:flex justify-center items-center space-x-4">
                                         {user ? <UserProfileMenu /> : <LoginButton />}
                                         <Link
                                             href="/admin/login"
