@@ -31,7 +31,8 @@
     "nodemailer": "^6.10.1",
     "react-error-boundary": "^5.0.0",
     "uuid": "^11.1.0",
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "googleapis": "^171.4.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
