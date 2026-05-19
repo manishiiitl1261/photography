@@ -393,7 +393,95 @@ const sendBookingStatusUpdateToUser = async (booking, user, previousStatus) => {
     return false;
   }
 };
+const sendPasswordResetEmail = async (email, resetUrl) => {
+  try {
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2>Password Reset</h2>
+        <p>You requested a password reset.</p>
 
+        <div style="margin: 30px 0;">
+          <a href="${resetUrl}"
+             style="background:#4a90e2;color:white;padding:12px 20px;text-decoration:none;border-radius:5px;">
+             Reset Password
+          </a>
+        </div>
+
+        <p>This link expires in 1 hour.</p>
+      </div>
+    `;
+
+    await sendViaGmail({
+      to: email,
+      subject: 'Password Reset - Photography App',
+      html,
+    });
+
+    return true;
+  } catch (error) {
+    console.error('Error sending password reset email:', error);
+    return false;
+  }
+};
+
+const sendPasswordChangedEmail = async (email) => {
+  try {
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2>Password Changed</h2>
+        <p>Your password was changed successfully.</p>
+
+        <p>If this wasn't you, contact support immediately.</p>
+      </div>
+    `;
+
+    await sendViaGmail({
+      to: email,
+      subject: 'Password Changed - Photography App',
+      html,
+    });
+
+    return true;
+  } catch (error) {
+    console.error('Error sending password changed email:', error);
+    return false;
+  }
+};
+
+const sendEmailChangedNotification = async (newEmail, oldEmail) => {
+  try {
+    const htmlNew = `
+      <div style="font-family: Arial, sans-serif; padding: 20px;">
+        <h2>Email Updated</h2>
+        <p>Your email address has been changed successfully.</p>
+      </div>
+    `;
+
+    const htmlOld = `
+      <div style="font-family: Arial, sans-serif; padding: 20px;">
+        <h2>Email Updated</h2>
+        <p>Your account email was changed to ${newEmail}.</p>
+      </div>
+    `;
+
+    await sendViaGmail({
+      to: newEmail,
+      subject: 'Email Updated - Photography App',
+      html: htmlNew,
+    });
+
+    await sendViaGmail({
+      to: oldEmail,
+      subject: 'Email Updated - Photography App',
+      html: htmlOld,
+    });
+
+    return true;
+  } catch (error) {
+    console.error('Error sending email changed notification:', error);
+    return false;
+  }
+};
 module.exports = {
   generateOTP,
   sendOTPEmail,
@@ -401,4 +489,7 @@ module.exports = {
   sendWelcomeEmail,
   sendBookingNotificationToAdmin,
   sendBookingStatusUpdateToUser,
+  sendPasswordResetEmail,
+  sendPasswordChangedEmail,
+  sendEmailChangedNotification,
 };
