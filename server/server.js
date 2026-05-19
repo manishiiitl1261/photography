@@ -22,6 +22,7 @@ const testCloudinaryRoutes = require("./testCloudinary");
 
 // Initialize Express app
 const app = express();
+app.set("trust proxy", 1);
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, "uploads");
@@ -47,36 +48,31 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(handleCSRFError);
 
 // Configure API rate limiter for all routes to prevent abuse
-// This is a general limiter with high limits to prevent abuse
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 500, // limit each IP to 500 requests per windowMs (reasonable for normal use)
+  windowMs: 15 * 60 * 1000,
+  max: 500,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
     success: false,
-    message:
-      "Too many requests from this IP, please try again after 15 minutes",
+    message: "Too many requests from this IP, please try again after 15 minutes",
   },
 });
 
 // Configure more strict rate limiter for sensitive auth endpoints
 const sensitiveAuthLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30, // limit each IP to 30 requests per windowMs for sensitive routes
+  windowMs: 15 * 60 * 1000,
+  max: 30,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
     success: false,
-    message:
-      "Too many authentication attempts, please try again after 15 minutes",
+    message: "Too many authentication attempts, please try again after 15 minutes",
   },
 });
 
-// Apply general API rate limiter to all routes
 app.use("/api", apiLimiter);
 
-// Apply stricter rate limiter only to sensitive auth endpoints
 app.use("/api/auth/login", sensitiveAuthLimiter);
 app.use("/api/auth/register", sensitiveAuthLimiter);
 app.use("/api/auth/verify-email", sensitiveAuthLimiter);
@@ -109,12 +105,9 @@ app.get("/", (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   logger.error(
-    `${err.status || 500} - ${err.message} - ${req.originalUrl} - ${
-      req.method
-    } - ${req.ip}`
+    `${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
   );
 
-  // Don't leak error details in production
   const errorResponse = {
     success: false,
     message:
@@ -123,7 +116,6 @@ app.use((err, req, res, next) => {
         : err.message || "Something went wrong!",
   };
 
-  // Include stack trace in development
   if (process.env.NODE_ENV !== "production") {
     errorResponse.stack = err.stack;
   }
@@ -134,13 +126,11 @@ app.use((err, req, res, next) => {
 // Connect to MongoDB
 const connectDB = async () => {
   try {
-    // Log connection string (with password masked)
     const maskedUri = process.env.MONGO_URI
       ? process.env.MONGO_URI.replace(/\/\/([^:]+):([^@]+)@/, "//$1:****@")
       : "MONGO_URI is undefined";
     logger.info("Attempting to connect to MongoDB with URI:", maskedUri);
 
-    // Use explicit connection options
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -166,17 +156,14 @@ const start = async () => {
   }
 };
 
-// Handle uncaught exceptions
 process.on("uncaughtException", (error) => {
   logger.error("Uncaught Exception:", error);
   process.exit(1);
 });
 
-// Handle unhandled promise rejections
 process.on("unhandledRejection", (error) => {
   logger.error("Unhandled Promise Rejection:", error);
   process.exit(1);
 });
 
-// Start server
 start();
