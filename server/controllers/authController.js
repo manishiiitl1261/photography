@@ -2,10 +2,17 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
-const { generateOTP, sendOTPEmail, sendEmailChangeOTP, sendWelcomeEmail, createTransporter } = require('../utils/emailService');
+const {
+  generateOTP,
+  sendOTPEmail,
+  sendEmailChangeOTP,
+  sendWelcomeEmail,
+  sendPasswordResetEmail,
+  sendPasswordChangedEmail,
+  sendEmailChangedNotification
+} = require('../utils/emailService');
+
 const crypto = require('crypto');
-const emailService = require('../utils/emailService');
-const nodemailer = require('nodemailer');
 const logger = require('../utils/logger');
 
 // Register new user
@@ -798,42 +805,10 @@ exports.forgotPassword = async (req, res) => {
     const resetUrl = `${process.env.CLIENT_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}&email=${email}`;
     
     try {
-      // Send reset email using the email service
-      const transporter = await createTransporter();
-      
-      const mailOptions = {
-        from: process.env.EMAIL_FROM || 'Photography App <noreply@photography.com>',
-        to: email,
-        subject: 'Password Reset - Photography App',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
-            <h2 style="color: #333; text-align: center;">Password Reset</h2>
-            <p>You requested a password reset for your Photography App account. Click the button below to reset your password:</p>
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${resetUrl}" style="background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
-                Reset Your Password
-              </a>
-            </div>
-            <p>If you didn't request a password reset, please ignore this email or contact support if you have concerns.</p>
-            <p>This link will expire in 1 hour.</p>
-            <p style="color: #666; font-size: 12px; margin-top: 30px; text-align: center;">
-              &copy; ${new Date().getFullYear()} Photography App. All rights reserved.
-            </p>
-          </div>
-        `
-      };
-      
-      const info = await transporter.sendMail(mailOptions);
-      console.log('Password reset email sent:', info.messageId);
-      
-      // If using Ethereal, provide preview URL
-      if (info.messageId && info.messageId.includes('ethereal')) {
-        console.log('Preview URL:', nodemailer.getTestMessageUrl(info));
-      }
-    } catch (emailError) {
-      console.error('Error sending password reset email:', emailError);
-      // Don't return an error to the client for security reasons
-    }
+  await sendPasswordResetEmail(email, resetUrl);
+} catch (emailError) {
+  console.error('Error sending password reset email:', emailError);
+}
     
     // Always return success for security (don't reveal if email exists)
     return res.status(200).json({
@@ -893,41 +868,11 @@ exports.resetPassword = async (req, res) => {
     
     await user.save();
     
-    try {
-      // Send password changed notification email
-      const transporter = await createTransporter();
-      
-      const mailOptions = {
-        from: process.env.EMAIL_FROM || 'Photography App <noreply@photography.com>',
-        to: email,
-        subject: 'Password Changed - Photography App',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
-            <h2 style="color: #333; text-align: center;">Password Changed</h2>
-            <p>Your password for Photography App has been successfully changed.</p>
-            <p>If you did not make this change, please contact support immediately.</p>
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}" style="background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
-                Login to Your Account
-              </a>
-            </div>
-            <p style="color: #666; font-size: 12px; margin-top: 30px; text-align: center;">
-              &copy; ${new Date().getFullYear()} Photography App. All rights reserved.
-            </p>
-          </div>
-        `
-      };
-      
-      const info = await transporter.sendMail(mailOptions);
-      console.log('Password changed email sent:', info.messageId);
-      
-      // If using Ethereal, provide preview URL
-      if (info.messageId && info.messageId.includes('ethereal')) {
-        console.log('Preview URL:', nodemailer.getTestMessageUrl(info));
-      }
-    } catch (emailError) {
-      console.error('Error sending password changed email:', emailError);
-    }
+   try {
+  await sendPasswordChangedEmail(email);
+} catch (emailError) {
+  console.error('Error sending password changed email:', emailError);
+}
     
     return res.status(200).json({
       success: true,
@@ -1218,53 +1163,10 @@ exports.verifyEmailChange = async (req, res) => {
       
       // Send confirmation email to both old and new email addresses
       try {
-        const transporter = await createTransporter();
-        
-        // Send to new email
-        const mailOptions = {
-          from: process.env.EMAIL_FROM || 'Photography App <noreply@photography.com>',
-          to: user.email,
-          subject: 'Email Address Changed - Photography App',
-          html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
-              <h2 style="color: #333; text-align: center;">Email Address Changed</h2>
-              <p>Your email address for Photography App has been successfully changed.</p>
-              <p>If you did not make this change, please contact support immediately.</p>
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}" style="background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
-                  Login to Your Account
-                </a>
-              </div>
-              <p style="color: #666; font-size: 12px; margin-top: 30px; text-align: center;">
-                &copy; ${new Date().getFullYear()} Photography App. All rights reserved.
-              </p>
-            </div>
-          `
-        };
-        
-        // Send to old email
-        const notificationOptions = {
-          from: process.env.EMAIL_FROM || 'Photography App <noreply@photography.com>',
-          to: oldEmail,
-          subject: 'Email Address Changed - Photography App',
-          html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
-              <h2 style="color: #333; text-align: center;">Email Address Changed</h2>
-              <p>The email address for your Photography App account has been changed to ${user.email}.</p>
-              <p>If you did not make this change, please contact support immediately.</p>
-              <p style="color: #666; font-size: 12px; margin-top: 30px; text-align: center;">
-                &copy; ${new Date().getFullYear()} Photography App. All rights reserved.
-              </p>
-            </div>
-          `
-        };
-        
-        await transporter.sendMail(mailOptions);
-        await transporter.sendMail(notificationOptions);
-      } catch (emailError) {
-        console.error('Error sending email change confirmation:', emailError);
-      }
-      
+  await sendEmailChangedNotification(user.email, oldEmail);
+} catch (emailError) {
+  console.error('Error sending email change confirmation:', emailError);
+}
       // Return the updated user
       const updatedUser = {
         _id: user._id,
