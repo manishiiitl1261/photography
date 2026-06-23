@@ -134,4 +134,43 @@ Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on our co
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. -
+
+
+
+
+
+
+
+## SETUP Details (.env for client and server respectively) 
+--------------------------> client
+NEXT_PUBLIC_API_URL=your_host_of_backend (example like your local host : http://localhost:5000)
+NEXT_PUBLIC_API_BASE_URL=your_host_of_backend
+NEXT_PUBLIC_ADMIN_EMAILS=admin_mail
+--------------------------> server 
+PORT=port_number
+MONGO_URI=your_db_url
+
+JWT_SECRET=photography_secure_jwt_secret_key_2024
+JWT_LIFETIME=30d
+JWT_REFRESH_SECRET=photography_secure_refresh_token_secret_2024
+
+# CLIENT URL for password reset and other links
+CLIENT_URL=your_frontend_host (like your local host http://localhost:3000)
+
+# OTP Configuration 
+OTP_EXPIRY=10 # in minutes
+
+# Cloudinary Configuration
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+GOOGLE_CLIENT_ID=your_client_id
+GOOGLE_CLIENT_SECRET=your_client_secret
+GOOGLE_REDIRECT_URI=https://developers.google.com/oauthplayground
+GOOGLE_REFRESH_TOKEN=your_refresh_token
+EMAIL_FROM=yourgmail@gmail.com
+
+
+
